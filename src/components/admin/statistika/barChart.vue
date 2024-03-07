@@ -59,6 +59,26 @@ export default {
           cubicInterpolationMode: "monotone",
           tension: 0.4,
         },
+        {
+          label: "Half Sales Data 1",
+          data: [500, 1000, 250, 100, 150, 150, 450],
+          type: "bar",
+          backgroundColor: "#7CD8FD",
+          borderColor: "#7CD8FD",
+          borderWidth: 2,
+          borderRadius: Number.MAX_VALUE,
+          barThickness: 10,
+        },
+        {
+          label: "Half Sales Data 2",
+          data: [250, 500, 125, 50, 75, 75, 225],
+          type: "bar",
+          backgroundColor: "#E0F3FE",
+          borderColor: "#E0F3FE",
+          borderWidth: 2,
+          borderRadius: Number.MAX_VALUE,
+          barThickness: 10,
+        },
       ],
     };
     new Chart(ctx, {
