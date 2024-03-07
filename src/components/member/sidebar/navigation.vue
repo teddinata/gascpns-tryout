@@ -15,24 +15,24 @@ onMounted(() => {
   openDropdown.value = parseInt(localStorage.getItem("openDropdown")) || null;
 });
 
-const toggleDropdown = (index) => {
-  const link = props.links[index];
-  if (link.name === "Soal & Paket") {
-    if (openDropdown.value === index) {
-      openDropdown.value = null;
-    } else {
-      openDropdown.value = index;
-    }
+// const toggleDropdown = (index) => {
+//   const link = props.links[index];
+//   if (link.name === "Soal & Paket") {
+//     if (openDropdown.value === index) {
+//       openDropdown.value = null;
+//     } else {
+//       openDropdown.value = index;
+//     }
 
-    // Store the openDropdown state in local storage
-    localStorage.setItem("openDropdown", openDropdown.value);
-  }
-};
+//     // Store the openDropdown state in local storage
+//     localStorage.setItem("openDropdown", openDropdown.value);
+//   }
+// };
 </script>
 
 <template>
   <nav class="flex flex-col gap-2">
-    <template v-for="(link, index) in props.links" :key="link.name">
+    <template v-for="link in props.links" :key="link.name">
       <div class="relative">
         <div class="flex items-center">
           <router-link
@@ -51,7 +51,7 @@ const toggleDropdown = (index) => {
               <Icon :icon="link.icons" class="text-3xl"></Icon>
               <p class="text-md">{{ link.name }}</p>
             </div>
-            <button
+            <!-- <button
               v-if="link.name === 'Soal & Paket'"
               @click="toggleDropdown(index)"
               class="focus:outline-none transition-transform duration-300 transform"
@@ -61,16 +61,16 @@ const toggleDropdown = (index) => {
               }"
             >
               <Icon icon="ri:arrow-drop-down-line" class="text-3xl" />
-            </button>
+            </button> -->
           </router-link>
         </div>
 
         <!-- Use transition element for fade effect -->
-        <Transition name="slide-fade">
-          <!-- Render children links if they exist and the dropdown is open -->
+        <!-- <Transition name="slide-fade">
+
           <template v-if="link.children && openDropdown === index">
             <div class="flex flex-col w-full bg-white space-y-2 pt-2">
-              <!-- Use router-link directly as the child of the template -->
+              
               <router-link
                 v-for="childLink in link.children"
                 :key="childLink.label"
@@ -90,7 +90,7 @@ const toggleDropdown = (index) => {
               </router-link>
             </div>
           </template>
-        </Transition>
+        </Transition> -->
       </div>
     </template>
   </nav>

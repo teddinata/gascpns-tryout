@@ -1,13 +1,25 @@
 <script setup>
-import { RouterView } from "vue-router";
-import Sidebar from "./components/admin/sidebar/sidebar.vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import AdminLayouts from "./components/AdminLayouts.vue";
+import MemberLayouts from "./components/MemberLayouts.vue";
+// import RegisterLayouts from "./components/RegisterLayouts.vue";
+
+const route = useRoute();
+
+// Computed property to dynamically select the layout based on the route path
+const currentLayout = computed(() => {
+  if (route.value && route.value.startsWith("/admin")) {
+    return AdminLayouts;
+  } else if (route.value && route.value.startsWith("/member")) {
+    return MemberLayouts;
+  } else {
+    return MemberLayouts;
+  }
+});
 </script>
 
 <template>
-  <div class="flex min-h-screen">
-    <Sidebar />
-    <main class="flex flex-col min-h-screen w-full p-7 bg-background">
-      <RouterView />
-    </main>
-  </div>
+  <!-- Use the dynamically selected layout component -->
+  <component :is="currentLayout" />
 </template>

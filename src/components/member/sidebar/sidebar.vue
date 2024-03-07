@@ -2,43 +2,36 @@
 <script setup>
 // import { store } from "@/store";
 import Logo from "./logo.vue";
-import Navigation from "./navigation.vue";
-const links = [
+import NavigationLink from "./navigation.vue";
+const memberLinks = [
   {
     name: "Dashboard",
-    url: "/admin/dashboard",
+    url: "/member/dashboard",
     icons: "ri:dashboard-2-line",
   },
   {
-    name: "Soal & Paket",
-    url: "/admin/soal",
+    name: "Tryout",
+    url: "/member/tryout",
     icons: "f7:question-square",
-    children: [
-      {
-        label: "Paket Soal Tryout",
-        name: "paket tryout",
-        to: "/admin/soal/paket",
-      },
-      {
-        label: "Soal Tryout",
-        name: "soal tryout",
-        to: "/admin/soal/tryout",
-      },
-    ],
   },
   {
-    name: "Statistika",
-    url: "/admin/statistika",
+    name: "Rangking",
+    url: "/member/rangking",
     icons: "flowbite:chart-line-up-outline",
   },
   {
-    name: "Soal Latihan",
-    url: "/admin/latihan",
+    name: "Statistika",
+    url: "/member/statistika",
     icons: "solar:volleyball-outline",
   },
   {
-    name: "Konten",
-    url: "/admin/konten",
+    name: "Latihan Soal",
+    url: "/member/latihan",
+    icons: "gg:browser",
+  },
+  {
+    name: "FAQ",
+    url: "/member/faq",
     icons: "gg:browser",
   },
 ];
@@ -46,7 +39,7 @@ const links = [
 const settings = [
   {
     name: "Pengaturan",
-    url: "/admin/pengaturan",
+    url: "/pengaturan",
     icons: "carbon:settings",
   },
   {
@@ -74,13 +67,13 @@ const settings = [
     <!-- MENU section -->
     <div class="flex flex-col gap-4">
       <h1 class="text-md font-medium text-text-tertiary">MENU</h1>
-      <Navigation :links="links" />
+      <NavigationLink :links="memberLinks" />
     </div>
 
     <!-- SETTINGS section -->
     <div class="pt-10 flex flex-col gap-4">
       <h1 class="text-md font-medium text-text-tertiary">SETTINGS</h1>
-      <Navigation :links="settings" />
+      <NavigationLink :links="settings" />
     </div>
   </div>
 </template>
