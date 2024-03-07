@@ -16,12 +16,12 @@ const memberLinks = [
   },
   {
     name: "Rangking",
-    url: "/member/rangking",
+    url: "#",
     icons: "flowbite:chart-line-up-outline",
   },
   {
     name: "Statistika",
-    url: "/member/statistika",
+    url: "#",
     icons: "solar:volleyball-outline",
   },
   {
@@ -31,7 +31,7 @@ const memberLinks = [
   },
   {
     name: "FAQ",
-    url: "/member/faq",
+    url: "#",
     icons: "gg:browser",
   },
 ];
@@ -39,7 +39,7 @@ const memberLinks = [
 const settings = [
   {
     name: "Pengaturan",
-    url: "/pengaturan",
+    url: "#",
     icons: "carbon:settings",
   },
   {

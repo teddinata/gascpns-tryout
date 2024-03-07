@@ -1,6 +1,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div>Statistika Page</div>
+  <MemberLayouts>
+    <div>Statistika Page</div>
+  </MemberLayouts>
 </template>
 
-<script setup></script>
+<script setup>
+import MemberLayouts from "@/components/MemberLayouts.vue";
+</script>

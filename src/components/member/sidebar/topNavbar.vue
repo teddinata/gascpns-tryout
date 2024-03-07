@@ -12,7 +12,9 @@ import { computed } from "vue";
 
 const route = useRoute();
 const router = useRouter();
-const hideSidebar = computed(() => route.path === "/member/latihan");
+const hideSidebar = computed(
+  () => route.path === "/member/latihan" || route.path === "/member/tryout"
+);
 const goBack = () => {
   router.go(-1); // Navigate back one step in history
 };

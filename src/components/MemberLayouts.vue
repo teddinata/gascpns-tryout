@@ -1,5 +1,5 @@
 <script setup>
-import { RouterView, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import Sidebar from "./member/sidebar/sidebar.vue";
 import TopNavbar from "./member/sidebar/topNavbar.vue";
 import { computed } from "vue";
@@ -7,7 +7,9 @@ import { computed } from "vue";
 const route = useRoute();
 
 // Use a computed property to make hideSidebar reactive
-const hideSidebar = computed(() => route.path === "/member/latihan");
+const hideSidebar = computed(
+  () => route.path === "/member/latihan" || route.path === "/member/tryout"
+);
 </script>
 
 <template>
@@ -25,7 +27,7 @@ const hideSidebar = computed(() => route.path === "/member/latihan");
         class="flex flex-col min-h-screen md:pl-72 w-full px-7 py-20 bg-background"
         :class="{ 'md:!pl-0 bg-white': hideSidebar }"
       >
-        <RouterView />
+        <slot />
       </main>
     </div>
   </div>

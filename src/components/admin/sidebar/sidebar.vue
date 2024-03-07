@@ -33,12 +33,12 @@ const links = [
   },
   {
     name: "Soal Latihan",
-    url: "/admin/latihan",
+    url: "#",
     icons: "solar:volleyball-outline",
   },
   {
     name: "Konten",
-    url: "/admin/konten",
+    url: "#",
     icons: "gg:browser",
   },
 ];
@@ -46,7 +46,7 @@ const links = [
 const settings = [
   {
     name: "Pengaturan",
-    url: "/admin/pengaturan",
+    url: "#",
     icons: "carbon:settings",
   },
   {

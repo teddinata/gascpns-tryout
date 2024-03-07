@@ -1,5 +1,5 @@
 <script setup>
-import { RouterView, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import Sidebar from "./admin/sidebar/sidebar.vue";
 import TopNavbar from "./admin/sidebar/topNavbar.vue";
 
@@ -20,7 +20,7 @@ const route = useRoute();
       <main
         class="flex flex-col min-h-screen w-full md:pl-72 px-7 py-20 bg-background"
       >
-        <RouterView />
+        <slot />
       </main>
     </div>
   </div>
