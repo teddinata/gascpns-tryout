@@ -20,7 +20,7 @@ const router = createRouter({
       meta: {
         title: "Dashboard | GASCPNS",
         description: "This is the home page of my Vue.js app.",
-        links: [{ label: "Dashboard", to: "/" }],
+        links: [{ label: "Dashboard", to: "/admin/dashboard" }],
       },
       component: () => import("@/views/admin/dashboard.vue"),
     },
@@ -79,45 +79,6 @@ const router = createRouter({
       component: () => import("@/views/admin/statistika.vue"),
     },
     {
-      path: "/admin/latihan",
-      name: "latihan",
-      meta: {
-        title: "Soal Latihan | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
-        links: [
-          { label: "Dashboard", to: "/admin/dashboard" },
-          { label: "Soal Latihan", to: "/admin/latihan" },
-        ],
-      },
-      component: () => import("@/views/admin/latihan.vue"),
-    },
-    {
-      path: "/admin/konten",
-      name: "konten",
-      meta: {
-        title: "Konten | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
-        links: [
-          { label: "Dashboard", to: "/admin/dashboard" },
-          { label: "Konten", to: "/admin/konten" },
-        ],
-      },
-      component: () => import("@/views/admin/konten.vue"),
-    },
-    {
-      path: "/pengaturan",
-      name: "pengaturan",
-      meta: {
-        title: "Pengaturan | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
-        links: [
-          { label: "Dashboard", to: "/admin/dashboard" },
-          { label: "Pengaturan", to: "/admin/pengaturan" },
-        ],
-      },
-      component: () => import("@/views/admin/pengaturan.vue"),
-    },
-    {
       path: "/member/dashboard",
       name: "Dashboard Member",
       meta: {
@@ -141,32 +102,6 @@ const router = createRouter({
       component: () => import("@/views/member/tryout.vue"),
     },
     {
-      path: "/member/rangking",
-      name: "rangking",
-      meta: {
-        title: "Rangking Member | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
-        links: [
-          { label: "Dashboard", to: "/member/dashboard" },
-          { label: "Rangking", to: "/member/rangking" },
-        ],
-      },
-      component: () => import("@/views/member/rangking.vue"),
-    },
-    {
-      path: "/member/statistika",
-      name: "statistika",
-      meta: {
-        title: "Statistika | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
-        links: [
-          { label: "Dashboard", to: "/member/dashboard" },
-          { label: "Statistika", to: "/member/statistika" },
-        ],
-      },
-      component: () => import("@/views/member/statistika.vue"),
-    },
-    {
       path: "/member/latihan",
       name: "latihan",
       meta: {
@@ -178,19 +113,6 @@ const router = createRouter({
         ],
       },
       component: () => import("@/views/member/latihan.vue"),
-    },
-    {
-      path: "/member/faq",
-      name: "faq",
-      meta: {
-        title: "FAQ | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
-        links: [
-          { label: "Dashboard", to: "/member/dashboard" },
-          { label: "FAQ", to: "/member/faq" },
-        ],
-      },
-      component: () => import("@/views/member/faq.vue"),
     },
   ],
 });
