@@ -37,6 +37,20 @@ export default createStore({
         throw error;
       }
     },
+
+    async signInUser({ commit }, userData) {
+      try {
+        const response = await axios.post(
+          "https://api-cpns.creazylab.works/api/v1/login",
+          userData
+        );
+        const user = response.data.data.user;
+        commit("SET_USER", user);
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    },
     setAdminRole({ commit }) {
       commit("SET_ADMIN_ROLE");
     },
