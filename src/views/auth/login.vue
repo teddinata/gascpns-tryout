@@ -9,7 +9,7 @@ const store = useStore();
 const router = useRouter();
 
 const userData = ref({
-  username: "",
+  email_or_username: "",
   password: "",
 });
 
@@ -97,17 +97,17 @@ const login = async () => {
             </div> -->
             <div class="flex flex-col gap-1">
               <label
-                for="username"
+                for="email_or_username"
                 class="text-text-primary font-medium text-sm"
                 >Username*</label
               >
               <input
                 type="text"
-                v-model="userData.username"
-                id="username"
-                name="username"
+                v-model="userData.email_or_username"
+                id="email_or_username"
+                name="email_or_username"
                 class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Username Anda"
+                placeholder="Masukkan Email atau Username Anda"
                 required
               />
             </div>
@@ -120,8 +120,8 @@ const login = async () => {
               <div class="password-container">
                 <input
                   :type="showPassword ? 'text' : 'password'"
-                  v-model="userData.password_"
-                  id="password_"
+                  v-model="userData.password"
+                  id="password"
                   name="password"
                   class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
                   placeholder="Masukkan Password Anda"

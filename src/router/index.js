@@ -157,9 +157,9 @@ router.beforeEach((to, from, next) => {
 
   if (requiresAuth && !user) {
     next("/register");
-  } else if (requiresAdmin && user.role !== "admin") {
+  } else if (requiresAdmin && user.roles !== "admin") {
     next("/admin/dashboard");
-  } else if (requiresMember && user.role !== "member") {
+  } else if (requiresMember && user.roles !== "member") {
     next("/member/dashboard");
   } else {
     next();
