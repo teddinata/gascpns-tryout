@@ -16,6 +16,17 @@ const router = createRouter({
         import(/* webpackChunkName: "register" */ "@/views/auth/register.vue"),
     },
     {
+      path: "/login",
+      name: "login",
+      meta: {
+        title: "Login | GASCPNS",
+        description: "Login to your account",
+        links: [{ label: "Dashboard", to: "/" }],
+      },
+      component: () =>
+        import(/* webpackChunkName: "register" */ "@/views/auth/login.vue"),
+    },
+    {
       path: "/admin/dashboard",
       name: "dashboard",
       meta: {
