@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from "@/store";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,8 @@ const router = createRouter({
         title: "Dashboard | GASCPNS",
         description: "This is the home page of my Vue.js app.",
         links: [{ label: "Dashboard", to: "/admin/dashboard" }],
+        requiresAuth: true,
+        requiresAdmin: true,
       },
       component: () => import("@/views/admin/dashboard.vue"),
     },
@@ -45,6 +48,8 @@ const router = createRouter({
           { label: "Dashboard", to: "/admin/dashboard" },
           { label: "Soal & Paket", to: "/admin/soal" },
         ],
+        requiresAuth: true,
+        requiresAdmin: true,
       },
       component: () => import("@/views/admin/soal/index.vue"),
     },
@@ -59,6 +64,8 @@ const router = createRouter({
           { label: "Soal & Paket", to: "/admin/soal" },
           { label: "Paket Soal", to: "/admin/soal/paket" },
         ],
+        requiresAuth: true,
+        requiresAdmin: true,
       },
       component: () => import("@/views/admin/soal/paket.vue"),
     },
@@ -73,6 +80,8 @@ const router = createRouter({
           { label: "Soal & Paket", to: "/admin/soal" },
           { label: "Soal Tryout", to: "/admin/soal/tryout" },
         ],
+        requiresAuth: true,
+        requiresAdmin: true,
       },
       component: () => import("@/views/admin/soal/tryout.vue"),
     },
@@ -86,6 +95,8 @@ const router = createRouter({
           { label: "Dashboard", to: "/admin/dashboard" },
           { label: "Statistika", to: "/admin/statistika" },
         ],
+        requiresAuth: true,
+        requiresAdmin: true,
       },
       component: () => import("@/views/admin/statistika.vue"),
     },
@@ -96,6 +107,8 @@ const router = createRouter({
         title: "Dashboard | GASCPNS",
         description: "This is the home page of my Vue.js app.",
         links: [{ label: "Dashboard", to: "/member/dashboard" }],
+        requiresAuth: true,
+        requiresMember: true,
       },
       component: () => import("@/views/member/dashboard.vue"),
     },
@@ -109,6 +122,8 @@ const router = createRouter({
           { label: "Dashboard", to: "/member/dashboard" },
           { label: "Tryout", to: "/member/tryout" },
         ],
+        requiresAuth: true,
+        requiresMember: true,
       },
       component: () => import("@/views/member/tryout.vue"),
     },
@@ -122,6 +137,8 @@ const router = createRouter({
           { label: "Dashboard", to: "/member/dashboard" },
           { label: "Latihan Soal", to: "/member/latihan" },
         ],
+        requiresAuth: true,
+        requiresMember: true,
       },
       component: () => import("@/views/member/latihan.vue"),
     },
@@ -131,7 +148,22 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // Update page title based on the route's metadata
   document.title = to.meta.title || "Your Default Title";
-  next();
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const requiresAdmin = to.matched.some((record) => record.meta.requiresAdmin);
+  const requiresMember = to.matched.some(
+    (record) => record.meta.requiresMember
+  );
+  const user = store.getters.currentUser;
+
+  if (requiresAuth && !user) {
+    next("/register");
+  } else if (requiresAdmin && user.role !== "admin") {
+    next("/admin/dashboard");
+  } else if (requiresMember && user.role !== "member") {
+    next("/member/dashboard");
+  } else {
+    next();
+  }
 });
 
 export default router;
