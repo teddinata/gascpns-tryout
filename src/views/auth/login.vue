@@ -23,24 +23,16 @@ const togglePassword = () => {
 
 const login = async () => {
   try {
-    const user = await store.dispatch("signInUser", userData.value);
-
-    // Handle user role distribution based on your criteria.
-    if (user.username === "admin") {
-      store.dispatch("setAdminRole");
-    } else {
-      store.dispatch("setMemberRole");
-    }
+    const user = await store.dispatch("auth/login", userData.value);
 
     // Redirect to the appropriate page based on user role.
     router.push(
-      user.roles === "admin" ? "/admin/dashboard" : "/member/dashboard"
+      store.getters["auth/isAdmin"] ? "/admin/dashboard" : "/member/dashboard"
     );
   } catch (error) {
     console.error("Login failed:", error);
 
-    // Optionally, display login error to the user
-    const loginError = store.getters.loginError;
+    const loginError = store.getters["auth/loginError"];
     alert(`Login failed: ${loginError}`);
   }
 };
@@ -48,18 +40,18 @@ const login = async () => {
 
 <style scoped>
 /* Inside your style tag (or in your CSS file if not scoped) */
-.password-container { /* We'll use a wrapper to help position */
+.password-container {
+  /* We'll use a wrapper to help position */
   position: relative; /* Establish a relative positioning context */
 }
 
 .password-toggle {
   position: absolute;
   top: 50%;
-  right: 10px; 
+  right: 10px;
   transform: translateY(-50%);
   cursor: pointer; /* Indicate that the button is clickable */
 }
-
 </style>
 
 <template>
@@ -67,7 +59,7 @@ const login = async () => {
     <div
       class="w-2/5 min-h-screen bg-gradient-to-b from-primary to-secondary rounded-r-3xl"
     >
-    <div class="flex flex-col justify-between items-center h-full pt-10">
+      <div class="flex flex-col justify-between items-center h-full pt-10">
         <img src="/logo-white.png" class="w-48 pb-20" />
         <div class="flex flex-col h-full">
           <img src="/register-image.png" class="w-96" />
@@ -133,7 +125,11 @@ const login = async () => {
                   class="password-toggle"
                   @click="togglePassword"
                 >
-                  <Icon icon="ph:eye-light" class="text-xl" v-if="!showPassword" />
+                  <Icon
+                    icon="ph:eye-light"
+                    class="text-xl"
+                    v-if="!showPassword"
+                  />
                   <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
                 </button>
               </div>
@@ -143,7 +139,7 @@ const login = async () => {
                 </p>
               </div>
             </div>
-            
+
             <button
               type="submit"
               class="bg-primary text-white w-full rounded-xl py-3"
@@ -165,7 +161,9 @@ const login = async () => {
             >
               <p>Apakah kamu belum punya akun?</p>
 
-              <router-link to="/register" class="text-primary underline cursor-pointer"
+              <router-link
+                to="/register"
+                class="text-primary underline cursor-pointer"
                 >Daftar</router-link
               >
             </div>

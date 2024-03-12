@@ -146,21 +146,24 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  // Update page title based on the route's metadata
   document.title = to.meta.title || "Your Default Title";
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  const requiresAdmin = to.matched.some((record) => record.meta.requiresAdmin);
-  const requiresMember = to.matched.some(
-    (record) => record.meta.requiresMember
-  );
-  const user = store.getters.currentUser;
 
-  if (requiresAuth && !user) {
-    next("/register");
-  } else if (requiresAdmin && user.roles !== "admin") {
-    next("/admin/dashboard");
-  } else if (requiresMember && user.roles !== "member") {
-    next("/member/dashboard");
+  if (to.meta.requiresAuth) {
+    if (store.getters["auth/isLoggedIn"]) {
+      const userRole = store.getters["auth/userRole"];
+
+      // Check if the route requires a specific role
+      if (to.meta.requiresAdmin && userRole === "admin") {
+        next();
+      } else if (to.meta.requiresMember && userRole === "member") {
+        next();
+      } else {
+        // Redirect to the appropriate dashboard based on user role
+        next(userRole === "admin" ? "/admin/dashboard" : "/member/dashboard");
+      }
+    } else {
+      next("/login");
+    }
   } else {
     next();
   }

@@ -17,42 +17,29 @@ const userData = ref({
   password_confirmation: "",
 });
 
-// Add a ref for password visibility
 const showPassword = ref(false);
+const showPasswordConfirmation = ref(false);
 
-// Add a function to toggle password visibility
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };
 
-// Add a ref for password visibility
-const showPasswordConfirmation = ref(false);
-
-// Add a function to toggle password visibility
 const togglePasswordConfirmation = () => {
   showPasswordConfirmation.value = !showPasswordConfirmation.value;
 };
 
 const register = async () => {
   try {
-    const user = await store.dispatch("registerUser", userData.value);
-
-    // Handle user role distribution based on your criteria.
-    if (user.username === "admin") {
-      store.dispatch("setAdminRole");
-    } else {
-      store.dispatch("setMemberRole");
-    }
+    const user = await store.dispatch("auth/register", userData.value);
 
     // Redirect to the appropriate page based on user role.
     router.push(
-      user.roles === "admin" ? "/admin/dashboard" : "/member/dashboard"
+      store.getters["auth/isAdmin"] ? "/admin/dashboard" : "/member/dashboard"
     );
   } catch (error) {
     console.error("Registration failed:", error);
 
-    // Optionally, display registration error to the user
-    const registrationError = store.getters.registrationError;
+    const registrationError = store.getters["auth/registrationError"];
     alert(`Registration failed: ${registrationError}`);
   }
 };
@@ -60,18 +47,18 @@ const register = async () => {
 
 <style>
 /* Inside your style tag (or in your CSS file if not scoped) */
-.password-container { /* We'll use a wrapper to help position */
+.password-container {
+  /* We'll use a wrapper to help position */
   position: relative; /* Establish a relative positioning context */
 }
 
 .password-toggle {
   position: absolute;
   top: 50%;
-  right: 10px; 
+  right: 10px;
   transform: translateY(-50%);
   cursor: pointer; /* Indicate that the button is clickable */
 }
-
 </style>
 
 <template>
@@ -173,11 +160,15 @@ const register = async () => {
                   class="password-toggle"
                   @click="togglePassword"
                 >
-                  <Icon icon="ph:eye-light" class="text-xl" v-if="!showPassword" />
+                  <Icon
+                    icon="ph:eye-light"
+                    class="text-xl"
+                    v-if="!showPassword"
+                  />
                   <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
                 </button>
               </div>
-              
+
               <div class="flex justify-end">
                 <p class="text-sm text-text-tertiary">
                   Must be at least 8 Characters.
@@ -206,7 +197,11 @@ const register = async () => {
                   class="password-toggle"
                   @click="togglePasswordConfirmation"
                 >
-                  <Icon icon="ph:eye-light" class="text-xl" v-if="!showPasswordConfirmation" />
+                  <Icon
+                    icon="ph:eye-light"
+                    class="text-xl"
+                    v-if="!showPasswordConfirmation"
+                  />
                   <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
                 </button>
               </div>
@@ -236,7 +231,9 @@ const register = async () => {
               class="text-sm text-text-primary flex items-center gap-1 justify-center"
             >
               <p>Apakah kamu sudah punya akun?</p>
-              <router-link to="/login" class="text-primary underline cursor-pointer"
+              <router-link
+                to="/login"
+                class="text-primary underline cursor-pointer"
                 >Login</router-link
               >
             </div>
