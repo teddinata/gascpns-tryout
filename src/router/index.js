@@ -5,6 +5,10 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: "/",
+      redirect: "/login",
+    },
+    {
       path: "/register",
       name: "register",
       meta: {
@@ -146,10 +150,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || "Your Default Title";
+  document.title = to.meta.title || "GasCPNS - Welcome to GASCPNS";
+
+  // Cek apakah token tersimpan
+  const isAuthenticated = store.getters["auth/isLoggedIn"];
 
   if (to.meta.requiresAuth) {
-    if (store.getters["auth/isLoggedIn"]) {
+    if (isAuthenticated) {
       const userRole = store.getters["auth/userRole"];
 
       // Check if the route requires a specific role
@@ -162,10 +169,16 @@ router.beforeEach((to, from, next) => {
         next(userRole === "admin" ? "/admin/dashboard" : "/member/dashboard");
       }
     } else {
-      next("/login");
+      next("/login"); // Redirect ke halaman login jika tidak ada token tersimpan
     }
   } else {
-    next();
+    if (isAuthenticated) {
+      // Jika pengguna sudah login, arahkan ke halaman sesuai peran
+      const userRole = store.getters["auth/userRole"];
+      next(userRole === "admin" ? "/admin/dashboard" : "/member/dashboard");
+    } else {
+      next(); // Lanjutkan jika tidak ada peran yang diperlukan
+    }
   }
 });
 
