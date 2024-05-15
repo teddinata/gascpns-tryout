@@ -4,9 +4,12 @@ import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { useToast } from 'vue-toastification';
+import { formatRupiah } from "@/filters";
 
 const store = useStore();
 const router = useRouter();
+const toast = useToast();
 
 const userData = ref({
   name: "",
@@ -32,12 +35,21 @@ const togglePasswordConfirmation = () => {
 
 const register = async () => {
   try {
-    const user = await store.dispatch("auth/register", userData.value);
+    const userResponse = await store.dispatch("auth/register", userData.value);
+    // console.log('User response:', userResponse);
+    const user = userResponse.data.data.user; // Ambil data user dari respons API
 
     // Redirect to the appropriate page based on user role.
     router.push(
       store.getters["auth/isAdmin"] ? "/admin/dashboard" : "/member/dashboard"
     );
+    // get response data from store and show toast with conditional message
+    if (user.wallet_balance > 0) {
+      toast.success('Selamat! Anda mendapatkan saldo sebesar Rp. ' +  formatRupiah(user.wallet_balance) + ' dari kode referral. Anda dapat menggunakan saldo ini untuk bertransaksi');
+    } else {
+      toast.success('Registrasi berhasil! Selamat datang di platform kami. Silahkan top up saldo anda untuk mulai bertransaksi');
+    }
+    toast.success('Registrasi berhasil! Selamat datang di platform kami. 🙂');
   } catch (error) {
     console.error("Registration failed:", error);
 

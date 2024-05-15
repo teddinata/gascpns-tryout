@@ -112,6 +112,14 @@ const auth = {
           });
       });
     },
+
+    logout({ commit }) {
+      return new Promise((resolve) => {
+        commit("AUTH_LOGOUT");
+        delete Api.defaults.headers.common["Authorization"];
+        resolve();
+      });
+    },
   },
   
   getters: {

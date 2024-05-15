@@ -132,6 +132,21 @@ const router = createRouter({
       component: () => import("@/views/member/my-tryout.vue"),
     },
     {
+      path: '/member/tryout/:tryoutId',
+      name: 'tryout',
+      meta: {
+        title: "Tryout | GASCPNS",
+        description: "Try Out Soal CPNS",
+        links: [
+          // { label: "Dashboard", to: "/member/dashboard" },
+          { label: "Tryout", to: "/member/my-tryout" },
+        ],
+        requiresAuth: true,
+        requiresMember: true,
+      },
+      component: () => import('../views/member/tryout.vue')
+    },
+    {
       path: "/member/latihan",
       name: "latihan",
       meta: {

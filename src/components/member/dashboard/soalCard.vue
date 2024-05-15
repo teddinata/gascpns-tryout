@@ -57,7 +57,7 @@ const soal = defineProps({
     </div>
     <button
       class="w-full rounded-full py-2 text-white"
-      :class="soal.is_enrolled ? 'bg-[#C2C3C6]' : 'bg-primary'"
+      :class="soal.is_enrolled ? 'bg-[#C2C3C6]' : 'bg-primary hover:bg-secondary'"
       :disabled="soal.is_enrolled"
     >
       {{ soal.is_enrolled ? 'Sudah Dibeli' : 'Beli' }}
