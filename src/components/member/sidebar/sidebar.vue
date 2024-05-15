@@ -11,7 +11,7 @@ const memberLinks = [
   },
   {
     name: "Tryout",
-    url: "/member/tryout",
+    url: "/member/my-tryout",
     icons: "f7:question-square",
   },
   {

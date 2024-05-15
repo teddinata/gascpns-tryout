@@ -4,6 +4,8 @@ import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+// import { ElNotification } from 'element-plus';
+
 
 const store = useStore();
 const router = useRouter();
@@ -29,6 +31,7 @@ const login = async () => {
     router.push(
       store.getters["auth/isAdmin"] ? "/admin/dashboard" : "/member/dashboard"
     );
+    
   } catch (error) {
     console.error("Login failed:", error);
 

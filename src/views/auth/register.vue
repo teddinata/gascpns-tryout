@@ -15,6 +15,8 @@ const userData = ref({
   phone: "",
   password: "",
   password_confirmation: "",
+  referral_code: "",
+  birthdate: "",
 });
 
 const showPassword = ref(false);
@@ -82,7 +84,9 @@ const register = async () => {
           <form class="flex flex-col gap-5" @submit.prevent="register">
             <div class="flex flex-col gap-1">
               <label for="name" class="text-text-primary font-medium text-sm"
-                >Name*</label
+                >Name
+                <small class="text-xs text-[#ff4545]">*</small>
+                </label
               >
               <input
                 type="text"
@@ -96,7 +100,9 @@ const register = async () => {
             </div>
             <div class="flex flex-col gap-1">
               <label for="email" class="text-text-primary font-medium text-sm"
-                >Email*</label
+                >Email
+                <small class="text-xs text-[#ff4545]">*</small>
+                </label
               >
               <input
                 type="email"
@@ -112,8 +118,10 @@ const register = async () => {
               <label
                 for="username"
                 class="text-text-primary font-medium text-sm"
-                >Username*</label
-              >
+                >Username
+                <small class="text-xs text-[#ff4545]">*</small>
+                </label
+                >
               <input
                 type="text"
                 v-model="userData.username"
@@ -126,7 +134,9 @@ const register = async () => {
             </div>
             <div class="flex flex-col gap-1">
               <label for="phone" class="text-text-primary font-medium text-sm"
-                >Phone*</label
+                >Phone
+                <small class="text-xs text-[#ff4545]">*</small>
+              </label
               >
               <input
                 type="tel"
@@ -134,7 +144,25 @@ const register = async () => {
                 id="phone"
                 name="phone"
                 class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Phone Anda"
+                placeholder="Masukkan No HP Anda"
+                required
+              />
+            </div>
+            
+            <!-- birth date -->
+            <div class="flex flex-col gap-1">
+              <label for="birthdate" class="text-text-primary font-medium text-sm"
+              >Tanggal Lahir
+              <small class="text-xs text-[#ff4545]">*</small>
+            </label>
+              
+              <input
+                type="date"
+                v-model="userData.birthdate"
+                id="birthdate"
+                name="birthdate"
+                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
+                placeholder="Masukkan Tanggal Lahir Anda"
                 required
               />
             </div>
@@ -142,7 +170,10 @@ const register = async () => {
               <label
                 for="password"
                 class="text-text-primary font-medium text-sm"
-                >Password*</label
+                >Password
+                <small class="text-xs text-[#ff4545]">*</small>
+                
+                </label
               >
               <div class="password-container">
                 <input
@@ -179,7 +210,9 @@ const register = async () => {
               <label
                 for="password"
                 class="text-text-primary font-medium text-sm"
-                >Confirm Password*</label
+                >Confirm Password
+                <small class="text-xs text-[#ff4545]">*</small>
+                </label
               >
               <div class="password-container">
                 <input
@@ -210,6 +243,21 @@ const register = async () => {
                   Must be at least 8 Characters.
                 </p>
               </div>
+            </div>
+
+            <!-- referral code -->
+            <div class="flex flex-col gap-1">
+              <label for="phone" class="text-text-primary font-medium text-sm"
+                >Referral Code</label>
+              <small class="text-xs text-text-tertiary">Optional</small>
+              <input
+                type="tel"
+                v-model="userData.referral_code"
+                id="referral_code"
+                name="referral_code"
+                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
+                placeholder="Masukkan Kode Referral Anda"
+              />
             </div>
             <button
               type="submit"
