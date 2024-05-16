@@ -4,7 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        inter: ["Inter", "sans-serif"],
+        // inter: ["Inter", "sans-serif"],
+        // change to poppins or any other font
+        poppins: ["Poppins", "sans-serif"],
       },
       colors: {
         background: "#F7F8FA",

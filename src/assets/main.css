@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 * {
-  font-family: "Inter", sans-serif;
+  /* font-family: "Inter", sans-serif; */
+  /* change to poppins */
+  font-family: "Poppins", sans-serif;
   /* border: 1px solid black; */
 }
