@@ -3,6 +3,18 @@
 // import { store } from "@/store";
 import Logo from "./logo.vue";
 import NavigationLink from "./navigation.vue";
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+
+const store = useStore();
+const router = useRouter();
+
+const logoutAction = () => {
+  store.dispatch('auth/logout');
+  localStorage.removeItem('token'); // Hapus token dari local storage
+  router.push('/login'); // Redirect ke halaman login
+};
+
 const memberLinks = [
   {
     name: "Dashboard",
@@ -11,7 +23,7 @@ const memberLinks = [
   },
   {
     name: "Tryout",
-    url: "/member/tryout",
+    url: "/member/my-tryout",
     icons: "f7:question-square",
   },
   {
@@ -46,6 +58,7 @@ const settings = [
     name: "Keluar",
     url: "#",
     icons: "ph:power-bold",
+    action: "logout",
   },
 ];
 
@@ -73,7 +86,7 @@ const settings = [
     <!-- SETTINGS section -->
     <div class="pt-10 flex flex-col gap-4">
       <h1 class="text-md font-medium text-text-tertiary">SETTINGS</h1>
-      <NavigationLink :links="settings" />
+      <NavigationLink :links="settings" @click="logoutAction" />
     </div>
   </div>
 </template>

@@ -4,7 +4,9 @@ import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const store = useStore();
 const router = useRouter();
 
@@ -29,10 +31,14 @@ const login = async () => {
     router.push(
       store.getters["auth/isAdmin"] ? "/admin/dashboard" : "/member/dashboard"
     );
+
+    toast.success('Login berhasil! 🙂');
+
   } catch (error) {
     console.error("Login failed:", error);
 
     const loginError = store.getters["auth/loginError"];
+    toast.error(`Login failed: ${loginError}`);
     alert(`Login failed: ${loginError}`);
   }
 };

@@ -3,6 +3,24 @@
 import DashboardCard from "@/components/member/dashboard/dashboardCard.vue";
 import SoalCard from "@/components/member/dashboard/soalCard.vue";
 import MemberLayouts from "@/components/MemberLayouts.vue";
+
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import api from '@/api/Api.js'; // Mengimpor instansi Axios
+
+const soalData = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await api.get(`/v1/tryout/favorite`);
+    // data with pagination
+    soalData.value = response.data.data.data;
+    console.log('Soal details:', soalData.value[0].discount);
+  } catch (error) {
+    console.error('Error fetching soal details:', error);
+    // Handle error, tampilkan pesan error, dll.
+  }
+});
 </script>
 
 <template>
@@ -45,7 +63,7 @@ import MemberLayouts from "@/components/MemberLayouts.vue";
       <div class="flex flex-col space-y-4">
         <h1 class="text-lg font-medium text-black">Soal Favorite</h1>
         <div class="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5">
-          <SoalCard
+          <!-- <SoalCard
             image="/hero-card.png"
             title="Soal SKD"
             icon1="fa6-solid:cart-shopping"
@@ -57,45 +75,10 @@ import MemberLayouts from "@/components/MemberLayouts.vue";
             discount="69.000"
             :button="`Dapat dibeli 3 hari lagi`"
             :isBuy="true"
-          />
-          <SoalCard
-            image="/hero-card.png"
-            title="Soal SKD"
-            icon1="fa6-solid:cart-shopping"
-            quantity="10.000 Terjual"
-            icon2="fluent:calendar-clock-24-filled"
-            period="01 - 05 Feb 2024"
-            income="20.000.000"
-            price="99.000"
-            discount="79.000"
-            :button="`Beli Soal`"
-            :isBuy="false"
-          />
-          <SoalCard
-            image="/hero-card.png"
-            title="Soal SKD"
-            icon1="fa6-solid:cart-shopping"
-            quantity="10.000 Terjual"
-            icon2="fluent:calendar-clock-24-filled"
-            period="01 - 05 Feb 2024"
-            income="20.000.000"
-            price="99.000"
-            :button="`Beli Soal`"
-            :isBuy="false"
-          />
-          <SoalCard
-            image="/hero-card.png"
-            title="Soal SKD"
-            icon1="fa6-solid:cart-shopping"
-            quantity="10.000 Terjual"
-            icon2="fluent:calendar-clock-24-filled"
-            period="01 - 05 Feb 2024"
-            income="20.000.000"
-            price="99.000"
-            discount="79.000"
-            :button="`Dapat dibeli 3 hari lagi`"
-            :isBuy="true"
-          />
+          /> -->
+          <SoalCard v-for="soal in soalData"
+              :key="soal.id"
+              v-bind="soal" />
         </div>
       </div>
       <div class="flex flex-col space-y-4">

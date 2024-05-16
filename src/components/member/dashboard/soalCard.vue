@@ -1,70 +1,76 @@
 <script setup>
-const props = defineProps({
-  image: String,
-  title: String,
+import { Icon } from "@iconify/vue";
+import { defineProps } from "vue";
+import { formatRupiah } from "@/filters";
+const soal = defineProps({
+  cover_path: String,
+  name: String,
   icon1: String,
   icon2: String,
-  quantity: String,
-  period: String,
+  students_count: String,
+  sale_start_at: String,
+  sale_end_at: String,
   income: String,
-  price: String,
-  discount: String,
+  price: Number,
+  discount: Number,
   button: String,
-  isBuy: Boolean,
+  is_enrolled: Boolean,
 });
-import { Icon } from "@iconify/vue";
+
+
 </script>
 <template>
   <div
     class="w-full max-w-[300px] flex flex-col gap-4 bg-white rounded-xl p-3 shadow-sm justify-between"
   >
-    <img :src="props.image" class="w-full h-40" :alt="props.title" />
-    <h1 class="text-xl font-semibold text-text-primary">{{ props.title }}</h1>
+    <img :src="soal.cover_path" class="w-full h-40" :alt="soal.title" />
+    <h1 class="text-xl font-semibold text-text-primary">{{ soal.title }}</h1>
     <div class="flex flex-col space-y-2">
-      <div class="flex gap-3 items-center">
+      <div class="flex gap-3 justify-between items-center">
         <div class="p-2 rounded-full bg-[#E0F3FE]">
-          <Icon :icon="props.icon1" class="text-xl text-primary" />
+          <Icon class="text-xl text-primary" icon="fa6-solid:cart-shopping" />
         </div>
         <p class="text-md font-medium text-text-primary">
-          {{ props.quantity }}
+          {{ soal.students_count }} Terjual
         </p>
       </div>
-      <div class="flex gap-3 items-center">
+      <div class="flex gap-3 justify-between items-center">
         <div class="p-2 rounded-full bg-[#E0F3FE]">
-          <Icon :icon="props.icon2" class="text-xl text-primary" />
+          <Icon class="text-xl text-primary" icon="fluent:calendar-clock-24-filled" />
         </div>
-        <div class="flex gap-2 items-center">
-          <h1 class="text-md font-medium text-text-primary">Periode</h1>
-          <p class="text-xs font-medium text-text-quaternary">
-            {{ props.period }}
+        <div class="flex gap-2 justify-between">
+          <!-- <h1 class="text-md font-medium text-text-primary">Periode</h1> -->
+          <p class="text-xs font-medium text-text-quaternary mt-1 text-right w-full">
+            <!-- DATE FORMAT sale_start_date - sale_end_date -->
+            {{ formatDate(soal.sale_start_at) }} - {{ formatDate(soal.sale_end_at) }}
           </p>
         </div>
       </div>
     </div>
-    <!-- <div class="flex items-center justify-between">
-      <h1 class="text-md font-medium text-text-primary">Pendapatan</h1>
-      <p class="text-sm font-medium text-primary">Rp {{ props.income }}</p>
-    </div> -->
     <div class="flex items-center justify-between">
-      <h1 class="text-[16px] font-semibold text-text-primary line-through">
-        Rp {{ props.price }}
+      <h1 v-if="soal.price" class="text-[16px] font-semibold text-red-400" :class="{ 'line-through': formatRupiah(soal.discount) }">
+        Rp {{ formatRupiah(soal.price) }}
       </h1>
-      <div
-        v-if="props.discount"
-        class="px-4 py-1.5 rounded-full"
-        :class="{
-          'text-[#0BA7E3] bg-[#E0F3FE]': props.isBuy,
-          'bg-[#E0FEEE] text-[#22C55E]': !props.isBuy,
-        }"
-      >
-        <p class="text-md font-semibold">Rp {{ props.discount }}</p>
+      <div v-if="soal.discount" class="px-4 py-1.5 rounded-full" :class="soal.is_enrolled ? 'text-[#0BA7E3] bg-[#E0F3FE]' : 'bg-[#E0FEEE] text-[#22C55E]'">
+        <p class="text-md font-semibold">Rp {{ formatRupiah(soal.discount) }}</p>
       </div>
     </div>
     <button
-      class="w-full rounded-full bg-primary text-white py-2"
-      :class="{ 'bg-[#C2C3C6]': props.isBuy }"
+      class="w-full rounded-full py-2 text-white"
+      :class="soal.is_enrolled ? 'bg-[#C2C3C6]' : 'bg-primary hover:bg-secondary'"
+      :disabled="soal.is_enrolled"
     >
-      {{ props.button }}
+      {{ soal.is_enrolled ? 'Sudah Dibeli' : 'Beli' }}
     </button>
   </div>
 </template>
+<script>
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  return `${day < 10 ? '0' + day : day}-${month < 10 ? '0' + month : month}-${year}`;
+};
+
+</script>

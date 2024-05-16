@@ -8,7 +8,7 @@ import AdminLayouts from "@/components/AdminLayouts.vue";
 
 <template>
   <AdminLayouts>
-    <div class="flex flex-col space-y-10">
+    <div class="flex flex-col">
       <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5">
         <DashboardCard
           title="Total Soal"

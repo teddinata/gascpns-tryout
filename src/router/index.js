@@ -117,19 +117,34 @@ const router = createRouter({
       component: () => import("@/views/member/dashboard.vue"),
     },
     {
-      path: "/member/tryout",
-      name: "tryout",
+      path: "/member/my-tryout",
+      name: "my-tryout",
       meta: {
         title: "Tryout | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
+        description: "Try Out Soal CPNS",
         links: [
-          { label: "Dashboard", to: "/member/dashboard" },
-          { label: "Tryout", to: "/member/tryout" },
+          // { label: "Dashboard", to: "/member/dashboard" },
+          { label: "Tryout", to: "/member/my-tryout" },
         ],
         requiresAuth: true,
         requiresMember: true,
       },
-      component: () => import("@/views/member/tryout.vue"),
+      component: () => import("@/views/member/my-tryout.vue"),
+    },
+    {
+      path: '/member/tryout/:tryoutId',
+      name: 'tryout',
+      meta: {
+        title: "Tryout | GASCPNS",
+        description: "Try Out Soal CPNS",
+        links: [
+          // { label: "Dashboard", to: "/member/dashboard" },
+          { label: "Tryout", to: "/member/my-tryout" },
+        ],
+        requiresAuth: true,
+        requiresMember: true,
+      },
+      component: () => import('../views/member/tryout.vue')
     },
     {
       path: "/member/latihan",
@@ -162,7 +177,7 @@ router.beforeEach((to, from, next) => {
       // Check if the route requires a specific role
       if (to.meta.requiresAdmin && userRole === "admin") {
         next();
-      } else if (to.meta.requiresMember && userRole === "member") {
+      } else if (to.meta.requiresMember && userRole === "user") {
         next();
       } else {
         // Redirect to the appropriate dashboard based on user role
