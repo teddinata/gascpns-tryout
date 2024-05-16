@@ -97,7 +97,9 @@ const login = async () => {
               <label
                 for="email_or_username"
                 class="text-text-primary font-medium text-sm"
-                >Username*</label
+                >Username atau Email Anda
+                <small class="text-xs text-[#ff4545]">*</small>
+                </label
               >
               <input
                 type="text"
@@ -113,7 +115,9 @@ const login = async () => {
               <label
                 for="password"
                 class="text-text-primary font-medium text-sm"
-                >Password*</label
+                >Password
+                <small class="text-xs text-[#ff4545]">*</small>
+                </label
               >
               <div class="password-container">
                 <input
