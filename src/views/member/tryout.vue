@@ -3,16 +3,16 @@
 import { ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/Api.js';
 
 const store = useStore();
 const router = useRouter();
 const toast = useToast();
-
 const currentTryoutId = ref(null);
 const isLoading = ref(false);
 const navigationData = ref(null);
+const route = useRoute();
 
 import MemberLayouts from "@/components/MemberLayouts.vue";
 
@@ -162,10 +162,10 @@ const countdown = ref('');
 const numbers = Array.from(Array(100).keys()).map((i) => (i + 1).toString().padStart(2, '0'));
 
 
-const getNavigationData = async () => {
+const getNavigationData = async (currentTryoutId) => {
   try {
     isLoading.value = true;
-    const response = await api.get(`/v1/tryout/50/navigate`);
+    const response = await api.get(`/v1/tryout/${currentTryoutId}/navigate`);
     navigationData.value = response.data;
     startCountdown(response.data.data.finished_at);
   } catch (error) {
@@ -196,7 +196,16 @@ const startCountdown = (finishedAt) => {
 };
 
 onMounted(() => {
-  getNavigationData();
+  const tryoutId = route.params.tryoutId;
+  console.log('Route Params:', route.params); // Debugging tambahan
+  if (tryoutId) {
+    console.log('Tryout ID:', tryoutId); // Debugging tambahan
+    getNavigationData(tryoutId);
+  } else {
+    console.error('ID not found in route parameters');
+    toast.error('ID tidak ditemukan di parameter URL');
+    // Optional: Redirect to another page or handle the error accordingly
+  }
 });
 </script>
 
