@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <MemberLayouts>
     <!-- v-for -->
@@ -41,7 +40,7 @@
         <button
           class="w-full rounded-full py-2"
           :class="tryout.is_started ? 'bg-secondary text-white font-semibold hover:bg-[#FFA500]' : 'bg-primary text-white font-semibold hover:bg-secondary'"
-          @click="tryout.is_started ? $router.push(`/member/tryout/${tryout.current_tryout.id}`) : startTryout(tryout.id)"
+          @click="tryout.is_started ? $router.push(`/member/tryout/${tryout.next}`) : startTryout(tryout.id)"
         >
           <template v-if="isLoading">
             <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -118,7 +117,7 @@ const startTryout = async (tryoutId) => {
     toast.success(`Tryout berhasil dimulai! Selamat mengerjakan 🙂`);
 
     // Di sini Anda bisa melakukan navigasi ke halaman pengerjaan tryout. Menggunakan tryoutId yang didapat dari respons API
-    router.push(`/member/tryout/${data.data.id}`); 
+    router.push(`/member/tryout/${data.next}`); 
   } catch (error) {
     console.error('Error starting tryout:', error);
     toast.error('Gagal memulai tryout');

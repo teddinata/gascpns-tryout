@@ -132,7 +132,7 @@ const router = createRouter({
       component: () => import("@/views/member/my-tryout.vue"),
     },
     {
-      path: '/member/tryout/:tryoutId',
+      path: '/member/tryout/:tryoutDetailsId',
       name: 'tryout',
       meta: {
         title: "Tryout | GASCPNS",

@@ -26,6 +26,10 @@ app.component("QuillEditor", QuillEditor);
 app.use(store);
 app.mount("#app");
 
+// store.dispatch("auth/getUser").then(() => {
+//   app.mount("#app");
+// });
+
 app.use(Toast, {
   // Opsi konfigurasi (lihat dokumentasi untuk opsi lengkap)
   position: 'top-right',
