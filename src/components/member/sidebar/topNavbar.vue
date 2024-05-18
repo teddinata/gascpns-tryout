@@ -129,7 +129,7 @@ const handleLogout = () => {
               class="w-8 h-8 rounded-full"
               alt="Profile Image"
             />
-            <p class="text-text-primary font-medium">{{ title }}</p>
+            <p class="text-text-primary font-medium">Hi, {{ user?.name }}!</p>
             <Icon icon="fa-solid:chevron-down" class="text-xl" />
           </button>
           <div v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-lg shadow-xl">

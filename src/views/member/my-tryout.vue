@@ -22,13 +22,23 @@
               <Icon class="text-xl text-primary" icon="fluent:clock-24-filled" />
             </div>
             <div 
-              v-if="tryout.current_tryout.finished_at !== null"
+              v-if="tryout?.current_tryout?.finished_at !== null"
               class="flex gap-2 justify-between">
               <!-- <h1 class="text-md font-medium text-text-primary">Periode</h1> -->
               <p class="text-sm font-medium text-text-quaternary mt-1 text-right w-full">
                 <!-- DATE FORMAT sale_start_date - sale_end_date -->
                 <!-- {{ formatDate(tryout.sale_start_at) }} - {{ formatDate(tryout.sale_end_at) }} -->
-                {{ countdown }}
+                {{ countdown }}  (100 Menit)
+              </p>
+            </div>
+            <div 
+              v-if="tryout?.is_started === false"
+              class="flex gap-2 justify-between">
+              <!-- <h1 class="text-md font-medium text-text-primary">Periode</h1> -->
+              <p class="text-sm font-medium text-text-quaternary mt-1 text-right w-full">
+                <!-- DATE FORMAT sale_start_date - sale_end_date -->
+                <!-- {{ formatDate(tryout.sale_start_at) }} - {{ formatDate(tryout.sale_end_at) }} -->
+                100 Menit
               </p>
             </div>
           </div>
@@ -53,14 +63,14 @@
         </div>
 
         <button 
-          v-if="tryout.current_tryout.status === 2"
-          class="w-full rounded-full py-2 bg-gray-700 text-white font-semibold"
+          v-if="tryout?.current_tryout?.status === 2 && tryout.is_started === true"
+          class="w-full rounded-full py-2 bg-gray-700 text-white font-semibold hover:bg-gray-500"
         >
           Lihat Hasil
         </button>
 
         <button 
-          v-if="tryout.current_tryout.status === 2"
+          v-if="tryout?.current_tryout?.status === 2 && tryout.is_started === true"
           class="w-full rounded-full py-2 bg-gray-300 text-white font-semibold cursor-not-allowed"
         >
           Selesai
@@ -68,7 +78,7 @@
 
         
         <button
-          v-if="tryout.current_tryout.status === 1"
+          v-if="tryout.is_started === false || tryout?.current_tryout?.status === 1"
           class="w-full rounded-full py-2"
           :class="tryout.is_started ? 'bg-secondary text-white font-semibold hover:bg-[#FFA500]' : 'bg-primary text-white font-semibold hover:bg-secondary'"
           @click="tryout.is_started ? $router.push(`/member/tryout/${tryout.next}`) : startTryout(tryout.id)"
@@ -133,23 +143,27 @@ const calculateCountdown = () => {
   tryoutData.value.forEach(tryout => {
     if (tryout.current_tryout.status === 1) {
       const finishedAt = new Date(tryout.current_tryout.finished_at);
-      const now = new Date();
-      const difference = finishedAt.getTime() - now.getTime();
+      const x = setInterval(() => {
+        const now = new Date();
+        const difference = finishedAt.getTime() - now.getTime();
 
-      if (difference > 0) {
-        const minutes = Math.floor((difference / (1000 * 60)) % 60);
-        const seconds = Math.floor((difference / 1000) % 60);
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-        countdown.value = `${minutes} Menit ${seconds} Detik`;
-      } else {
-        countdown.value = 'Waktu Habis';
-      }
+        countdown.value = `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+
+        if (difference < 0) {
+          clearInterval(x);
+          countdown.value = 'Waktu Habis';
+        }
+      }, 1000); 
     }
   });
 };
 
 watch(tryoutData, () => tryoutData.value.forEach(tryout => {
-  if (tryout.current_tryout.status === 1) {
+  if (tryout?.current_tryout?.status === 1) {
     calculateCountdown();
   }
 }));
