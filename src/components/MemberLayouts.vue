@@ -1,26 +1,52 @@
 <script setup>
-import { useRoute } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 import Sidebar from "./member/sidebar/sidebar.vue";
 import TopNavbar from "./member/sidebar/topNavbar.vue";
-import { computed } from "vue";
 
+const store = useStore();
 const route = useRoute();
+const router = useRouter();
+const user = ref(null);
 
-// Use a computed property to make hideSidebar reactive
 const hideSidebar = computed(
   () => route.path === "/member/latihan" || route.path === "/member/tryout"
 );
+
+const getUser = async () => {
+  try {
+    await store.dispatch('auth/getUser');
+    user.value = store.getters['auth/user'];
+    console.log('User:', user.value.name);
+  } catch (error) {
+    console.error('Error getting user:', error);
+  }
+};
+
+onMounted(async () => {
+  await getUser();
+});
+
+const logoutAction = () => {
+  store.dispatch('auth/logout');
+  router.push('/login');
+};
 </script>
 
 <template>
   <div class="flex flex-row min-h-screen w-full">
+    <!-- <Sidebar v-if="!hideSidebar && user" :user="user" /> -->
     <Sidebar v-if="!hideSidebar" />
     <div class="flex flex-col w-full">
       <TopNavbar
+        v-if="user"
         :title="route.meta.title"
         :links="route.meta.links"
+        :user="user"
         icon1="mage:notification-bell"
         image="/profile.png"
+        @logout="logoutAction"
       />
 
       <main

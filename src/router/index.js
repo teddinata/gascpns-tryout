@@ -132,7 +132,7 @@ const router = createRouter({
       component: () => import("@/views/member/my-tryout.vue"),
     },
     {
-      path: '/member/tryout/:tryoutId',
+      path: '/member/tryout/:tryoutDetailsId',
       name: 'tryout',
       meta: {
         title: "Tryout | GASCPNS",
@@ -145,6 +145,36 @@ const router = createRouter({
         requiresMember: true,
       },
       component: () => import('../views/member/tryout.vue')
+    },
+    {
+      path: "/member/tryout/:tryoutId/summary",
+      name: "tryout-summary",
+      meta: {
+        title: "Hasil Tryout | GASCPNS",
+        description: "Hasil Try Out Soal CPNS",
+        links: [
+          { label: "Dashboard", to: "/member/dashboard" },
+          { label: "Hasil Tryout", to: "/member/summary" },
+        ],
+        requiresAuth: true,
+        requiresMember: true,
+      },
+      component: () => import("@/views/member/summary.vue"),
+    },
+    {
+      path: "/member/tryout/summary/:tryoutDetailsId",
+      name: "summary",
+      meta: {
+        title: "Summary | GASCPNS",
+        description: "This is the home page of my Vue.js app.",
+        links: [
+          { label: "Dashboard", to: "/member/dashboard" },
+          { label: "Summary", to: "/member/summary" },
+        ],
+        requiresAuth: true,
+        requiresMember: true,
+      },
+      component: () => import("@/views/member/summary-detail.vue"),
     },
     {
       path: "/member/latihan",

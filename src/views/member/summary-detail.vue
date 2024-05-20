@@ -1,4 +1,204 @@
 <!-- eslint-disable vue/multi-word-component-names -->
+<!-- <script setup>
+import { ref, onMounted } from 'vue';
+import { useToast } from 'vue-toastification';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import api from '@/api/Api.js';
+
+const store = useStore();
+const router = useRouter();
+const toast = useToast();
+
+const currentTryoutId = ref(null);
+const isLoading = ref(false);
+const navigationData = ref(null);
+
+import MemberLayouts from "@/components/MemberLayouts.vue";
+
+// const numbers = Array.from({ length: 110 }, (_, index) => index + 1);
+
+// Example data structure to store the status of each question
+const questionStatus = [
+  { status: "correct" },
+  { status: "passed" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  //11-20
+  { status: "correct" },
+  { status: "unanswered" },
+  { status: "passed" },
+  { status: "wrong" },
+  { status: "wrong" },
+  { status: "wrong" },
+  { status: "wrong" },
+  { status: "unanswered" },
+  { status: "unanswered" },
+  { status: "unanswered" },
+  //21-30
+  { status: "correct" },
+  { status: "unanswered" },
+  { status: "unanswered" },
+  { status: "passed" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  //31-40
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "passed" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  //41-50
+  { status: "correct" },
+  { status: "wrong" },
+  { status: "wrong" },
+  { status: "wrong" },
+  { status: "wrong" },
+  { status: "passed" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  //51-60
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "passed" },
+  { status: "wrong" },
+  { status: "wrong" },
+  { status: "wrong" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  //61-70
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "passed" },
+  { status: "unanswered" },
+  { status: "wrong" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  //71-80
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "passed" },
+  { status: "wrong" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  //81-90
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "passed" },
+  { status: "wrong" },
+  { status: "correct" },
+  { status: "correct" },
+  //91-100
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "passed" },
+  { status: "correct" },
+  { status: "correct" },
+  //100-110
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "correct" },
+  { status: "passed" },
+  { status: "correct" },
+];
+// Computed property to determine the class for each button
+const getButtonClass = (index) => {
+  const status = questionStatus[index]?.status;
+  switch (status) {
+    case "correct":
+      return "bg-[#22C55E] text-white border-none"; // Green for correct
+    case "wrong":
+      return "bg-[#F90A0A] text-white border-none"; // Red for wrong
+    case "passed":
+      return "bg-[#FBBF24] text-white border-none"; // Yellow for passed
+    default:
+      return "bg-transparent text-[#90989F]"; // Transparent for unanswered
+  }
+};
+
+
+const countdown = ref('');
+
+const numbers = Array.from(Array(100).keys()).map((i) => (i + 1).toString().padStart(2, '0'));
+
+
+const getNavigationData = async () => {
+  try {
+    isLoading.value = true;
+    const response = await api.get(`/v1/tryout/50/navigate`);
+    navigationData.value = response.data;
+    startCountdown(response.data.data.finished_at);
+  } catch (error) {
+    console.error('Error getting question data:', error);
+    toast.error('Gagal mendapatkan data soal');
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const startCountdown = (finishedAt) => {
+  const countDownDate = new Date(finishedAt).getTime();
+  const x = setInterval(() => {
+    const now = new Date().getTime();
+    const distance = countDownDate - now;
+
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdown.value = `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+
+    if (distance < 0) {
+      clearInterval(x);
+      countdown.value = 'EXPIRED';
+    }
+  }, 1000);
+};
+
+onMounted(() => {
+  getNavigationData();
+});
+</script> -->
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
@@ -167,7 +367,7 @@ const numbers = Array.from(Array(100).keys()).map((i) => (i + 1).toString().padS
 
 const getQuestionDetail = async (tryoutDetailsId) => {
   try {
-    const response = await api.get(`/v1/tryout/${tryoutDetailsId}`);
+    const response = await api.get(`/v1/tryout/summary/${tryoutDetailsId}`);
     questionDetail.value = response.data;
 
     // Mapping jawaban ke label A, B, C, D, E
@@ -203,7 +403,7 @@ const getQuestionDetail = async (tryoutDetailsId) => {
 };
 
 const goToQuestion = (tryoutDetailsId) => {
-  router.push(`/member/tryout/${tryoutDetailsId}`);
+  router.push(`/member/tryout/summary/${tryoutDetailsId}`);
   getQuestionDetail(tryoutDetailsId);
 };
 
@@ -379,65 +579,87 @@ onMounted(() => {
             <div class="flex gap-4 items-center">
               <div class="flex flex-col space-y-3 pt-4">
                 <div
-                    v-for="(answer) in questionDetail?.data?.answers"
-                    :key="answer.id"
-                    class="group flex items-center justify-between rounded-full w-full border border-slate-600 p-[18px_20px] gap-[14px] 
-                      transition-all duration-300 cursor-pointer"
-                    :class="{
-                        'border-[#EEEEEE]': selectedAnswer !== answer.id,
-                        'border-2 border-[#0A090B] bg-secondary text-white': selectedAnswer === answer.id,
-                        'hover:bg-secondary hover:text-white hover:border-none': selectedAnswer !== answer.id
-                    }"
-                    @click="selectedAnswer = answer.id"
-                >
-                <!-- {{ selectedAnswer === answer.id}} -->
-                  <div class="flex items-center gap-[14px]">
-                    <span class="font-semibold text-xl leading-[30px]">{{ answer.label }}.</span>
-                    <span class="font-semibold text-xl leading-[30px]">{{ answer.text }}</span>
-                  </div>
-                  <!-- <div v-if="selectedAnswer === answer.id">
-                    <img src="/public/tick-circle.svg" style="color: #22C55E;" />
-                  </div> -->
-                  <!-- <input
+                  v-for="(answer) in questionDetail?.data?.answers"
+                  :key="answer.id" 
+                  class="flex items-center gap-2 radio-answer">
+                  <input
                     type="radio"
-                    :name="`answer_${questionDetail?.data?.id}`"
+                    disabled
                     :id="answer.id"
-                    :value="answer.id"
+                    name="answer"
                     v-model="selectedAnswer"
-                    class="hidden"
-                  /> -->
+                    :value="answer.id"
+                    class="w-0 h-0 opacity-0"
+                  />
+                  <label :for="answer.id" class="radio-label flex items-center gap-4 text-lg">
+                    <span class="radio-button gap-2"></span>
+                    {{ answer.label }}. {{ answer.text }}
+                  </label>
+                  <img v-if="answer.score === 5" src="/true.svg" alt="true answer" />
+                  <img v-else src="/wrong.svg" alt="wrong answer" />
                 </div>
-                <!-- button simpan dan lanjutkan -->
-             <button
-             class="bg-primary text-white rounded-full py-4 px-4 hover:bg-secondary" 
-             @click="saveAndNextQuestion" v-if="questionDetail?.data?.next !== null"
-           >
-             Simpan dan Lanjutkan
-           </button>
-            <button
-              class="bg-secondary text-white rounded-full py-4 px-4 hover:bg-primary"
-              @click="saveAndNextQuestion" v-else
-            >
-              Selesai dan Kirim Tryout
-            </button>
               </div>
-              
+              <!-- <div class="flex flex-col space-y-[14px] pt-4">
+                <img src="/wrong.svg" alt="wrong answer" />
+                <img src="/wrong.svg" alt="wrong answer" />
+                <img src="/wrong.svg" alt="wrong answer" />
+                <img src="/true.svg" alt="true answer" />
+                <img src="/wrong.svg" alt="wrong answer" />
+              </div> -->
             </div>
           </li>
+
+          <div class="flex items-center mt-14 mb-4 gap-4">
+            <h2> Pembahasan</h2>
+            <img src="/public/arrow-circle-right.svg" class="-ml-2 w-6 rotate-90" />
+          </div>
+          <div class="explanation-container bg-gray-300 p-4 rounded-lg">
+            <div v-html="questionDetail?.data?.questions?.explanation" class="question-content" 
+              style="line-height: 1.6; letter-spacing: 0.5px; font-size: 16px;"></div>
+          </div>
         </ol>
       </div>
-      <div class="flex flex-col gap-3 w-[500px] ">
+      <div class="flex flex-col gap-3 w-[500px]">
         <div
-          class="bg-white drop-shadow-md flex flex-col space-y-5 px-10 py-5 rounded-lg"
+          class="bg-white drop-shadow-md flex flex-col space-y-5 px-10 py-5"
         >
-          <div class="flex justify-end">
-            <div
+          <div class="flex justify-center">
+
+            <div class="flex items-center gap-6">
+              <div class="rounded-lg bg-gray-100 p-2">
+                <div class="flex items-center gap-1">
+                  <img src="/true.svg" class="w-4 h-4" />
+                  <span class="text-lg font-semibold">{{ questionDetail?.data?.is_correct }}</span>
+                </div>
+                <span>Benar</span>
+              </div>
+              <div class="rounded-lg bg-gray-100 p-2">
+                <div class="flex items-center gap-1">
+                  <img src="/wrong.svg" class="w-4 h-4" />
+                  <span class="text-lg font-semibold">{{ questionDetail?.data?.is_false }}</span>
+                </div>
+                <span>Salah</span>
+              </div>
+              <div class="rounded-lg bg-gray-100 p-2">
+                <div class="flex items-center gap-1">
+                  <img src="/blank.svg" class="w-4 h-4" />
+                  <span class="text-lg font-semibold">{{ questionDetail?.data?.is_blank }}</span>
+                </div>
+                <span>Kosong</span>
+              </div>
+            </div>
+            
+            
+
+            <!-- <div
               class="text-primary flex items-center gap-4 px-3 py-2 rounded-lg"
             >
               <img src="/countdown-blue.svg" />
               <p>{{ countdown }}</p>
-            </div>
+            </div> -->
           </div>
+          <!-- divider -->
+          <div class="border-b border-[#E0E0E0]"></div>
           <div
             class="flex flex-wrap justify-start items-center gap-3 max-w-[440px]"
           >
@@ -452,23 +674,21 @@ onMounted(() => {
                 'border',
                 'border-[#90989F]',
                 'text-xs',
-                number.answer ? 'bg-green-500 text-white' : 'bg-transparent',
+                number.score === 5 ? 'bg-[#22C55E] text-white' : 'bg-[#F90A0A] text-white',
               ]"
               @click="goToQuestion(number.id)"
             >
               {{ number.question_number }}
             </button>
-             
           </div>
-          
         </div>
         <div
           class="w-fit bg-white drop-shadow-md flex flex-col space-y-5 px-10 py-5 rounded-lg"
         >
           <ul class="list-inside">
-            <p>Informasi Pengerjaan Soal :</p>
+            <p>Informasi Rangkuman Tryout</p>
             <li class="list-disc pl-2">
-              Halaman ini menampilkan informasi pengerjaan soal yang sedang kamu kerjakan.
+              Halaman ini berisi rangkuman jawaban yang telah kamu pilih pada setiap soal tryout.
             </li>
           </ul>
           <div class="flex flex-col space-y-3">
@@ -478,84 +698,41 @@ onMounted(() => {
                 <img src="/done.svg" alt="done" class="w-5 h-5" />
                 <p>Sudah Dikerjakan</p>
               </div>
-              <!-- <div class="flex items-center gap-4">
+              <div class="flex items-center gap-4">
                 <img src="/wrong-indicator.svg" alt="done" class="w-5 h-5" />
                 <p>Jawaban Salah</p>
-              </div> -->
+              </div>
               <!-- <div class="flex items-center gap-4">
                 <img src="/skip.svg" alt="done" class="w-5 h-5" />
                 <p>Dilewati</p>
               </div> -->
-              <div class="flex items-center gap-4">
+              <!-- <div class="flex items-center gap-4">
                 <img src="/blank.svg" alt="done" class="w-5 h-5" />
                 <p>Belum diisi</p>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
-        <button
-            class="bg-secondary text-white rounded-full py-4 px-4 hover:bg-primary"
-            :class="{ 'opacity-50 cursor-not-allowed': questionDetail?.data?.unanswered_questions > 0 }"
-            :disabled="questionDetail?.data?.unanswered_questions > 0"
-            @click="finishModal"
-            :title="questionDetail?.data?.unanswered_questions > 0 ? 'Jawaban kamu belum lengkap' : 'Kamu bisa kirim tryout'"
-          >
-            Selesai dan Kirim Tryout
-          </button>
       </div>
     </div>
   </MemberLayouts>
-  <div v-if="showConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-    <div class="modal-container bg-white rounded-lg shadow-xl max-w-sm">
-      <div class="modal-header">
-        <h2 class="text-lg font-semibold mb-4">Konfirmasi Penyelesaian Tryout</h2>
-      </div>
-      <div class="modal-body">
-        <p class="mb-4 text-sm">Apakah Kamu yakin ingin menyelesaikan tryout?</p>
-        <p class="mb-6 text-sm">Kamu tidak bisa mengubah jawaban setelah menyelesaikan tryout.</p>
-      </div>
-      <div class="modal-footer flex justify-end">
-        <button @click="cancelFinish" class="mr-2 px-4 py-2 bg-gray-100 text-gray-800 rounded-full border border-gray-300 focus:outline-none focus:border-gray-400 hover:bg-gray-200">Batal</button>
-        <button @click="finishTryout" class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600">Ya, Selesaikan</button>
-      </div>
-    </div>
-  </div>
-  
-  
-  
 </template>
 
 <style scoped>
-.question-content {
-  font-size: 24px; /* Ukuran font yang diinginkan */
-  line-height: 1.5; /* Menyesuaikan tinggi baris jika diperlukan */
+.radio-label {
+  position: relative;
+  cursor: pointer;
 }
 
-.question-content p {
-  font-size: 24px; /* Ukuran font yang diinginkan */
-  line-height: 1.5; /* Menyesuaikan tinggi baris jika diperlukan */
+.radio-button {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  border: 2px solid #0BA7E3;
 }
 
-/* Modal Container */
-.modal-container {
-  padding: 32px; /* Lebih banyak padding */
+input[type="radio"]:checked + .radio-label .radio-button {
+  background-color: #0BA7E3;
 }
-
-/* Modal Header */
-.modal-header {
-  border-bottom: 1px solid #e5e5e5; /* Garis pemisah tipis */
-  padding-bottom: 16px; /* Jarak antara judul dan isi */
-}
-
-/* Modal Body */
-.modal-body {
-  padding: 16px 0; /* Jarak antara isi dan tombol */
-}
-
-/* Tombol */
-.modal-footer button {
-  border-radius: 8px; /* Tombol lebih membulat */
-  font-weight: 500; /* Sedikit lebih tebal */
-}
-
 </style>

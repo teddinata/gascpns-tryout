@@ -13,3 +13,13 @@ export function formatDate(value) {
     day: 'numeric',
   });
 }
+
+export function formatDateTime(value) {
+  const date = new Date(value);
+  return date.toLocaleDateString('id-ID', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }) + ', ' + date.toLocaleTimeString('id-ID') + ' WIB';
+}

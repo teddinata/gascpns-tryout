@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <MemberLayouts>
     <!-- v-for -->
@@ -6,26 +5,50 @@
       <div v-for="tryout in tryoutData" :key="tryout.id"
         class="w-full max-w-[300px] flex flex-col gap-4 bg-white rounded-xl p-3 shadow-sm justify-between"
       >
-        <img :src="tryout.cover_path" class="w-full h-40" :alt="tryout.title" />
-        <h1 class="text-xl font-semibold text-text-primary">{{ tryout.title }}</h1>
+        <img :src="tryout.cover_path" class="w-full h-40" :alt="tryout.name" />
+        <h1 class="text-xl font-semibold text-text-primary">{{ tryout.name }}</h1>
         <div class="flex flex-col space-y-2">
           <div class="flex gap-3 justify-between items-center">
             <div class="p-2 rounded-full bg-[#E0F3FE]">
               <Icon class="text-xl text-primary" icon="fa6-solid:book-open" />
             </div>
-            <p class="text-sm font-medium text-text-primary">
-              {{ formatDate(tryout.start_at) }} - {{ formatDate(tryout.end_at) }}
-            </p>
+            <!-- badge premium -->
+            <div class="px-4 py-1.5 rounded-md bg-primary text-white">
+              <p class="text-sm font-semibold">Premium</p>
+            </div>
           </div>
           <div class="flex gap-3 justify-between items-center">
             <div class="p-2 rounded-full bg-[#E0F3FE]">
-              <Icon class="text-xl text-primary" icon="fluent:calendar-clock-24-filled" />
+              <Icon class="text-xl text-primary" icon="fluent:clock-24-filled" />
             </div>
-            <div class="flex gap-2 justify-between">
+            <div 
+              v-if="tryout?.current_tryout?.finished_at !== null"
+              class="flex gap-2 justify-between">
               <!-- <h1 class="text-md font-medium text-text-primary">Periode</h1> -->
               <p class="text-sm font-medium text-text-quaternary mt-1 text-right w-full">
                 <!-- DATE FORMAT sale_start_date - sale_end_date -->
-                {{ formatDate(tryout.sale_start_at) }} - {{ formatDate(tryout.sale_end_at) }}
+                <!-- {{ formatDate(tryout.sale_start_at) }} - {{ formatDate(tryout.sale_end_at) }} -->
+                {{ countdown }}  (100 Menit)
+              </p>
+            </div>
+            <div 
+              v-if="tryout?.is_started === false"
+              class="flex gap-2 justify-between">
+              <!-- <h1 class="text-md font-medium text-text-primary">Periode</h1> -->
+              <p class="text-sm font-medium text-text-quaternary mt-1 text-right w-full">
+                <!-- DATE FORMAT sale_start_date - sale_end_date -->
+                <!-- {{ formatDate(tryout.sale_start_at) }} - {{ formatDate(tryout.sale_end_at) }} -->
+                100 Menit
+              </p>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 justify-between items-center">
+              <div class="p-2 rounded-full bg-[#E0F3FE]">
+                <Icon class="text-xl text-primary" icon="fluent:checkmark-circle-24-filled" />
+              </div>
+              <p class="text-sm font-medium text-text-quaternary mt-1 text-right w-full">
+                {{ tryout.total_questions }} Soal
               </p>
             </div>
           </div>
@@ -38,10 +61,28 @@
             <p class="text-md font-semibold">Rp {{ formatRupiah(tryout.discount) }}</p>
           </div>
         </div>
+
+        <button 
+          v-if="tryout?.current_tryout?.status === 2 && tryout.is_started === true"
+          class="w-full rounded-full py-2 bg-gray-700 text-white font-semibold hover:bg-gray-500"
+          @click="$router.push(`/member/tryout/${tryout.current_tryout.id}/summary`)"
+        >
+          Lihat Hasil
+        </button>
+
+        <button 
+          v-if="tryout?.current_tryout?.status === 2 && tryout.is_started === true"
+          class="w-full rounded-full py-2 bg-gray-300 text-white font-semibold cursor-not-allowed"
+        >
+          Selesai
+        </button>
+
+        
         <button
+          v-if="tryout.is_started === false || tryout?.current_tryout?.status === 1"
           class="w-full rounded-full py-2"
           :class="tryout.is_started ? 'bg-secondary text-white font-semibold hover:bg-[#FFA500]' : 'bg-primary text-white font-semibold hover:bg-secondary'"
-          @click="tryout.is_started ? $router.push(`/member/tryout/${tryout.current_tryout.id}`) : startTryout(tryout.id)"
+          @click="tryout.is_started ? $router.push(`/member/tryout/${tryout.next}`) : startTryout(tryout.id)"
         >
           <template v-if="isLoading">
             <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,9 +96,6 @@
           </template>
         </button>
       </div>
-
-      
-      
     </div>
     <!-- empty -->
     <div v-if="!tryoutData.length" class="w-full flex justify-center items-center">
@@ -78,7 +116,7 @@ import { formatRupiah } from "@/filters";
 import { formatDate } from "@/filters";
 import { Icon } from "@iconify/vue";
 import { useToast } from 'vue-toastification';
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import axios from "axios";
@@ -88,18 +126,48 @@ const toast = useToast();
 const isLoading = ref(false);
 const tryoutData = ref([]);
 const router = useRouter();
+const countdown = ref(null);
 
 const fetchTryouts = async () => {
   try {
     const response = await api.get("/v1/tryout");
     tryoutData.value = response.data.data;
-    console.log('Tryout details:', tryoutData.value);
+
   } catch (error) {
     console.error('Error fetching tryout details:', error);
     // Handle error, tampilkan pesan error, dll.
   }
 };
 
+const calculateCountdown = () => {
+  // for each tryout, calculate the countdown
+  tryoutData.value.forEach(tryout => {
+    if (tryout.current_tryout.status === 1) {
+      const finishedAt = new Date(tryout.current_tryout.finished_at);
+      const x = setInterval(() => {
+        const now = new Date();
+        const difference = finishedAt.getTime() - now.getTime();
+
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        countdown.value = `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+
+        if (difference < 0) {
+          clearInterval(x);
+          countdown.value = 'Waktu Habis';
+        }
+      }, 1000); 
+    }
+  });
+};
+
+watch(tryoutData, () => tryoutData.value.forEach(tryout => {
+  if (tryout?.current_tryout?.status === 1) {
+    calculateCountdown();
+  }
+}));
 const currentTryoutId = ref(null); // Menyimpan tryoutId yang sedang aktif
 
 const startTryout = async (tryoutId) => {
@@ -118,7 +186,7 @@ const startTryout = async (tryoutId) => {
     toast.success(`Tryout berhasil dimulai! Selamat mengerjakan 🙂`);
 
     // Di sini Anda bisa melakukan navigasi ke halaman pengerjaan tryout. Menggunakan tryoutId yang didapat dari respons API
-    router.push(`/member/tryout/${data.data.id}`); 
+    router.push(`/member/tryout/${data.next}`); 
   } catch (error) {
     console.error('Error starting tryout:', error);
     toast.error('Gagal memulai tryout');

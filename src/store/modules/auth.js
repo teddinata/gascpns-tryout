@@ -5,7 +5,8 @@ const auth = {
   namespaced: true,
   state: {
     token: localStorage.getItem("token") || "",
-    user: JSON.parse(localStorage.getItem("user")) || {},
+    // user: JSON.parse(localStorage.getItem("user")) || {},
+    user: null,
     role: localStorage.getItem("role") || "", // Added user role
   },
   mutations: {
@@ -71,7 +72,7 @@ const auth = {
           });
       });
     },
-    getUser({ commit }) {
+    async getUser({ commit }) {
       return new Promise((resolve, reject) => {
         Api.get("/user")
           .then((response) => {
@@ -123,6 +124,9 @@ const auth = {
   },
   
   getters: {
+    user(state) {
+      return state.user;
+    },
     currentUser(state) {
       return state.user;
     },
