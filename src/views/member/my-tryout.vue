@@ -65,6 +65,7 @@
         <button 
           v-if="tryout?.current_tryout?.status === 2 && tryout.is_started === true"
           class="w-full rounded-full py-2 bg-gray-700 text-white font-semibold hover:bg-gray-500"
+          @click="$router.push(`/member/tryout/${tryout.current_tryout.id}/summary`)"
         >
           Lihat Hasil
         </button>
