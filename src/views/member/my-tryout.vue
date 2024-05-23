@@ -22,7 +22,7 @@
               <Icon class="text-xl text-primary" icon="fluent:clock-24-filled" />
             </div>
             <div 
-              v-if="tryout?.current_tryout?.finished_at !== null"
+              v-if="tryout?.current_tryout !== null"
               class="flex gap-2 justify-between">
               <!-- <h1 class="text-md font-medium text-text-primary">Periode</h1> -->
               <p class="text-sm font-medium text-text-quaternary mt-1 text-right w-full">
@@ -42,7 +42,36 @@
               </p>
             </div>
           </div>
-          <div class="flex flex-col gap-2">
+          <div
+            v-if="tryout?.is_started === false"
+            class="flex flex-col gap-2">
+            <div class="flex gap-2 justify-between items-center">
+              <div class="p-2 rounded-full bg-[#E0F3FE]">
+                <Icon class="text-xl text-primary" icon="fluent:calendar-clock-24-filled" />
+                
+              </div>
+              <!-- Mulai pada -->
+              <p class="text-sm font-medium text-text-quaternary mt-1 text-right w-full">
+               Mulai: <strong>{{ formatDate(tryout.start_at) }}</strong> 
+              </p>
+            </div>
+          </div>
+          <div
+            v-if="tryout?.is_started === false"
+            class="flex flex-col gap-2">
+            <div class="flex gap-2 justify-between items-center">
+              <div class="p-2 rounded-full bg-red-100">
+                <Icon class="text-xl text-red-400" icon="fluent:calendar-clock-24-filled" />
+              </div>
+              <!-- Mulai pada -->
+              <p class="text-sm font-medium text-text-quaternary mt-1 text-right w-full">
+               Berakhir: <strong>{{ formatDate(tryout.end_at) }}</strong> 
+              </p>
+            </div>
+          </div>
+          <div
+            v-if="tryout?.is_started === true"
+            class="flex flex-col gap-2">
             <div class="flex gap-2 justify-between items-center">
               <div class="p-2 rounded-full bg-[#E0F3FE]">
                 <Icon class="text-xl text-primary" icon="fluent:checkmark-circle-24-filled" />
@@ -79,9 +108,15 @@
 
         
         <button
-          v-if="tryout.is_started === false || tryout?.current_tryout?.status === 1"
+          v-if="tryout?.is_started === false"
           class="w-full rounded-full py-2"
-          :class="tryout.is_started ? 'bg-secondary text-white font-semibold hover:bg-[#FFA500]' : 'bg-primary text-white font-semibold hover:bg-secondary'"
+          :class="{
+            'bg-secondary text-white font-semibold hover:bg-[#FFA500]': tryout.is_started,
+            'bg-primary text-white font-semibold hover:bg-secondary': !tryout.is_started,
+            'disabled:opacity-50 cursor-not-allowed': startAt > new Date() && !tryout.is_started,
+          }"
+          :disabled="startAt > new Date()"
+          :title="startAt > new Date() ? 'Tryout belum dimulai' : ''"
           @click="tryout.is_started ? $router.push(`/member/tryout/${tryout.next}`) : startTryout(tryout.id)"
         >
           <template v-if="isLoading">
@@ -127,11 +162,17 @@ const isLoading = ref(false);
 const tryoutData = ref([]);
 const router = useRouter();
 const countdown = ref(null);
+let startAt = null;
+let startAtString = null;
 
 const fetchTryouts = async () => {
   try {
     const response = await api.get("/v1/tryout");
     tryoutData.value = response.data.data;
+
+    startAtString = tryoutData.value[0].start_at;
+    startAt = new Date(startAtString);
+    console.log('Tryout details:', startAtString, startAt);
 
   } catch (error) {
     console.error('Error fetching tryout details:', error);
