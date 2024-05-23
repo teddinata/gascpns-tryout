@@ -177,6 +177,37 @@ const router = createRouter({
       component: () => import("@/views/member/summary-detail.vue"),
     },
     {
+      path: "/member/tryout/detail/:slug",
+      name: "beli-paket-soal",
+      meta: {
+        title: "Beli Paket Soal | GASCPNS",
+        description: "Halaman pembelian paket soal",
+        links: [
+          { label: "Dashboard", to: "/member/dashboard" },
+          { label: "Paket Soal", to: "/member/beli-paket-soal" },
+        ],
+        requiresAuth: true,
+        requiresMember: true,
+      },
+      component: () => import("@/views/member/beli-paket.vue"),
+    },
+    // payment method
+    {
+      path: '/member/beli-paket-soal/payment-method',
+      name: 'payment-method',
+      meta: {
+        title: 'Payment Method | GASCPNS',
+        description: 'This is the home page of my Vue.js app.',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Payment Method', to: '/member/payment-method' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/choose-payment.vue')
+    },
+    {
       path: "/member/latihan",
       name: "latihan",
       meta: {

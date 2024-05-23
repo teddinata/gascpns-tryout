@@ -2,6 +2,7 @@
 import { Icon } from "@iconify/vue";
 import { defineProps } from "vue";
 import { formatRupiah } from "@/filters";
+import { useRouter } from 'vue-router';
 const soal = defineProps({
   cover_path: String,
   name: String,
@@ -15,13 +16,23 @@ const soal = defineProps({
   discount: Number,
   button: String,
   is_enrolled: Boolean,
+  slug: String,
+  id: Number,
 });
+
+const redirectToPurchaseForm = () => {
+  // router.push('/member/beli-paket-soal');
+  router.push(`/member/tryout/detail/${soal.slug}`);
+};
+
+const router = useRouter();
+
 
 
 </script>
 <template>
   <div
-    class="w-full max-w-[300px] flex flex-col gap-4 bg-white rounded-xl p-3 shadow-sm justify-between"
+    class="w-full max-w-[300px] flex flex-col gap-4 bg-white rounded-xl p-3 shadow-lg justify-between"
   >
     <img :src="soal.cover_path" class="w-full h-40" :alt="soal.title" />
     <h1 class="text-xl font-semibold text-text-primary">{{ soal.name }}</h1>
@@ -47,18 +58,23 @@ const soal = defineProps({
         </div>
       </div>
     </div>
-    <div class="flex items-center justify-between">
-      <h1 v-if="soal.price" class="text-[16px] font-semibold text-red-400" :class="{ 'line-through': formatRupiah(soal.discount) }">
+    <p v-if="soal.discount" class="text-green-500 font-bold text-xl ml-2"> Rp {{ formatRupiah(soal.discount) }}</p>
+    <div class="flex items-center justify-start ml-2 -mt-4"> 
+      <h1 v-if="soal.price" class="text-xl font-semibold text-red-400" 
+        :class="{ 'line-through': formatRupiah(soal.discount) }">
         Rp {{ formatRupiah(soal.price) }}
       </h1>
-      <div v-if="soal.discount" class="px-4 py-1.5 rounded-full" :class="soal.is_enrolled ? 'text-[#0BA7E3] bg-[#E0F3FE]' : 'bg-[#E0FEEE] text-[#22C55E]'">
-        <p class="text-md font-semibold">Rp {{ formatRupiah(soal.discount) }}</p>
+      <!-- discount percentage = price -> 10000, discount price 8500, then discount percentage is 15% -->
+      <div v-if="soal.discount" 
+        class="px-4 py-1.5 rounded-full ml-2" :class="soal.is_enrolled ? 'text-[#0BA7E3] bg-[#E0F3FE]' : 'bg-[#ee3a3a] text-white'">
+        <p class="text-large font-semibold"> -{{ Math.round(((soal.price - soal.discount) / soal.price) * 100) }}%</p>
       </div>
     </div>
     <button
       class="w-full rounded-full py-2 text-white"
       :class="soal.is_enrolled ? 'bg-[#C2C3C6] cursor-not-allowed' : 'bg-primary hover:bg-secondary'"
       :disabled="soal.is_enrolled"
+      @click="redirectToPurchaseForm"
     >
       {{ soal.is_enrolled ? 'Sudah Dibeli' : 'Beli' }}
     </button>
@@ -89,5 +105,7 @@ const formatDate = (dateString) => {
 
 // Contoh penggunaan
 console.log(formatDate('2024-05-01')); // Output: 1 Mei 2024
+
+
 
 </script>

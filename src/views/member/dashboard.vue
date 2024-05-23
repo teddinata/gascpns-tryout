@@ -78,7 +78,9 @@ onMounted(async () => {
           /> -->
           <SoalCard v-for="soal in soalData"
               :key="soal.id"
-              v-bind="soal" />
+              :slug="soal.slug"
+              v-bind="soal" 
+              />
         </div>
       </div>
       <div class="flex flex-col space-y-4">
