@@ -22,7 +22,7 @@ const soal = defineProps({
 
 const redirectToPurchaseForm = () => {
   // router.push('/member/beli-paket-soal');
-  router.push(`/member/tryout/detail/${soal.slug}`);
+  router.push(`/member/paket/detail/${soal.slug}`);
 };
 
 const router = useRouter();
@@ -58,9 +58,9 @@ const router = useRouter();
         </div>
       </div>
     </div>
-    <p v-if="soal.discount" class="text-green-500 font-bold text-xl ml-2"> Rp {{ formatRupiah(soal.discount) }}</p>
+    <p v-if="soal.discount" class="text-green-500 font-bold text-2xl ml-2"> Rp {{ formatRupiah(soal.discount) }}</p>
     <div class="flex items-center justify-start ml-2 -mt-4"> 
-      <h1 v-if="soal.price" class="text-xl font-semibold text-red-400" 
+      <h1 v-if="soal.price" class="font-semibold text-red-400" 
         :class="{ 'line-through': formatRupiah(soal.discount) }">
         Rp {{ formatRupiah(soal.price) }}
       </h1>

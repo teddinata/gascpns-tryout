@@ -177,24 +177,24 @@ const router = createRouter({
       component: () => import("@/views/member/summary-detail.vue"),
     },
     {
-      path: "/member/tryout/detail/:slug",
-      name: "beli-paket-soal",
+      path: "/member/paket/detail/:slug",
+      name: "detail",
       meta: {
         title: "Beli Paket Soal | GASCPNS",
         description: "Halaman pembelian paket soal",
         links: [
           { label: "Dashboard", to: "/member/dashboard" },
-          { label: "Paket Soal", to: "/member/beli-paket-soal" },
+          { label: "Paket Soal", to: "/member/detail" },
         ],
         requiresAuth: true,
         requiresMember: true,
       },
-      component: () => import("@/views/member/beli-paket.vue"),
+      component: () => import("@/views/member/detail-package.vue"),
     },
     // payment method
     {
-      path: '/member/beli-paket-soal/payment-method',
-      name: 'payment-method',
+      path: '/member/paket/:slug/checkout',
+      name: 'PaymentMethod',
       meta: {
         title: 'Payment Method | GASCPNS',
         description: 'This is the home page of my Vue.js app.',
@@ -206,6 +206,36 @@ const router = createRouter({
         requiresMember: true
       },
       component: () => import('@/views/member/choose-payment.vue')
+    },
+    {
+      path: '/member/paket/:slug/checkout/confirm',
+      name: 'Checkout',
+      meta: {
+        title: 'Checkout | GASCPNS',
+        description: 'Halaman checkout',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Payment Method', to: '/member/payment-method' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/checkout.vue')
+    },
+    {
+      path: '/member/transaksi/:invoiceId/payment',
+      name: 'Payment',
+      meta: {
+        title: 'Payment | GASCPNS',
+        description: 'Halaman pembayaran',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Payment Method', to: '/member/payment-method' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/payment-detail.vue')
     },
     {
       path: "/member/latihan",
