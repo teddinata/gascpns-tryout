@@ -6,8 +6,12 @@ const auth = {
   state: {
     token: localStorage.getItem("token") || "",
     // user: JSON.parse(localStorage.getItem("user")) || {},
-    user: null,
+    user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
+    // user: null,
     role: localStorage.getItem("role") || "", // Added user role
+    transactionId: null,
+    selectedPaymentMethod: null, // Data selected payment method disimpan di sini
+    transactionData: null,
   },
   mutations: {
     AUTH_SUCCESS(state, { token, user }) {
@@ -38,6 +42,18 @@ const auth = {
       localStorage.removeItem("user");
       localStorage.removeItem("role");
     },
+
+    SET_TRANSACTION_ID(state, transactionId) {
+      state.transactionId = transactionId;
+    },
+
+    SET_SELECTED_PAYMENT_METHOD(state, method) {
+      state.selectedPaymentMethod = method;
+    },
+
+    SET_TRANSACTION_DATA(state, transactionData) {
+      state.transactionData = transactionData;
+    }
   },  
   actions: {
     register({ commit }, user) {
@@ -121,11 +137,30 @@ const auth = {
         resolve();
       });
     },
+
+    setTransactionId({ commit }, transactionId) {
+      commit('SET_TRANSACTION_ID', transactionId);
+    },
+
+    updateSelectedPaymentMethod(context, method) {
+      context.commit('setSelectedPaymentMethod', method);
+    },
+
+    saveTransactionData({ commit }, transactionData) {
+      commit('SET_TRANSACTION_DATA', transactionData);
+    },
   },
   
   getters: {
     user(state) {
       return state.user;
+    },
+    getTransactionId: (state) => state.transactionId,
+    getSelectedPaymentMethod(state) {
+      return state.selectedPaymentMethod;
+    },
+    getTransactionData(state) {
+      return state.transactionData;
     },
     currentUser(state) {
       return state.user;
