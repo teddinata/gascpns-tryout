@@ -237,6 +237,22 @@ const router = createRouter({
       },
       component: () => import('@/views/member/payment-detail.vue')
     },
+    // success payment
+    {
+      path: '/member/transaksi/success',
+      name: 'Success',
+      meta: {
+        title: 'Success | GASCPNS',
+        description: 'Halaman pembayaran berhasil',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Payment Method', to: '/member/payment-method' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/success-payment.vue')
+    },
     {
       path: "/member/latihan",
       name: "latihan",

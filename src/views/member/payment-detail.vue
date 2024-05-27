@@ -1,6 +1,6 @@
 <template>
   <MemberLayouts>
-    <div class="max-w-7xl mx-auto p-6">
+    <div class="w-full mx-auto p-6">
       <!-- Pesan Keberhasilan -->
       <div class="bg-green-100 text-green-800 p-4 rounded mb-6">
         <p class="font-semibold">Berhasil!</p>
@@ -129,10 +129,41 @@
               <span>Rp{{ formatRupiah(transactionData.total_amount) }}</span>
             </div>
           </div>
+          
+        </div>
+
+        <!-- Accordion Tata Cara Pembayaran -->
+        <div v-if="transactionData.payment_channel === 'Virtual Account'" class="accordion mt-4 mb-4">
+          <h2 class="text-xl font-bold mb-4">Instruksi Pembayaran</h2>
+          <div v-if="loading" class="text-center">Loading...</div>
+          <div v-if="error" class="text-red-500">{{ error }}</div>
+          <div v-for="(methods, methodName) in paymentInstructions" :key="methodName" class="mb-4">
+            <button 
+              @click="toggleAccordion(methodName)" 
+              class="w-full flex justify-between items-center p-4 bg-blue-500 text-white font-semibold rounded-md">
+              {{ methodName }}
+              <span v-if="isAccordionOpen(methodName)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414L10 3.586l4.707 4.707a1 1 0 01-1.414 1.414L10 6.414l-3.293 3.293a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              </span>
+              <span v-else>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 10.293a1 1 0 011.414 0L10 13.586l3.293-3.293a1 1 111.414 1.414L10 16.414l-4.707-4.707a1 1 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </span>
+            </button>
+            <div v-if="isAccordionOpen(methodName)" class="p-4 bg-gray-100 rounded-md mt-2">
+              <div v-for="instruction in methods" :key="instruction.id" class="mb-4">
+                <h3 class="text-lg font-semibold">{{ instruction.title }}</h3>
+                <p class="whitespace-pre-line">{{ instruction.instructions }}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Tombol Pembatalan -->
-        <div class="flex justify-between">
+        <div class="flex justify-between mt-4">
 
           <button 
           @click="cancelTransaction" 
@@ -181,10 +212,16 @@ import { formatDateTime } from '@/filters';
 import QrcodeVue from 'qrcode.vue';
 
 import MemberLayouts from "@/components/MemberLayouts.vue";
+import Accordion from "@/components/member/dashboard/Accordion.vue";
 
 const router = useRouter();
 const transactionData = ref({});
 const transactionId = localStorage.getItem('transactionId');
+const paymentInstructions = ref({});
+const openAccordions = ref([]);
+const loading = ref(true);
+const error = ref(null);
+
 const paymentDeadline = ref('');
 
 
@@ -241,8 +278,53 @@ const openApp = (paymentNumber) => {
   console.log('Open app with payment number:', paymentNumber);
 };
 
+const fetchPaymentInstructions = async () => {
+  const bankCode = transactionData.value.payment_method;
+  console.log("bank", bankCode);
+  loading.value = true;
+  try {
+    // bankCode is get from transactionData.payment_method
+    // hilangkan tanda kutip pada bankCode 
+
+    const response = await api.get(`/payment-instructions/${bankCode}`);
+    paymentInstructions.value = response.data.data;
+  } catch (err) {
+    error.value = 'Failed to load payment instructions.';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const toggleAccordion = (methodName) => {
+  if (openAccordions.value.includes(methodName)) {
+    openAccordions.value = openAccordions.value.filter(name => name !== methodName);
+  } else {
+    openAccordions.value.push(methodName);
+  }
+};
+
+const isAccordionOpen = (methodName) => {
+  return openAccordions.value.includes(methodName);
+};
+
+async function fetchData() { 
+  loading.value = true;
+
+  try {
+    await fetchTransaction(); 
+    fetchPaymentInstructions();
+  } catch (error) {
+    console.error(error);
+    // Set a more specific error message if needed
+    error.value = "Failed to load transaction data or payment instructions." 
+  } finally {
+    loading.value = false;
+  }
+}
+
+
 onMounted(() => {
-  fetchTransaction();
+  fetchData();
 });
 </script>
 
@@ -289,5 +371,38 @@ onMounted(() => {
 .mt-4 {
   margin-top: 1rem;
 }
+
+/* Accordion */
+.accordion {
+  margin-top: 1rem;
+}
+.accordion-item {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 0;
+}
+.accordion-header {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.accordion-button {
+  background-color: #f9fafb;
+  border: none;
+  padding: 1rem;
+  width: 100%;
+  text-align: left;
+}
+.accordion-button:focus {
+  outline: none;
+}
+.accordion-collapse {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.accordion-body {
+  white-space: pre-wrap;
+}
+
 </style>
 
