@@ -146,7 +146,7 @@ const settings2 = [
 
     <!-- LOGOUT section -->
       <button @click="logoutAction" class="flex w-full justify-center items-center py-2 px-4 bg-secondary rounded-full transition-all duration-300">
-          <Icon icon="fa-solid:sign-out-alt" class="text-3xl text-white mr-4"></Icon>
+          <Icon icon="fa-solid:sign-out-alt" class="text-xl text-white mr-4"></Icon>
           <p class="text-white text-lg">Logout</p>
       </button>
     
