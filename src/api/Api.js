@@ -3,8 +3,8 @@
 import axios from "axios";
 
 const Api = axios.create({
-  // baseURL: "https://api-cpns.creazylab.works/api", // Staging
-  baseURL: "http://backend-gascpns.dev.com/api", // dev
+  baseURL: "https://api-cpns.creazylab.works/api", // Staging
+  // baseURL: "http://backend-gascpns.dev.com/api", // dev
 });
 
 Api.interceptors.request.use((config) => {
