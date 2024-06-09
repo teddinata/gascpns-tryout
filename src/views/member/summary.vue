@@ -40,7 +40,24 @@
           </div>
         </div>
 
-        <div class="score-card-grid grid grid-cols-1 md:grid-cols-3  gap-4">
+        
+      <div v-if="userRank">
+        <!-- Tampilkan informasi peringkat sesuai keterangan -->
+        <div class="rank-card p-4 bg-white rounded-lg shadow-md mt-4">
+          <h2 class="text-xl font-semibold mb-2">Peringkat Kamu</h2>
+          <!-- Menyesuaikan pesan berdasarkan keterangan -->
+          <p class="text-gray-700">
+            <template v-if="userRank.keterangan === 'Lulus'">
+              Selamat! Kamu lulus dan berhasil mendapat ranking {{ userRank.rank }} 🎉
+            </template>
+            <template v-else>
+              Yah, mohon maaf kamu belum lulus nih. 🙁<br> Kamu dapet rank: <strong>{{ userRank.rank }}</strong>. Tetap semangat, jangan menyerah ya!
+            </template>
+          </p>
+        </div>
+      </div>
+
+        <div class="score-card-grid grid grid-cols-1 md:grid-cols-3 mt-4 gap-4">
           <div 
             v-for="(category, index) in tryoutSummary.categories" 
             :key="index" 
@@ -108,6 +125,7 @@ const loading = ref(false);
 const route = useRoute();
 const router = useRouter();
 const tryoutSummary = ref({});
+const userRank = ref(null);
 
 const calculateDuration = (start, finish) => {
   const startDate = new Date(start);
@@ -122,10 +140,20 @@ const fetchSummary = async () => {
     const response = await api.get(`/v1/tryout/${route.params.tryoutId}/summary`);
     tryoutSummary.value = response.data.data;
     tryoutSummary.value.duration = calculateDuration(tryoutSummary.value.started_at, tryoutSummary.value.finish_time);
+    await fetchRank();
   } catch (error) {
     console.error(error);
   } finally {
     loading.value = false;
+  }
+};
+
+const fetchRank = async () => {
+  try {
+    const response = await api.get(`/v1/tryout/${route.params.tryoutId}/rank`);
+    userRank.value = response.data.data;
+  } catch (error) {
+    console.error(error);
   }
 };
 

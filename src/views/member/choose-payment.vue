@@ -93,6 +93,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <div 
             @click="updateSelectedMethodId('saldo')"
+            :method="saldoMethod"
             :class="{ 'selected': selectedMethodId === 'saldo' }"
             class="payment-method-card relative cursor-pointer p-4 bg-white rounded-lg shadow-md flex flex-col">
             <div class="flex items-center mb-4">
@@ -117,10 +118,20 @@
       <div class="bg-white p-6 rounded-lg shadow-xl">
         <h2 class="text-lg font-semibold mb-4">Konfirmasi Pembayaran</h2>
         <p class="mb-4">Apakah Anda yakin ingin melanjutkan pembayaran dengan metode <span class="font-bold">{{ selectedMethodName }}</span>?</p>
+
+        <!-- if selected payment method use saldo -->
+        <div v-if="selectedMethodId === 'saldo'" class="mt-4">
+          <p class="text-gray-400">Saldo GASKoin Anda saat ini: <span class="font-bold">Rp {{ formatRupiah(user.wallet_balance) }}</span></p>
+          <p class="text-gray-600">Pembayaranmu akan langsung diproses menggunakan saldo GASKoin. Pastikan saldo GASKoin Anda mencukupi untuk melakukan pembayaran.</p>
+          <p class="text-gray-600">Kamu tidak dapat mengembalikan saldo GASKoin yang sudah digunakan untuk pembayaran.</p>
+        </div>
+
         <div class="flex justify-end">
           <button @click="cancelPayment" class="px-4 py-2 bg-gray-400 text-white rounded-lg mr-4">Batal</button>
           <button @click="confirmPayment" class="px-4 py-2 bg-primary text-white rounded-lg">Ya, Lanjutkan</button>
         </div>
+
+        
       </div>
     </div>
 
@@ -137,10 +148,13 @@ import qrisLogo from '@/assets/qris.png';
 import { useRoute, useRouter } from 'vue-router';
 import { formatRupiah } from "@/filters";
 import { useStore } from 'vuex';
+import { useToast } from 'vue-toastification';
+
 
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
+const toast = useToast();
 const paymentMethods = ref([]);
 const wallets = ref([]);
 const selectedMethodId = ref(null);
@@ -223,6 +237,14 @@ const qrisMethod = ref({
   note: 'Scan QR code to pay'
 });
 
+const saldoMethod = ref({
+  id: 'saldo-999', // Static ID for Saldo with prefix
+  name: 'Saldo GASKoin Anda',
+  logo: qrisLogo,
+  adminFee: 'Rp0',
+  note: 'Saldo saat ini'
+});
+
 
 const selectedMethodName = computed(() => {
   if (selectedMethodId.value) {
@@ -234,6 +256,9 @@ const selectedMethodName = computed(() => {
       return selectedMethod ? selectedMethod.name : '';
     } else if (selectedTab.value === 'qris') {
       const selectedMethod = qrisMethod.value;
+      return selectedMethod ? selectedMethod.name : '';
+    } else if (selectedTab.value === 'saldo') {
+      const selectedMethod = saldoMethod.value;
       return selectedMethod ? selectedMethod.name : '';
     }
   }
@@ -248,6 +273,8 @@ const getSelectedMethod = () => {
       return wallets.value.find(method => method.id === selectedMethodId.value);
     } else if (selectedTab.value === 'qris') {
       return qrisMethod.value;
+    } else if (selectedTab.value === 'saldo') {
+      return saldoMethod.value;
     }
   }
   return null;
@@ -262,6 +289,8 @@ const proceedToPayment = () => {
       proceedToEwalletPayment(selectedMethod);
     } else if (selectedMethod.id.startsWith('qris')) {
       proceedToQrisPayment(selectedMethod);
+    } else if (selectedMethod.id.startsWith('saldo')) {
+      proceedSaldoPayment(selectedMethod);
     } else {
       console.error('Unknown payment method:', selectedMethod);
     }
@@ -344,6 +373,33 @@ const proceedToQrisPayment = async (method) => {
     const response = await api.post('/v1/tryout/transactions/qris', requestData);
 
     router.push({ name: 'Checkout' });
+
+    // Handle response for QRIS payment
+
+    // Simpan data transaksi ke Vuex setelah transaksi berhasil
+    // store.dispatch('auth/saveTransactionData', response.data.data);
+  } catch (error) {
+    console.error('Failed to process QRIS payment:', error);
+  }
+};
+
+const proceedSaldoPayment = async (method) => {
+  try {
+    // const transactionId = store.state.transactionId; // Get transactionId from Vuex store
+    // get transactionId from Local Storage
+    const transactionId = localStorage.getItem('transactionId');
+    const requestData = {
+      transaction_id: transactionId,
+      payment_method: 'WALLET',
+    };
+    const response = await api.post('/v1/tryout/transactions/saldo', requestData);
+
+    if (response.data.meta.code === 200) {
+      toast.success('Pembayaran berhasil! Silahkan cek halaman Tryout Anda untuk melakukan pengerjaan soal.');
+      router.push({ name: 'Dashboard Member' });
+    } else {
+      toast.error('Pembayaran gagal! Silahkan coba lagi atau hubungi customer service kami.');
+    }
 
     // Handle response for QRIS payment
 

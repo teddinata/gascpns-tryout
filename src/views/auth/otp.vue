@@ -1,69 +1,123 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
-import { Icon } from "@iconify/vue";
-import { ref } from "vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { ref, nextTick, onMounted, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
+import api from '@/api/Api.js';
 
-const toast = useToast();
+
 const store = useStore();
 const router = useRouter();
-const isLoading = ref(false); // Menambahkan state untuk loading
+const toast = useToast();
+const inputs = ref([]);
+const email = ref('');
+const otp = ref(['', '', '', '']);
+const isLoading = ref(false);
 
-const userData = ref({
-  email_or_username: "",
-  password: "",
+// Fungsi untuk menangani input dan berpindah fokus
+const handleInput = (e, index) => {
+  if (e.target.value.length === 1 && index < inputs.value.length - 1) {
+    inputs.value[index + 1].focus();
+  }
+};
+
+// Fungsi untuk menangani keydown dan berpindah fokus ke input sebelumnya jika dihapus
+const handleKeydown = (e, index) => {
+  if (e.key === 'Backspace' && !e.target.value && index > 0) {
+    inputs.value[index - 1].focus();
+  }
+};
+
+// Fungsi untuk mengisi referensi input saat dirender
+const setInputRef = (el, index) => {
+  nextTick(() => {
+    inputs.value[index] = el;
+  });
+};
+
+const censoredEmail = computed(() => {
+  if (email.value) {
+    const [username, domain] = email.value.split('@');
+    const censoredUsername = username.slice(0, 3) + '*'.repeat(username.length - 2);
+    return `${censoredUsername}@${domain}`;
+  } else {
+    return ''; // Atau pesan default jika email tidak ada
+  }
 });
 
-// Add a ref for password visibility
-const showPassword = ref(false);
+// Fungsi untuk mengirim OTP ke endpoint
+// Di halaman verify-otp
+const verifyOtp = async () => {
+  try {
+    isLoading.value = true;
+    const otpValue = otp.value.join(''); // Gabungkan elemen array menjadi string
 
-// Add a function to toggle password visibility
-const togglePassword = () => {
-  showPassword.value = !showPassword.value;
-};
+    const response = await store.dispatch("auth/verifyOtp", {
+      email: email.value,
+      otp: otpValue,
+    });
 
-const login = async () => {
-    try {
-        isLoading.value = true; // Set loading menjadi true sebelum request dimulai
-        const response = await store.dispatch("auth/login", userData.value);
+    isLoading.value = false;
+    
+    // Periksa apakah response berisi wallet_balance
+    const walletBalance = response?.data?.wallet_balance || 0;
 
-        isLoading.value = false; // Set loading menjadi false setelah request selesai
-
-        const isVerified = store.getters["auth/isVerified"];
-        
-        // save email to session storage
-        localStorage.setItem('verificationEmail', userData.value.email_or_username); // Simpan ke localStorage
-        
-        if (!isVerified) { // Gunakan isVerified yang sudah diupdate di Vuex store
-            router.push('/verify-otp'); 
-            toast.error(response.data.message || 'Email kamu belum terverifikasi nih. Silakan cek email kamu untuk verifikasi ya.');
-        } else {
-            router.push(store.getters["auth/isAdmin"] ? "/admin/dashboard" : "/member/dashboard");
-            toast.success("Login berhasil! Selamat datang di GASCPNS.🙂");
-        }
-    } catch (error) {
-        isLoading.value = false; // Set loading menjadi false jika request gagal
-        if (error.meta.code === 400 && error.meta.message === 'Unverified Email') {
-            localStorage.setItem('verificationEmail', userData.value.email_or_username); // Simpan ke localStorage
-            router.push('/verify-otp');
-            toast.error(error.data.message);
-        } else {
-            toast.error(error.message || 'Login gagal! Pastikan email atau username dan password kamu benar.');
-        }
+    if (walletBalance > 0) {
+      toast.success('Selamat! Anda mendapatkan saldo sebesar Rp. ' + formatRupiah(walletBalance) + ' dari kode referral. Anda dapat menggunakan saldo ini untuk bertransaksi');
+    } else {
+      toast.success('Registrasi berhasil! Selamat datang di platform kami. Silahkan top up saldo anda untuk mulai bertransaksi');
     }
+    toast.success('Selamat! Akun kamu berhasil diverifikasi!');
+    toast.success('Registrasi berhasil! Selamat datang di platform kami. 🙂');
+
+    // Redirect ke halaman yang sesuai (dashboard, dll.)
+    router.push('/member/dashboard');
+
+    // Hapus data verifikasi dari localStorage (opsional)
+    localStorage.removeItem('verificationEmail');
+  } catch (error) {
+    isLoading.value = false;
+    console.error("Verification failed:", error);
+
+    // Tampilkan pesan error dari respons API, atau pesan default jika tidak ada
+    const errorMessage = error?.response?.data?.message || 'Terjadi kesalahan saat verifikasi OTP.';
+    toast.error(errorMessage);
+  }
 };
 
+// resend otp
+const resendOtp = async () => {
+  try {
+    isLoading.value = true;
+    const response = await api.post('/v1/otp/resend', {
+      email: email.value,
+    });
+
+    isLoading.value = false;
+
+    if (response.status === 200) {
+      toast.success('Kode OTP berhasil dikirim ulang. Silakan cek email kamu.');
+    }
+  } catch (error) {
+    isLoading.value = false;
+    toast.error(error.response.data.data.message);
+    // console.log(error);
+  }
+};
+
+onMounted(() => {
+  // Ambil data dari sessionStorage
+  email.value = localStorage.getItem('verificationEmail');
+});
 
 </script>
+
 
 
 <template>
   <div class="flex flex-row min-h-screen w-full relative">
 
-    <!-- loading -->
-    <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500">
+    <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500 z-50">
       <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
         <div class="wheel"></div>
         <div class="hamster">
@@ -96,132 +150,74 @@ const login = async () => {
       </div>
     </div>
     <div class="w-3/5 h-full">
-      <div class="w-full flex justify-center py-48">
-        <div class="flex flex-col space-y-4 w-[400px]">
-          <h5 class="text-text-primary font-bold text-[20px] text-center">
-            Login ke Akun GASCPNS Anda
-          </h5>
-          <form class="flex flex-col gap-5" @submit.prevent="login">
-            <!-- <div class="flex flex-col gap-1">
-              <label for="email" class="text-text-primary font-medium text-sm"
-                >Email*</label
-              >
-              <input
-                type="email"
-                v-model="userData.email"
-                id="email"
-                name="email"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Email Anda"
-                required
-              />
-            </div> -->
-            <div class="flex flex-col gap-1">
-              <label
-                for="email_or_username"
-                class="text-text-primary font-medium text-sm"
-                >Username atau Email Anda
-                <small class="text-xs text-[#ff4545]">*</small>
-                </label
-              >
-              <input
-                type="text"
-                v-model="userData.email_or_username"
-                id="email_or_username"
-                name="email_or_username"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Email atau Username Anda"
-                required
-              />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label
-                for="password"
-                class="text-text-primary font-medium text-sm"
-                >Password
-                <small class="text-xs text-[#ff4545]">*</small>
-                </label
-              >
-              <div class="password-container">
-                <input
-                  :type="showPassword ? 'text' : 'password'"
-                  v-model="userData.password"
-                  id="password"
-                  name="password"
-                  class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                  placeholder="Masukkan Password Anda"
-                  minlength="8"
-                  required
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  @click="togglePassword"
-                >
-                  <Icon
-                    icon="ph:eye-light"
-                    class="text-xl"
-                    v-if="!showPassword"
-                  />
-                  <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
-                </button>
+      <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12">
+        <div class="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
+          <div class="mx-auto flex w-full max-w-md flex-col space-y-16">
+            <div class="flex flex-col items-center justify-center text-center space-y-2">
+              <div class="font-semibold text-3xl">
+                <p>Email Verification</p>
               </div>
-              <div class="flex justify-end">
-                <p class="text-sm text-text-tertiary">
-                  Must be at least 8 Characters.
-                </p>
+              <div class="flex flex-row text-sm font-medium text-gray-400">
+                <p>We have sent a code to your email {{ censoredEmail }}</p>
               </div>
             </div>
-
-            <button
-              type="submit"
-              class="bg-primary text-white w-full rounded-xl py-3"
-            >
-              Login
-            </button>
-            <button class="bg-white drop-shadow-md w-full rounded-xl py-3">
-              <router-link
-                to="#"
-                aria-lable="Google Sign In"
-                class="w-full flex justify-center items-center"
-              >
-                <Icon icon="flat-color-icons:google" class="text-2xl" />
-                <span class="ml-3">Sign up with Google</span>
-              </router-link>
-            </button>
-            <div
-              class="text-sm text-text-primary flex items-center gap-1 justify-center"
-            >
-              <p>Apakah kamu belum punya akun?</p>
-
-              <router-link
-                to="/register"
-                class="text-primary underline cursor-pointer"
-                >Daftar</router-link
-              >
+            <div>
+              <form @submit.prevent="verifyOtp">
+                <div class="flex flex-col space-y-16">
+                  <div class="flex flex-row items-center justify-between mx-auto w-full max-w-xs">
+                    <div 
+                    v-for="(digit, index) in otp" :key="index" 
+                      class="w-16 h-16">
+                      <input
+                        
+                        class="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
+                        v-model="otp[index]" type="text" maxlength="1" 
+                        @input="handleInput($event, index)"
+                        @keydown="handleKeydown($event, index)"
+                        :ref="el => setInputRef(el, index)"
+                        inputmode="numeric"
+                      />
+                      <!-- <input v-for="(digit, index) in otp" :key="index" 
+                      v-model="otp[index]" type="text" maxlength="1" 
+                      @input="handleInput($event, index)"
+                      @keydown="handleKeydown($event, index)" 
+                      :ref="el => setInputRef(el, index)" 
+                      class="w-12 h-12 border rounded text-center focus:outline-none focus:ring focus:ring-primary" 
+                      inputmode="numeric"
+                      /> -->
+                    </div>
+                  </div>
+                  <div class="flex flex-col space-y-5">
+                    <div>
+                      <button
+                        type="submit"
+                        class="bg-primary text-white w-full rounded-xl py-3"
+                      >
+                        Verification Account
+                      </button>
+                    </div>
+                    <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                      <p>Didn't receive code?</p>
+                      <button
+                        type="button"
+                        @click="resendOtp"
+                        class="text-primary font-semibold"
+                      >
+                        Resend
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <style scoped>
-/* Inside your style tag (or in your CSS file if not scoped) */
-.password-container {
-  /* We'll use a wrapper to help position */
-  position: relative; /* Establish a relative positioning context */
-}
-
-.password-toggle {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  cursor: pointer; /* Indicate that the button is clickable */
-}
 
 #wifi-loader {
   --background: #62abff;
@@ -419,7 +415,7 @@ const login = async () => {
     clip-path: inset(0 0 0 100%);
   }
 }
- 
+
 .wheel-and-hamster {
   --dur: 1s;
   position: relative;
@@ -692,4 +688,5 @@ const login = async () => {
     transform: rotate(-1turn);
   }
 }
+ 
 </style>

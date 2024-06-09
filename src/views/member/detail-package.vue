@@ -16,7 +16,7 @@
       <div class="grid grid-cols-2 gap-10">
         <div class="text-white">
           <div class="p-6 bg-gray-800 rounded-xl shadow-lg w-auto">
-            <img :src="paket.cover_path" alt="Paket CPNS Premium" class="w-full h-40 rounded mb-4" style="object-fit: cover; object-position: center; size: 20px;">
+            <img :src="paket.cover_path" alt="Paket CPNS Premium" class="w-full h-auto rounded mb-4" style="object-fit: cover; object-position: center; size: 20px;">
             <h2 class="text-xl font-semibold mb-2">{{ paket.name }} 
             <span v-if="paket.is_premium == 0"
               class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 
@@ -32,9 +32,10 @@
               <span v-if="paket.discount" class="text-green-500 ml-2">-{{ Math.round(((paket.price - paket.discount) / paket.price) * 100) }}%</span>
               <span v-else class="text-red-400 text-2xl font-bold">Rp {{ formatRupiah(paket.price) }}</span>
             </div>
-            <button @click="purchaseForSelf" class="w-full py-2 bg-primary text-white rounded-md hover:bg-blue-600">Beli Paket Sekarang</button>
-            <button class="w-full mt-2 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600">Beli Bareng Teman?</button>
+            <button @click="purchaseForSelf" class="w-full py-2 bg-primary text-white rounded-md hover:bg-blue-600 mt-2">Beli Paket Sekarang</button>
+            <button @click="toggleFriendPurchase" class="w-full mt-2 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600">Beli Untuk Teman?</button>
           </div>
+          
         </div>
         <div>
           <ul class="list-none space-y-2">
@@ -77,6 +78,22 @@
               <span class="text-red-500 mr-2">✖</span> Kalkulator TIU
             </li>
           </ul>
+          <!-- Form Beli Bareng Teman -->
+          <div v-if="showFriendPurchaseForm" class="mt-4 p-4 bg-gray-800 rounded-xl shadow-lg w-auto">
+            <form @submit.prevent="purchaseForFriends">
+              <div v-for="(email, index) in friendEmails" :key="index" class="mb-2">
+                <input 
+                  v-model="friendEmails[index]" 
+                  type="email" 
+                  placeholder="Masukkan email teman" 
+                  class="w-full py-2 px-4 bg-gray-800 text-white rounded-md 
+                  focus:outline-none focus:ring-2 focus:ring-blue-600 border border-gray-700"
+                />
+              </div>
+              <button type="button" @click="addEmailField" class="w-full mt-2 py-2 bg-green-600 text-white rounded-md hover:bg-green-500">Tambah Email</button>
+              <button type="submit" class="w-full mt-2 py-2 bg-primary text-white rounded-md hover:bg-blue-600">Kirim Pembelian</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -98,8 +115,57 @@ const toast = useToast();
 const router = useRouter();
 const store = useStore();
 
+let showFriendPurchaseForm = ref(false);
+let friendEmails = ref(['']);
+
 let user = {};
 const paket = ref({});
+
+const toggleFriendPurchase = () => {
+  showFriendPurchaseForm.value = !showFriendPurchaseForm.value;
+};
+
+const addEmailField = () => {
+  friendEmails.value.push('');
+};
+
+const purchaseForFriends = async () => {
+  try {
+    if (typeof paket.value === 'object' && paket.value !== null) {
+      // Pastikan paket memiliki properti id
+      if (paket.value.id) {
+        // Siapkan data untuk dikirim ke endpoint pembelian
+        const requestData = {
+          package_id: paket.value.id,
+          quantity: friendEmails.value.length,
+          email: friendEmails.value
+        };
+
+        // Kirim permintaan POST ke endpoint pembelian
+        const response = await api.post('/v1/tryout/transactions/store', requestData);
+        const transactionId = response.data.data.id;
+
+        // Simpan transactionId ke Local Storage
+        localStorage.setItem('transactionId', transactionId);
+
+        // Tampilkan pesan sukses jika pembelian berhasil
+        toast.success(`Berhasil membeli paket soal ${paket.value.name} untuk teman-teman Anda`);
+
+        // Navigasikan ke halaman pembayaran
+        router.push({ name: 'PaymentMethod' });
+
+      } else {
+        throw new Error('Package id is missing.');
+      }
+    } else {
+      // Tampilkan pesan kesalahan jika paket bukan objek yang valid
+      console.error('Data paket tidak valid:', paket.value);
+    }
+  } catch (error) {
+    console.error('Gagal menyimpan transaksi:', error);
+    toast.error('Gagal membeli paket soal untuk teman: ' + error.response.data.meta.message);
+  }
+};
 
 const redirectToPurchaseForm = () => {
   // Navigasi ke halaman pembelian dengan slug paket

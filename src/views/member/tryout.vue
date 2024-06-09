@@ -237,6 +237,12 @@ const startCountdown = (finishedAt) => {
     if (distance < 0) {
       clearInterval(x);
       countdown.value = 'EXPIRED';
+
+      // reload page and hit endpoint finishTryout
+      finishTryout();
+
+      router.push('/member/my-tryout');
+      
     }
   }, 1000);
 };
@@ -337,7 +343,7 @@ const finishTryout = async () => {
     const tryoutId = questionDetail.value.data.tryout_id;
     const response = await api.post(`/v1/tryout/${tryoutId}/finish`);
     if (response.data.meta.code === 200) {
-      toast.success('Tryout berhasil diselesaikan');
+      toast.success('Berhasil menyelesaikan tryout. Terima kasih telah mengerjakan tryout!');
       router.push('/member/my-tryout');
     } else {
       toast.error('Gagal menyelesaikan tryout. ' + response.data.meta.message);

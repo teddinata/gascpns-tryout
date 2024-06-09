@@ -41,27 +41,35 @@ const memberLinks = [
   {
     name: "Tryout",
     url: "/member/my-tryout",
-    icons: "f7:question-square",
+    // icons learning use outline
+    icons: "fluent:brain-circuit-20-regular",
   },
   {
     name: "Rangking",
-    url: "#",
+    url: "/member/ranking",
     icons: "flowbite:chart-line-up-outline",
   },
   {
-    name: "Statistika",
-    url: "#",
-    icons: "solar:volleyball-outline",
+    name: "Raport",
+    url: "/member/raport",
+    // icon raport use outline 
+    icons: "fluent:document-bullet-list-24-regular",
   },
+  // {
+  //   name: "Statistika",
+  //   url: "#",
+  //   icons: "solar:volleyball-outline",
+  // },
   {
     name: "Latihan Soal",
-    url: "/member/latihan",
-    icons: "gg:browser",
+    url: "/member/latihan-soal",
+    // icons exercise use outline
+    icons: "fluent:book-question-mark-24-regular",
   },
   {
     name: "FAQ",
-    url: "#",
-    icons: "gg:browser",
+    url: "/member/faq",
+    icons: "f7:question-square",
   },
 ];
 
@@ -74,7 +82,8 @@ const settings = [
   {
     name: "Bantuan",
     url: "#",
-    icons: "bx:bxs-help-circle",
+    // icon call center outline
+    icons: "fa-solid:headset",
   },
 ];
 
