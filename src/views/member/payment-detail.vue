@@ -47,14 +47,15 @@
             <img 
               :src="transactionData.payment_method === 'QRIS' ?  ('../../../../src/assets/qris.png') : transactionData.payment_image" 
               alt="Logo Pembayaran" class="w-16 h-16 object-contain mr-2" />
-            <p class="font-semibold">{{ transactionData.payment_method }}</p>
+              <span v-if="transactionData.payment_channel === 'Virtual Account'"> Virtual Account {{ transactionData.payment_method }}</span>
+              <span v-else>{{ transactionData.payment_method }}</span>
             </div>
           </div>
           <div>
             <p class="text-gray-600">Nomor Pembayaran</p>
             <p
-              v-if="transactionData.payment_channel == 'VA'" 
-              class="font-semibold flex items-center">
+              v-if="transactionData.payment_channel == 'Virtual Account'" 
+              class="font-semibold flex items-center mt-2">
               {{ transactionData.payment_number }}
               <button 
                 @click="copyToClipboard(transactionData.payment_number)"

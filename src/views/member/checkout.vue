@@ -1,6 +1,6 @@
 <template>
   <MemberLayouts>
-    <div class="w-full mx-auto p-6">
+    <div class="w-full mx-auto p-6" v-if="transactionData">
       <!-- Metode Pembayaran -->
       <div class="mb-6">
         <h1 class="text-3xl font-bold">Checkout</h1>
@@ -9,103 +9,96 @@
         <div class="flex items-center gap-4 justify-between">
           <h1 class="text-xl font-bold">Metode Pembayaran</h1>
           <div @click="changePaymentMethod" class="flex items-center gap-2 cursor-pointer">
-          <button  class="text-blue-500 text-end justify-end hover:text-blue-600">
-            Ganti Metode Pembayaran
-          </button>
-          <Icon icon="fa-solid:chevron-right" class="text-sm text-blue-500" />
+            <button class="text-blue-500 text-end justify-end hover:text-blue-600">
+              Ganti Metode Pembayaran
+            </button>
+            <Icon icon="fa-solid:chevron-right" class="text-sm text-blue-500" />
           </div>  
         </div>
         <div class="flex items-center">
           <img 
             :src="transactionData.payment_method === 'QRIS' ? ('../../../../src/assets/qris.png') : transactionData.payment_image" 
-            alt="QRIS" class="w-20 h-20 object-contain" />
-          <h2 class="text-lg font-semibold">{{ transactionData.payment_method }}</h2>
+            alt="Metode Pembayaran"
+            class="w-20 h-20 object-contain" />
+          <h2 class="text-lg ml-4 mt-3 font-semibold items-center">
+            <span v-if="transactionData.payment_channel === 'Virtual Account'"> Virtual Account {{ transactionData.payment_method }}</span>
+            <span v-else>{{ transactionData.payment_method }}</span>
+          </h2>
         </div>
       </div>
-
-      <!-- Beli Ramean -->
-      <!-- <h3 class="text-lg font-semibold mt-10">Beli Ramean</h3>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-        <RameanCard
-          v-for="item in rameanItems"
-          :key="item.id"
-          :item="item"
-          @select="selectRameanItem"
-        />
-      </div> -->
-
-      <!-- Tambah Paket Lain -->
-      <!-- <h3 class="text-lg font-semibold mt-10">Makin hemat tambah paket lain</h3>
-      <div class="flex mt-4">
-        <PackageCard :package="additionalPackage" @select="selectAdditionalPackage" />
-      </div> -->
-
+  
       <!-- Kode Promo -->
       <div class="p-4 rounded-lg shadow-2xl items-center bg-white">
         <div class="flex items-center gap-4 justify-between">
-
-          <h3 class="text-lg font-semibold ">Kode Promo/Referral (Apabila ada)</h3>
+          <h3 class="text-lg font-semibold">Kode Promo/Referral (Apabila ada)</h3>
           <button @click="applyPromoCode" class="text-blue-500">Lihat Voucher Saya</button>
         </div>
-        
         <div class="mt-4 flex flex-col card p-4 rounded-lg shadow-2xl bg-white">
           <input v-model="promoCode" type="text" class="p-2 border rounded w-full" placeholder="Masukkan kode promo" />
           <p v-if="promoApplied" class="text-green-500 mt-2">Kode voucher berhasil digunakan!</p>
         </div>
       </div>
-
+  
       <!-- Checkout Pembelian -->
-      <div class="mt-10">
+      <div class="mt-10" v-if="transactionData.package">
         <h3 class="text-lg font-semibold">Checkout Pembelian</h3>
-        <div 
-          v-for="item in transactionData.details"
-          :key="item.id"
-          class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div 
-            class="p-4 rounded-lg shadow-2xl bg-white">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <!-- Informasi Paket -->
+          <div class="p-4 rounded-lg shadow-2xl bg-white">
             <div class="flex items-center mb-6 shadow-2xl bg-white p-4">
               <img 
-              v-if="transactionData.package.cover_path" 
-              :src="transactionData.package.cover_path" 
-              alt="Paket CPNS Premium" 
-              class="w-40 rounded mr-4" 
-              style="object-fit: cover; object-position: center; size: 20px; border-radius: 10px; border: 1px solid #000000;" />
+                v-if="transactionData.package.cover_path" 
+                :src="transactionData.package.cover_path" 
+                alt="Paket CPNS Premium" 
+                class="w-40 rounded mr-4" 
+                style="object-fit: cover; object-position: center; border-radius: 10px; border: 1px solid #000000;" />
               <div class="flex flex-col">
-                <h4 
-                  class="text-lg font-semibold mb-2">{{ item.package_name }}</h4>
-                <p class="text-gray-400">Rp{{ formatRupiah(item.price) }}</p>
+                <h4 class="text-lg font-semibold mb-2">{{ transactionData.package.name }}</h4>
+                <div class="flex items-center">
+                  <p v-if="transactionData.package.discount" class="text-red-400 font-semibold">Rp {{ formatRupiah(transactionData.package.discount) }}</p>
+                  <p v-if="transactionData.package.discount" class="text-gray-400 line-through ml-2">Rp {{ formatRupiah(transactionData.package.price) }}</p>
+                  <span v-else class="text-red-400">Rp {{ formatRupiah(transactionData.package.price) }}</span>
+                  <!-- count quantity from details array -->
+                </div>
+                <span class="text-black mt-2">Jumlah:
+                  <span class="text-black font-semibold">x{{ transactionData.details.reduce((acc, item) => acc + item.quantity, 0) }}</span>
+                </span>
               </div>
-              
             </div>
-            
           </div>
-          <div class="p-4 rounded-lg shadow-2xl bg-white">
-            <h4 class="text-lg font-semibold mb-2">Rincian Pembayaran</h4>
-            <div class="flex justify-between mb-2">
-              <span>Subtotal</span>
-              <span>Rp{{ formatRupiah(item.package_price) }}</span>
+
+         <!-- Rincian Pembayaran -->
+        <div class="p-4 rounded-lg shadow-2xl bg-white">
+          <h4 class="text-lg font-semibold mb-2">Rincian Pembayaran</h4>
+          <div class="flex justify-between mb-2">
+            <span>Subtotal</span>
+            <div class="flex items-center">
+              <span class="text-gray-700">Rp {{ formatRupiah(transactionData.details.reduce((acc, item) => acc + item.price * item.quantity, 0)) }}</span>
             </div>
-            <div class="flex justify-between mb-2">
-              <span>Diskon Kode Promo</span>
-              <!-- <span>Rp{{ formatRupiah(discount) }}</span> -->
-              <span>Rp0</span>
-            </div>
-            <div class="flex justify-between mb-2">
-              <span>Pajak</span>
-              <span>Rp{{ formatRupiah(transactionData.tax) }}</span>
-            </div>
-            <div class="flex justify-between font-semibold">
-              <span>Total Pembayaran</span>
-              <span>Rp{{ formatRupiah(transactionData.total_amount) }}</span>
-            </div>
-            <button 
-              @click="proceedToPaymentModal" 
-              class="mt-4 w-full py-2 bg-primary rounded-md text-white hover:bg-blue-600">
-              Lanjut Pembayaran
-            </button>
           </div>
+          <div class="flex justify-between mb-2">
+            <span>Diskon Kode Promo</span>
+            <span>Rp0</span>
+          </div>
+          <div class="flex justify-between mb-2">
+            <span>Pajak</span>
+            <span>Rp{{ formatRupiah(transactionData.tax) }}</span>
+          </div>
+          <div class="flex justify-between font-semibold">
+            <span>Total Pembayaran</span>
+            <span>Rp{{ formatRupiah(transactionData.total_amount) }}</span>
+          </div>
+          <button 
+            @click="proceedToPaymentModal" 
+            class="mt-4 w-full py-2 bg-primary rounded-md text-white hover:bg-blue-600">
+            Lanjut Pembayaran
+          </button>
+        </div>
         </div>
       </div>
+    </div>
+    <div v-else>
+      <p>Loading...</p>
     </div>
 
     <!-- modal konfirmasi ganti pembayaran -->
@@ -257,5 +250,23 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Add any necessary styles here */
+.bg-primary {
+  background-color: #1e40af; /* Custom blue color */
+}
+
+.bg-gray-800 {
+  background-color: #2d3748; /* Custom dark gray color */
+}
+
+.bg-gray-700 {
+  background-color: #4a5568; /* Custom medium gray color */
+}
+
+.text-blue-500 {
+  color: #3b82f6; /* Custom blue color */
+}
+
+.text-blue-600:hover {
+  color: #2563eb; /* Custom darker blue color */
+}
 </style>

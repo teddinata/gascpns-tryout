@@ -1,10 +1,11 @@
 // api/Api.js
 
 import axios from "axios";
+import router from "../router";
 
 const Api = axios.create({
-  baseURL: "https://api-cpns.creazylab.works/api", // Staging
-  // baseURL: "http://backend-gascpns.dev.com/api", // dev
+  // baseURL: "https://api-cpns.creazylab.works/api", // Staging
+  baseURL: "http://backend-gascpns.dev.com/api", // dev
 });
 
 Api.interceptors.request.use((config) => {
@@ -22,7 +23,7 @@ Api.interceptors.response.use(
       // Hapus token yang mungkin tidak valid dari localStorage
       localStorage.removeItem("token");
       // Arahkan pengguna ke halaman login
-      router.push({ name: 'Login' });
+      router.push({ name: "login" });
     }
     return Promise.reject(error);
   }

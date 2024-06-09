@@ -200,7 +200,7 @@ onMounted(() => {
 });
 </script> -->
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
@@ -401,6 +401,19 @@ const getQuestionDetail = async (tryoutDetailsId) => {
     toast.error('Gagal mendapatkan detail soal');
   }
 };
+
+const timeTaken = computed(() => {
+  if (questionDetail.value?.data?.start_time && questionDetail.value?.data?.end_time) {
+    const createdAt = new Date(questionDetail.value.data.start_time);
+    const updatedAt = new Date(questionDetail.value.data.end_time);
+    const diffInSeconds = (updatedAt - createdAt) / 1000;
+    const diffInMinutes = diffInSeconds / 60;
+
+    // Return time in minutes if more than a minute, otherwise return in seconds
+    return diffInMinutes >= 1 ? `${Math.floor(diffInMinutes)} menit` : `${Math.floor(diffInSeconds)} detik`;
+  }
+  return '0 detik';
+});
 
 const goToQuestion = (tryoutDetailsId) => {
   router.push(`/member/tryout/summary/${tryoutDetailsId}`);
@@ -660,6 +673,12 @@ onMounted(() => {
           </div>
           <!-- divider -->
           <div class="border-b border-[#E0E0E0]"></div>
+
+          <div class="mt-4">
+            Kamu mengerjakan soal ini selama <strong>{{ timeTaken }}</strong>
+          </div>
+
+          <div class="border-b border-[#E0E0E0]"></div>
           <div
             class="flex flex-wrap justify-start items-center gap-3 max-w-[440px]"
           >
@@ -675,6 +694,7 @@ onMounted(() => {
                 'border-[#90989F]',
                 'text-xs',
                 number.score === 5 ? 'bg-[#22C55E] text-white' : 'bg-[#F90A0A] text-white',
+                number.id === questionDetail?.data?.id ? 'border-4 border-black' : ''
               ]"
               @click="goToQuestion(number.id)"
             >

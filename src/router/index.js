@@ -253,6 +253,22 @@ const router = createRouter({
       },
       component: () => import('@/views/member/success-payment.vue')
     },
+    // otp
+    {
+      path: '/verify-otp',
+      name: 'verify-otp',
+      meta: {
+        title: 'Verification | GASCPNS',
+        description: 'Halaman OTP',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Payment Method', to: '/member/payment-method' }
+        ],
+        requiresAuth: true,
+        // requiresMember: true
+      },
+      component: () => import('@/views/auth/otp.vue')
+    },
     {
       path: "/member/latihan",
       name: "latihan",
@@ -268,40 +284,170 @@ const router = createRouter({
       },
       component: () => import("@/views/member/latihan.vue"),
     },
+    {
+      path: "/member/latihan-soal",
+      name: "latihan-soal",
+      meta: {
+        title: "Latihan Soal | GASCPNS",
+        description: "This is the home page of my Vue.js app.",
+        links: [
+          { label: "Dashboard", to: "/member/dashboard" },
+          { label: "Latihan Soal", to: "/member/latihan" },
+        ],
+        requiresAuth: true,
+        requiresMember: true,
+      },
+      component: () => import("@/views/member/list-latihan.vue"),
+    },
+    // ranking page
+    {
+      path: '/member/ranking',
+      name: 'ranking',
+      meta: {
+        title: 'Ranking | GASCPNS',
+        description: 'This is the home page of my Vue.js app.',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Ranking', to: '/member/ranking' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/ranking.vue')
+    },
+    // raport
+    {
+      path: '/member/raport',
+      name: 'raport',
+      meta: {
+        title: 'Raport | GASCPNS',
+        description: 'This is the home page of my Vue.js app.',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Raport', to: '/member/raport' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/raport.vue')
+    },
+    // member faq
+    {
+      path: '/member/faq',
+      name: 'faq',
+      meta: {
+        title: 'FAQ | GASCPNS',
+        description: 'This is the home page of my Vue.js app.',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'FAQ', to: '/member/faq' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/faq.vue')
+    },
+    // { 
+    //   path: '/:catchAll(.*)*', 
+    //   name: 'NotFound', 
+    //   component: () => import('@/views/member/notfound.vue')
+    // }
   ],
 });
+
+// router.beforeEach((to, from, next) => {
+//   // document.title = to.meta.title || "GasCPNS - Welcome to GASCPNS";
+
+//   const isAuthenticated = store.getters["auth/isLoggedIn"];
+//   const isVerified = store.getters["auth/isVerified"];
+
+//   if (to.meta.requiresAuth) {
+//     if (!isAuthenticated) {
+//       next("/login");
+//     } else if (!isVerified && to.path !== '/verify-otp') {
+//       next('/verify-otp');
+//     } else {
+//       next(); // Tambahkan pemanggilan next() di sini
+//     }
+//   } else {
+//     if (isAuthenticated) {
+//       if (!isVerified && to.path !== '/verify-otp') {
+//         next('/verify-otp'); // Arahkan ke halaman verifikasi jika belum diverifikasi
+//       } else {
+//         const userRole = store.getters["auth/userRole"];
+//         next(userRole === "admin" ? "/admin/dashboard" : "/member/dashboard");
+//       }
+//     } else {
+//       next(); // Lanjutkan jika tidak ada peran yang diperlukan
+//     }
+//   }
+// });
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title || "GasCPNS - Welcome to GASCPNS";
 
   // Cek apakah token tersimpan
   const isAuthenticated = store.getters["auth/isLoggedIn"];
+  const isVerified = store.getters["auth/isVerified"];
 
   if (to.meta.requiresAuth) {
+    if (!isAuthenticated) {
+      next("/login");
+    } else if (!isVerified && to.path !== '/verify-otp') {
+      next('/verify-otp');
+    } else {
+      next(); // Lanjutkan jika terotentikasi dan terverifikasi
+    }
+  } else { // Jika rute tidak memerlukan otentikasi
     if (isAuthenticated) {
-      const userRole = store.getters["auth/userRole"];
-
-      // Check if the route requires a specific role
-      if (to.meta.requiresAdmin && userRole === "admin") {
-        next();
-      } else if (to.meta.requiresMember && userRole === "user") {
-        next();
+      if (!isVerified && to.path !== '/verify-otp') {
+        next('/verify-otp');
       } else {
-        // Redirect to the appropriate dashboard based on user role
+        const userRole = store.getters["auth/userRole"];
         next(userRole === "admin" ? "/admin/dashboard" : "/member/dashboard");
       }
     } else {
-      next("/login"); // Redirect ke halaman login jika tidak ada token tersimpan
-    }
-  } else {
-    if (isAuthenticated) {
-      // Jika pengguna sudah login, arahkan ke halaman sesuai peran
-      const userRole = store.getters["auth/userRole"];
-      next(userRole === "admin" ? "/admin/dashboard" : "/member/dashboard");
-    } else {
-      next(); // Lanjutkan jika tidak ada peran yang diperlukan
+      next();
     }
   }
 });
+
+
+// router.beforeEach((to, from, next) => {
+//   document.title = to.meta.title || "GasCPNS - Welcome to GASCPNS";
+
+//   // Cek apakah token tersimpan
+//   const isAuthenticated = store.getters["auth/isLoggedIn"];
+//   const isVerified = store.getters["auth/isVerified"];
+
+//   if (to.meta.requiresAuth) {
+//     if (isAuthenticated) {
+//       const userRole = store.getters["auth/userRole"];
+
+//       // Check if the route requires a specific role
+//       if (to.meta.requiresAdmin && userRole === "admin") {
+//         next();
+//       } else if (to.meta.requiresMember && userRole === "user") {
+//         next();
+//       } else {
+//         // Redirect to the appropriate dashboard based on user role
+//         next(userRole === "admin" ? "/admin/dashboard" : "/member/dashboard");
+//       }
+//     } else if (!isVerified && to.path !== '/verify-otp') {
+//       next('/verify-otp');
+//     } else {
+//       next("/login"); // Redirect ke halaman login jika tidak ada token tersimpan
+//     }
+//   } else {
+//     if (isAuthenticated) {
+//       // Jika pengguna sudah login, arahkan ke halaman sesuai peran
+//       const userRole = store.getters["auth/userRole"];
+//       next(userRole === "admin" ? "/admin/dashboard" : "/member/dashboard");
+//     } else {
+//       next(); // Lanjutkan jika tidak ada peran yang diperlukan
+//     }
+//   }
+// });
+
 
 export default router;
