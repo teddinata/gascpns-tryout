@@ -22,5 +22,6 @@
 <template>
   <!-- Use the dynamically selected layout component -->
   <!-- <component :is="currentLayout" /> -->
+  <vue3-progress />
   <router-view />
 </template>

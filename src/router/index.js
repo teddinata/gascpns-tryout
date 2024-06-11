@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store";
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -385,7 +387,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title || "GasCPNS - Welcome to GASCPNS";
-
+  NProgress.start();
   // Cek apakah token tersimpan
   const isAuthenticated = store.getters["auth/isLoggedIn"];
   const isVerified = store.getters["auth/isVerified"];
@@ -410,6 +412,10 @@ router.beforeEach((to, from, next) => {
       next();
     }
   }
+});
+
+router.afterEach(() => {
+  NProgress.done();
 });
 
 
