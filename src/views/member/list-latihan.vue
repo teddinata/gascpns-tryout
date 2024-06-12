@@ -21,7 +21,6 @@
         </button>
       </div>
       <div class="table-wrapper bg-white p-6 rounded-lg shadow-sm">
-        <h3 class="text-xl font-bold mb-4">Tabel Raport</h3>
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>

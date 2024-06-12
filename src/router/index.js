@@ -349,11 +349,53 @@ const router = createRouter({
       },
       component: () => import('@/views/member/faq.vue')
     },
-    // { 
-    //   path: '/:catchAll(.*)*', 
-    //   name: 'NotFound', 
-    //   component: () => import('@/views/member/notfound.vue')
-    // }
+    // list transaction
+    {
+      path: '/member/riwayat-transaksi',
+      name: 'riwayat-transaksi',
+      meta: {
+        title: 'Riwayat Transaksi | GASCPNS',
+        description: 'Halaman menampilkan riwayat transaksi',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Riwayat Transaksi', to: '/member/riwayat-transaksi' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/list-transactions.vue')
+    },
+    // detail transaction
+    {
+      path: '/member/riwayat-transaksi/:id',
+      name: 'detail-transaksi',
+      meta: {
+        title: 'Detail Transaksi | GASCPNS',
+        description: 'Halaman menampilkan rincian transaksi',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Riwayat Transaksi', to: '/member/riwayat-transaksi' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/detail-transaction.vue')
+    },
+    { 
+      path: '/member/notfound',
+      name: 'NotFound', 
+      meta: {
+        title: 'Not Found | GASCPNS',
+        description: 'This is the home page of my Vue.js app.',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Not Found', to: '/member/notfound' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/notfound.vue')
+    }
   ],
 });
 
