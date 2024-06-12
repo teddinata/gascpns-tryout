@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+import NProgress from "nprogress"; // Impor NProgress
 import Sidebar from "./member/sidebar/sidebar.vue";
 import TopNavbar from "./member/sidebar/topNavbar.vue";
 
@@ -25,7 +26,9 @@ const getUser = async () => {
 };
 
 onMounted(async () => {
+  NProgress.start();
   await getUser();
+  NProgress.done();
 });
 
 const logoutAction = () => {

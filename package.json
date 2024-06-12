@@ -12,10 +12,13 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "@vueup/vue-quill": "^1.2.0",
+    "@vueuse/router": "^10.10.0",
     "axios": "^1.6.7",
     "chart.js": "^4.4.2",
     "date-fns": "^3.3.1",
     "highcharts": "^11.4.0",
+    "html2pdf.js": "^0.10.1",
+    "nprogress": "^0.2.0",
     "qrcode.vue": "^3.4.1",
     "v-calendar": "^3.1.2",
     "vue": "^3.4.15",

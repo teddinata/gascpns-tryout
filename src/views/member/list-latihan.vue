@@ -21,7 +21,6 @@
         </button>
       </div>
       <div class="table-wrapper bg-white p-6 rounded-lg shadow-sm">
-        <h3 class="text-xl font-bold mb-4">Tabel Raport</h3>
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
@@ -89,6 +88,21 @@
         </table>
       </div>
     </div>
+    <!-- modal for alert claim success -->
+  <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+    <div class="modal-container bg-white rounded-lg shadow-xl max-w-sm">
+      <div class="modal-header">
+        <h2 class="text-lg font-semibold mb-4">Selamat! Try out gratis ini berhasil kamu klaim.</h2>
+      </div>
+      <div class="modal-body">
+        <p class="mb-6 text-sm">Kamu bisa langsung memulai mengerjakan try out ini sekarang.</p>
+      </div>
+      <div class="modal-footer flex justify-end">
+        <button @click="showSuccessModal = false"
+          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Oke</button>
+      </div>
+    </div>
+  </div>
   </MemberLayouts>
 </template>
 
@@ -104,6 +118,7 @@ const toast = useToast();
 const tab = ref('Belum Dikerjakan');
 const items = ref([]);
 const isLoading = ref(false);
+const showSuccessModal = ref(false);
 
 // Fungsi untuk mengambil data dari API
 const fetchFreeTryout = async () => {
@@ -132,7 +147,7 @@ const claimPackage = async (packageId) => {
         await api.post('/v1/tryout/free/claim', { package_id: packageId });
         // Refresh data setelah klaim berhasil
         fetchFreeTryout();
-        alert('Paket soal berhasil diklaim!');
+        showSuccessModal.value = true;
     } catch (error) {
         console.error('Error claiming package:', error);
         alert('Gagal mengklaim paket soal.');
@@ -169,6 +184,27 @@ const filteredItems = computed(() => {
 </script>
 
 <style scoped>
+/* Modal Container */
+.modal-container {
+  padding: 32px; /* Lebih banyak padding */
+}
+
+/* Modal Header */
+.modal-header {
+  border-bottom: 1px solid #e5e5e5; /* Garis pemisah tipis */
+  padding-bottom: 16px; /* Jarak antara judul dan isi */
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 16px 0; /* Jarak antara isi dan tombol */
+}
+
+/* Tombol */
+.modal-footer button {
+  border-radius: 8px; /* Tombol lebih membulat */
+  font-weight: 500; /* Sedikit lebih tebal */
+}
 .table-wrapper {
   overflow-x: auto;
 }

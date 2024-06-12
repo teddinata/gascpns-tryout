@@ -66,11 +66,13 @@ const memberLinks = [
     // icons exercise use outline
     icons: "fluent:book-question-mark-24-regular",
   },
+  // riwayat transaksi
   {
-    name: "FAQ",
-    url: "/member/faq",
-    icons: "f7:question-square",
+    name: "Transaksi",
+    url: "/member/riwayat-transaksi",
+    icons: "fluent:money-24-regular",
   },
+  
 ];
 
 const settings = [
@@ -84,6 +86,11 @@ const settings = [
     url: "#",
     // icon call center outline
     icons: "fa-solid:headset",
+  },
+  {
+    name: "FAQ",
+    url: "/member/faq",
+    icons: "f7:question-square",
   },
 ];
 

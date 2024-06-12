@@ -6,6 +6,7 @@ import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/Api.js';
 import MemberLayouts from "@/components/MemberLayouts.vue";
+import NProgress from 'nprogress';
 
 const store = useStore();
 const router = useRouter();
@@ -19,6 +20,14 @@ const route = useRoute();
 // show confirmation dialog before finishing the tryout
 const showConfirmationModal = ref(false);
 
+// Memanggil NProgress.configure() untuk menyesuaikan konfigurasi NProgress
+NProgress.configure({ 
+  showSpinner: false, // Jika Anda tidak ingin menampilkan spinner
+  easing: 'ease', // Fungsi animasi CSS yang digunakan
+  speed: 500, // Kecepatan animasi dalam milidetik
+  // Warna progress  hijau
+  color: '#22C55E',
+});
 
 // const numbers = Array.from({ length: 110 }, (_, index) => index + 1);
 
@@ -248,11 +257,12 @@ const startCountdown = (finishedAt) => {
 };
 
 const saveAndNextQuestion = async () => {
-
+  NProgress.start();
   const tryoutDetailsId = route.params.tryoutDetailsId;
 
   if (!selectedAnswer.value) {
     toast.error('Pilih jawaban terlebih dahulu!');
+    NProgress.done();
     return;
   }
 
@@ -275,6 +285,8 @@ const saveAndNextQuestion = async () => {
   } catch (error) {
     console.error('Error saving answer:', error.response.data.meta.message);
     toast.error(error.response.data.meta.message +'.' + ' Gagal menyimpan jawaban.');
+  } finally {
+    NProgress.done();
   }
 };
 
@@ -459,6 +471,7 @@ onMounted(() => {
                 'border-[#90989F]',
                 'text-xs',
                 number.answer ? 'bg-green-500 text-white' : 'bg-transparent',
+                number.id === questionDetail?.data?.id ? 'border-4 border-black' : ''
               ]"
               @click="goToQuestion(number.id)"
             >
@@ -564,4 +577,12 @@ onMounted(() => {
   font-weight: 500; /* Sedikit lebih tebal */
 }
 
+/* NProgress */
+#nprogress .bar {
+  background: #22C55E; /* Warna hijau */
+}
+
+#nprogress .bar {
+  transition: width 1s ease; /* Kecepatan animasi dalam detik */
+}
 </style>
