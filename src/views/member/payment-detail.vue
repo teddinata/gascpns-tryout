@@ -38,7 +38,11 @@
             </p>
             <p 
               v-else-if="transactionData.payment_status == 'EXPIRED'"
-              class="font-semibold text-red-500">Pembayaran Kadaluarsa
+              class="font-semibold text-red-500">Pembayaran Kadaluarsa    
+            </p>
+            <p 
+              v-else-if="transactionData.payment_status == 'CANCELLED'"
+              class="font-semibold text-red-500">Pembayaran dibatalkan oleh pengguna
             </p>
           </div>
           <div>
@@ -166,14 +170,14 @@
         <!-- Tombol Pembatalan -->
         <div class="flex justify-between mt-4">
 
-          <button 
-          @click="cancelTransaction" 
+        <button 
+          @click="showCancelModal = true" 
           :class="{
-            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID',
-            'bg-red-500 hover:bg-red-700': transactionData.payment_status !== 'EXPIRED' && transactionData.payment_status !== 'PAID'
+            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID' || transactionData.payment_status == 'CANCELLED',
+            'bg-red-500 hover:bg-red-700': transactionData.payment_status !== 'EXPIRED' && transactionData.payment_status !== 'PAID' || transactionData.payment_status !== 'CANCELLED'
           }"
           class="flex items-center py-2 px-4 rounded-md text-white"
-          :disabled="transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID'">
+          :disabled="transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID' || transactionData.payment_status == 'CANCELLED'">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
@@ -183,11 +187,11 @@
         <button 
           @click="fetchTransaction" 
           :class="{
-            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID',
-            'bg-blue-500 hover:bg-blue-700': transactionData.payment_status !== 'EXPIRED' && transactionData.payment_status !== 'PAID'
+            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID' || transactionData.payment_status == 'CANCELLED',
+            'bg-blue-500 hover:bg-blue-700': transactionData.payment_status !== 'EXPIRED' && transactionData.payment_status !== 'PAID' || transactionData.payment_status !== 'CANCELLED'
           }"
           class="flex py-2 px-4 rounded-md text-white mr-2 items-center"
-          :disabled="transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID'">
+          :disabled="transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID' || transactionData.payment_status == 'CANCELLED'">
           <!-- icon check -->
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -195,6 +199,19 @@
           Cek Pembayaranmu
         </button>
     
+        </div>
+      </div>
+    </div>
+    <!-- Modal Konfirmasi -->
+    <div v-if="showCancelModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-4">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Konfirmasi Pembatalan</h3>
+        <p class="text-gray-600 mb-6">Apakah Kamu yakin ingin membatalkan pembelian ini?</p>
+        <br />
+        <p class="text-gray-600 mb-6">Setelah pembelian dibatalkan, kamu tidak bisa melanjutkan pembayaran.</p>
+        <div class="flex justify-end space-x-4">
+          <button @click="showCancelModal = false" class="py-2 px-4 bg-gray-300 rounded-lg hover:bg-gray-400">Tidak</button>
+          <button @click="confirmCancel" class="py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600">Ya, Batalkan</button>
         </div>
       </div>
     </div>
@@ -211,6 +228,7 @@ import api from '@/api/Api.js';
 import { formatRupiah } from '@/filters';
 import { formatDateTime } from '@/filters';
 import QrcodeVue from 'qrcode.vue';
+import { useToast } from 'vue-toastification';
 
 import MemberLayouts from "@/components/MemberLayouts.vue";
 import Accordion from "@/components/member/dashboard/Accordion.vue";
@@ -222,6 +240,8 @@ const paymentInstructions = ref({});
 const openAccordions = ref([]);
 const loading = ref(true);
 const error = ref(null);
+const showCancelModal = ref(false);
+const toast = useToast();
 
 const paymentDeadline = ref('');
 
@@ -243,6 +263,10 @@ const fetchTransaction = async () => {
     transactionData.value = response.data.data;
     startCountdown(response.data.data.payment_expired);
     // console.log(response.data);
+
+    if (transactionData.value.payment_status === 'PAID') {
+      router.push({ name: 'payment-success' });
+    }
   } catch (error) {
     console.error(error);
   }
@@ -269,9 +293,21 @@ const startCountdown = (paymentExpired) => {
   countdown(); // Run it initially
 };
 
-const cancelTransaction = () => {
-  console.log('Pembelian dibatalkan');
-  alert('Pembelian berhasil dibatalkan!');
+const confirmCancel = async () => {
+  try {
+    const response = await api.post(`/v1/tryout/transactions/${transactionData.value.id}/cancel`);
+    if (response.data.meta.status === 'success') {
+      toast.success('Transaksi berhasil dibatalkan');
+      transactionData.value.payment_status = 'CANCELLED';
+      window.location.reload();
+    } else {
+      toast.error('Gagal membatalkan transaksi');
+    }
+  } catch (error) {
+    toast.error('Terjadi kesalahan saat membatalkan transaksi');
+  } finally {
+    showCancelModal.value = false;
+  }
 };
 
 const openApp = (paymentNumber) => {
@@ -405,5 +441,35 @@ onMounted(() => {
   white-space: pre-wrap;
 }
 
+.fixed {
+  z-index: 1050;
+}
+
+.modal-content {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 16px;
+}
+
+.modal-footer {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #e5e5e5;
+  background-color: #f8f8f8;
+}
 </style>
 

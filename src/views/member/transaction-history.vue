@@ -12,21 +12,21 @@
               <TabList class="flex space-x-1 bg-blue-900/20 p-1 rounded-lg justify-center">
                 <Tab
                   class="w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
-                  :class="{ 'bg-white shadow': activeTab === 'pending' }"
+                  :class="{ 'bg-primary text-white': activeTab === 'pending', 'bg-white text-gray-800': activeTab !== 'pending' }"
                   @click="activeTab = 'pending'"
                 >
                   Menunggu Pembayaran
                 </Tab>
                 <Tab
                   class="w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
-                  :class="{ 'bg-white shadow': activeTab === 'cancelled' }"
+                  :class="{ 'bg-primary text-white': activeTab === 'cancelled', 'bg-white text-gray-800': activeTab !== 'cancelled' }"
                   @click="activeTab = 'cancelled'"
                 >
                   Pembayaran Batal
                 </Tab>
                 <Tab
                   class="w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
-                  :class="{ 'bg-white shadow': activeTab === 'completed' }"
+                  :class="{ 'bg-primary text-white': activeTab === 'completed', 'bg-white text-gray-800': activeTab !== 'completed' }"
                   @click="activeTab = 'completed'"
                 >
                   Pembayaran Berhasil
@@ -95,7 +95,7 @@ const lastPage = ref(1);
 
 const mapTransactionStatus = (status) => {
   if (status === 'PAID') return 'completed';
-  if (status === 'EXPIRED') return 'cancelled';
+  if (status === 'EXPIRED' || status === 'CANCELLED') return 'cancelled';
   return 'pending';
 };
 

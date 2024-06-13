@@ -90,7 +90,7 @@
           </div>
           <button 
             @click="proceedToPaymentModal" 
-            class="mt-4 w-full py-2 bg-primary rounded-md text-white hover:bg-blue-600">
+            class="mt-4 w-full py-2 bg-blue-500 rounded-md text-white hover:bg-blue-600">
             Lanjut Pembayaran
           </button>
         </div>

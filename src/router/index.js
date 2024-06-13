@@ -111,7 +111,7 @@ const router = createRouter({
       name: "Dashboard Member",
       meta: {
         title: "Dashboard | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
+        description: "Halaman dashboard member",
         links: [{ label: "Dashboard", to: "/member/dashboard" }],
         requiresAuth: true,
         requiresMember: true,
@@ -167,8 +167,8 @@ const router = createRouter({
       path: "/member/tryout/summary/:tryoutDetailsId",
       name: "summary",
       meta: {
-        title: "Summary | GASCPNS",
-        description: "This is the home page of my Vue.js app.",
+        title: "Ringkasan Tryout | GASCPNS",
+        description: "Ringkasan Try Out Soal CPNS",
         links: [
           { label: "Dashboard", to: "/member/dashboard" },
           { label: "Summary", to: "/member/summary" },
@@ -182,7 +182,7 @@ const router = createRouter({
       path: "/member/paket/detail/:slug",
       name: "detail",
       meta: {
-        title: "Beli Paket Soal | GASCPNS",
+        title: "Paket Soal | GASCPNS",
         description: "Halaman pembelian paket soal",
         links: [
           { label: "Dashboard", to: "/member/dashboard" },
@@ -198,8 +198,8 @@ const router = createRouter({
       path: '/member/paket/:slug/checkout',
       name: 'PaymentMethod',
       meta: {
-        title: 'Payment Method | GASCPNS',
-        description: 'This is the home page of my Vue.js app.',
+        title: 'Pilih Metode Pembayaran | GASCPNS',
+        description: 'Halaman pilih metode pembayaran',
         links: [
           { label: 'Dashboard', to: '/member/dashboard' },
           { label: 'Payment Method', to: '/member/payment-method' }
@@ -242,9 +242,9 @@ const router = createRouter({
     // success payment
     {
       path: '/member/transaksi/success',
-      name: 'Success',
+      name: 'payment-success',
       meta: {
-        title: 'Success | GASCPNS',
+        title: 'Pembayaran Berhasil | GASCPNS',
         description: 'Halaman pembayaran berhasil',
         links: [
           { label: 'Dashboard', to: '/member/dashboard' },
@@ -386,7 +386,7 @@ const router = createRouter({
       path: '/member/profile',
       name: 'profile',
       meta: {
-        title: 'Profile | GASCPNS',
+        title: 'Profil | GASCPNS',
         description: 'Halaman menampilkan profile',
         links: [
           { label: 'Dashboard', to: '/member/dashboard' },
@@ -402,7 +402,7 @@ const router = createRouter({
       path: '/member/help',
       name: 'help',
       meta: {
-        title: 'Help | GASCPNS',
+        title: 'Bantuan | GASCPNS',
         description: 'This is the home page of my Vue.js app.',
         links: [
           { label: 'Dashboard', to: '/member/dashboard' },

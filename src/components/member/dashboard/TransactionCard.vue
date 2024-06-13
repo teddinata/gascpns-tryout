@@ -5,12 +5,13 @@
       <div class="flex-grow">
         <div class="flex justify-between items-center mb-2">
           <div>
-            <div class="mb-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold" v-if="transaction.payment_status === 'EXPIRED'">Pembayaran Batal</div>
+            <div class="mb-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold" v-if="transaction.payment_status === 'CANCELLED'">Transaksi Dibatalkan Pengguna</div>
+            <div class="mb-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold" v-if="transaction.payment_status === 'EXPIRED'">Pembayaran Dibatalkan Sistem</div>
             <div class="mb-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold" v-if="transaction.payment_status === 'PAID'">Pembayaran Berhasil</div>
-            <div class="mb-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold" v-if="transaction.payment_status === 'PENDING'">Menunggu Pembayaran</div>
+            <div class="mb-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold" v-if="transaction.payment_status === 'UNPAID'">Menunggu Pembayaran</div>
           </div>
           <div class="flex items-center gap-4">
-            <div class="text-gray-500">{{ formatDate(transaction.created_at) }}</div> |
+            <div class="text-gray-500">{{ formatDateTime(transaction.created_at) }}</div> |
             <div class="text-gray-500">#{{ transaction.invoice_code }}</div>
           </div>
         </div>
@@ -37,7 +38,7 @@
 import { defineProps } from 'vue';
 import { formatRupiah } from "@/filters";
 import { useRouter } from 'vue-router';
-import { formatDate } from '@/filters';
+import { formatDateTime } from '@/filters';
 
 const props = defineProps({
   transaction: {
