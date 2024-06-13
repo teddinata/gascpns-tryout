@@ -24,7 +24,7 @@ const showConfirmationModal = ref(false);
 NProgress.configure({ 
   showSpinner: false, // Jika Anda tidak ingin menampilkan spinner
   easing: 'ease', // Fungsi animasi CSS yang digunakan
-  speed: 500, // Kecepatan animasi dalam milidetik
+  speed: 1000, // Kecepatan animasi dalam milidetik
   // Warna progress  hijau
   color: '#22C55E',
 });

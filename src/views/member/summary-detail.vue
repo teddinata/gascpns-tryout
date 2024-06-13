@@ -206,6 +206,7 @@ import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/Api.js';
 import MemberLayouts from "@/components/MemberLayouts.vue";
+import NProgress from 'nprogress';
 
 const store = useStore();
 const router = useRouter();
@@ -218,6 +219,14 @@ const selectedAnswer = ref(null);
 const route = useRoute();
 // show confirmation dialog before finishing the tryout
 const showConfirmationModal = ref(false);
+
+NProgress.configure({ 
+  showSpinner: false, // Jika Anda tidak ingin menampilkan spinner
+  easing: 'ease', // Fungsi animasi CSS yang digunakan
+  speed: 1000, // Kecepatan animasi dalam milidetik
+  // Warna progress  hijau
+  color: '#22C55E',
+});
 
 
 // const numbers = Array.from({ length: 110 }, (_, index) => index + 1);
@@ -367,6 +376,7 @@ const numbers = Array.from(Array(100).keys()).map((i) => (i + 1).toString().padS
 
 const getQuestionDetail = async (tryoutDetailsId) => {
   try {
+    NProgress.start();
     const response = await api.get(`/v1/tryout/summary/${tryoutDetailsId}`);
     questionDetail.value = response.data;
 
@@ -396,9 +406,11 @@ const getQuestionDetail = async (tryoutDetailsId) => {
     // }
     // Get navigation data after getting question detail
     getNavigationData(response.data.data.tryout_id);
+    NProgress.done();
   } catch (error) {
     console.error('Error getting question detail:', error);
     toast.error('Gagal mendapatkan detail soal');
+    NProgress.done();
   }
 };
 
@@ -417,7 +429,9 @@ const timeTaken = computed(() => {
 
 const goToQuestion = (tryoutDetailsId) => {
   router.push(`/member/tryout/summary/${tryoutDetailsId}`);
+  NProgress.start();
   getQuestionDetail(tryoutDetailsId);
+  NProgress.done();
 };
 
 const getNavigationData = async (currentTryoutId) => {

@@ -29,7 +29,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-text-primary">{{ item.payment_method === 'WALLET' ? 'GAS Koin' : item.payment_method }}</div>
                 <span v-if="item.payment_status === 'PAID'" class="mt-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">Lunas</span>
-                <span v-else-if="item.payment_status === 'PENDING'" class="mt-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold">Menunggu Pembayaran</span>
+                <span v-else-if="item.payment_status === 'UNPAID'" class="mt-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold">Menunggu Pembayaran</span>
                 <span v-else-if="item.payment_status === 'EXPIRED'" class="mt-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">Dibatalkan</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
@@ -123,7 +123,7 @@ const statusClasses = (status) => {
   switch (status) {
     case 'PAID':
       return 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold';
-    case 'PENDING':
+    case 'UNPAID':
       return 'bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold';
     case 'FAILED':
       return 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold';

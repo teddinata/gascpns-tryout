@@ -7,18 +7,20 @@
       <TabGroup>
         <TabList class="flex space-x-1 bg-blue-900/20 p-1 rounded-lg">
           <Tab
+            as="button"
             class="w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
             :class="{ 'bg-primary text-white': tab === 'Belum Dikerjakan', 'bg-white text-gray-800': tab !== 'Belum Dikerjakan' }"
             @click="tab = 'Belum Dikerjakan'"
           >
-            Belum Dikerjakan
+            Belum Diambil
           </Tab>
           <Tab
+            as="button"
             class="w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
             :class="{ 'bg-primary text-white': tab === 'Dikerjakan', 'bg-white text-gray-800': tab !== 'Dikerjakan' }"
             @click="tab = 'Dikerjakan'"
           >
-            Dikerjakan
+            Sudah Diambil
           </Tab>
         </TabList>
         <TabPanels class="mt-6">
@@ -277,7 +279,7 @@ const filteredItems = computed(() => {
   border-radius: 8px; /* Tombol lebih membulat */
   font-weight: 500; /* Sedikit lebih tebal */
 }
-.table-wrapper {
+/** .table-wrapper {
   overflow-x: auto;
 }
 
@@ -286,7 +288,7 @@ const filteredItems = computed(() => {
 }
 
 .tabs button:hover {
-  background-color: #0BA7E3; /* Tailwind's blue-600 color */
+  background-color: #0BA7E3;
   color: white;
-}
+} */
 </style>

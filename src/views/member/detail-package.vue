@@ -81,7 +81,7 @@
           <!-- Form Beli Bareng Teman -->
           <div v-if="showFriendPurchaseForm" class="mt-4 p-4 bg-gray-800 rounded-xl shadow-lg w-auto">
             <form @submit.prevent="purchaseForFriends">
-              <div v-for="(email, index) in friendEmails" :key="index" class="mb-2">
+              <div v-for="(email, index) in friendEmails" :key="index" class="mb-2 flex items-center">
                 <input 
                   v-model="friendEmails[index]" 
                   type="email" 
@@ -89,6 +89,7 @@
                   class="w-full py-2 px-4 bg-gray-800 text-white rounded-md 
                   focus:outline-none focus:ring-2 focus:ring-blue-600 border border-gray-700"
                 />
+                <button type="button" @click="removeEmailField(index)" class="ml-2 p-2 bg-red-500 text-white rounded-md hover:bg-red-600">x</button>
               </div>
               <button type="button" @click="addEmailField" class="w-full mt-2 py-2 bg-green-600 text-white rounded-md hover:bg-green-500">Tambah Email</button>
               <button type="submit" class="w-full mt-2 py-2 bg-primary text-white rounded-md hover:bg-blue-600">Kirim Pembelian</button>
@@ -129,6 +130,10 @@ const addEmailField = () => {
   friendEmails.value.push('');
 };
 
+const removeEmailField = (index) => {
+  friendEmails.value.splice(index, 1);
+};
+
 const purchaseForFriends = async () => {
   try {
     if (typeof paket.value === 'object' && paket.value !== null) {
@@ -149,7 +154,7 @@ const purchaseForFriends = async () => {
         localStorage.setItem('transactionId', transactionId);
 
         // Tampilkan pesan sukses jika pembelian berhasil
-        toast.success(`Berhasil membeli paket soal ${paket.value.name} untuk teman-teman Anda`);
+        toast.success(`Berhasil membeli paket soal ${paket.value.name} untuk teman Anda`);
 
         // Navigasikan ke halaman pembayaran
         router.push({ name: 'PaymentMethod' });

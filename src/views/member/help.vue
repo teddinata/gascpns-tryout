@@ -13,7 +13,7 @@
           </ul>
         </div>
 
-        <div class="mb-8">
+        <!-- <div class="mb-8">
           <h3 class="text-xl font-semibold mb-4">FAQ</h3>
           <div v-for="faq in faqs" :key="faq.question" class="mb-4">
             <button class="text-left w-full bg-gray-100 px-4 py-2 rounded-lg" @click="toggleFaq(faq)">
@@ -27,7 +27,7 @@
               <p class="text-gray-600">{{ faq.answer }}</p>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div class="mb-8">
           <h3 class="text-xl font-semibold mb-4">Kontak Dukungan</h3>
