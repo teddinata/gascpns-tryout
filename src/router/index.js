@@ -363,7 +363,7 @@ const router = createRouter({
         requiresAuth: true,
         requiresMember: true
       },
-      component: () => import('@/views/member/list-transactions.vue')
+      component: () => import('@/views/member/transaction-history.vue')
     },
     // detail transaction
     {
@@ -381,6 +381,38 @@ const router = createRouter({
       },
       component: () => import('@/views/member/detail-transaction.vue')
     },
+    // profile
+    {
+      path: '/member/profile',
+      name: 'profile',
+      meta: {
+        title: 'Profile | GASCPNS',
+        description: 'Halaman menampilkan profile',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Profile', to: '/member/profile' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/profile-setting.vue')
+    },
+    // help page
+    {
+      path: '/member/help',
+      name: 'help',
+      meta: {
+        title: 'Help | GASCPNS',
+        description: 'This is the home page of my Vue.js app.',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Help', to: '/member/help' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/help.vue')
+    },
     { 
       path: '/member/notfound',
       name: 'NotFound', 
@@ -395,7 +427,7 @@ const router = createRouter({
         requiresMember: true
       },
       component: () => import('@/views/member/notfound.vue')
-    }
+    },
   ],
 });
 

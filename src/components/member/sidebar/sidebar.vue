@@ -78,12 +78,12 @@ const memberLinks = [
 const settings = [
   {
     name: "Pengaturan",
-    url: "#",
+    url: "/member/profile",
     icons: "carbon:settings",
   },
   {
     name: "Bantuan",
-    url: "#",
+    url: "/member/help",
     // icon call center outline
     icons: "fa-solid:headset",
   },

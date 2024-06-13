@@ -105,6 +105,13 @@ const resendOtp = async () => {
   }
 };
 
+// change email
+const changeEmail = () => {
+  // remove email from localStorage
+  localStorage.removeItem('verificationEmail');
+  router.push('/register');
+};
+
 onMounted(() => {
   // Ambil data dari sessionStorage
   email.value = localStorage.getItem('verificationEmail');
@@ -197,13 +204,23 @@ onMounted(() => {
                       </button>
                     </div>
                     <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
-                      <p>Didn't receive code?</p>
+                      <p>Tidak menerima kode?</p>
                       <button
                         type="button"
                         @click="resendOtp"
                         class="text-primary font-semibold"
                       >
-                        Resend
+                        Kirim Ulang Kode
+                      </button>
+                    </div>
+                    <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                      <p>Ingin mengganti email?</p>
+                      <button
+                        type="button"
+                        @click="changeEmail"
+                        class="text-primary font-semibold"
+                      >
+                        Ganti Email
                       </button>
                     </div>
                   </div>
