@@ -213,7 +213,7 @@ onMounted(() => {
                         Kirim Ulang Kode
                       </button>
                     </div>
-                    <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                    <!-- <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
                       <p>Ingin mengganti email?</p>
                       <button
                         type="button"
@@ -222,7 +222,7 @@ onMounted(() => {
                       >
                         Ganti Email
                       </button>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </form>
