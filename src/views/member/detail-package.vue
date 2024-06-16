@@ -148,10 +148,10 @@ const purchaseForFriends = async () => {
 
         // Kirim permintaan POST ke endpoint pembelian
         const response = await api.post('/v1/tryout/transactions/store', requestData);
-        const transactionId = response.data.data.id;
+        const transactionIds = response.data.data.transactions.map(transaction => transaction.id);
 
-        // Simpan transactionId ke Local Storage
-        localStorage.setItem('transactionId', transactionId);
+        // Simpan transactionIds ke Local Storage
+        localStorage.setItem('transactionIds', JSON.stringify(transactionIds));
 
         // Tampilkan pesan sukses jika pembelian berhasil
         toast.success(`Berhasil membeli paket soal ${paket.value.name} untuk teman Anda`);
@@ -171,6 +171,7 @@ const purchaseForFriends = async () => {
     toast.error('Gagal membeli paket soal untuk teman: ' + error.response.data.meta.message);
   }
 };
+
 
 const redirectToPurchaseForm = () => {
   // Navigasi ke halaman pembelian dengan slug paket
@@ -193,12 +194,10 @@ const purchaseForSelf = async () => {
 
         // Kirim permintaan POST ke endpoint pembelian
         const response = await api.post('/v1/tryout/transactions/store', requestData);
-        const transactionId = response.data.data.id;
+        const transactionIds = response.data.data.transactions.map(transaction => transaction.id);
 
-        // Simpan transactionId ke Vuex store
-        // store.dispatch('setTransactionId', transactionId);
-        // Simpan transactionId ke Local Storage
-        localStorage.setItem('transactionId', transactionId);
+        // Simpan transactionIds ke Local Storage
+        localStorage.setItem('transactionIds', JSON.stringify(transactionIds));
         
         // Tampilkan pesan sukses jika pembelian berhasil
         toast.success(`Berhasil membeli paket soal ${paket.value.name}`);
@@ -218,7 +217,7 @@ const purchaseForSelf = async () => {
     }
   } catch (error) {
     console.error('Gagal menyimpan transaksi:', error);
-    toast.error('Gagal membeli paket soal : ' + error.message);
+    toast.error('Gagal membeli paket soal : ' + error.response.data.meta.message);
   }
 };
 

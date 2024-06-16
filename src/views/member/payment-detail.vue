@@ -11,12 +11,13 @@
       <div class="bg-white p-6 rounded-lg shadow-2xl">
         <div class="flex items-center mb-6">
           <img 
-            :src="transactionData.package?.cover_path"
+            v-if="transactionData[0]?.package?.cover_path"
+            :src="transactionData[0]?.package?.cover_path"
             alt="Paket SKD CPNS Premium" class="w-40 h-40 object-contain mr-4" />
           <div>
-            <h2 class="text-xl font-semibold">{{ transactionData.package?.name }}</h2>
+            <h2 class="text-xl font-semibold">{{ transactionData[0]?.package?.name }}</h2>
             <p class="text-lg font-bold">Total Pembayaran</p>
-            <p class="text-2xl font-bold text-green-600">Rp{{ formatRupiah(transactionData.total_amount) }}</p>
+            <p class="text-2xl font-bold text-green-600">Rp{{ formatRupiah(totalPayment) }}</p>
           </div>
         </div>
 
@@ -24,45 +25,50 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>
             <p class="text-gray-600">Order ID</p>
-            <p class="font-semibold">#{{ transactionData.invoice_code }}</p>
+            <p class="font-semibold">#{{ transactionData[0]?.invoice_code }}</p>
           </div>
           <div>
             <p class="text-gray-600">Status Pembayaran</p>
             <p 
-              v-if="transactionData.payment_status == 'PENDING' || transactionData.payment_status == 'UNPAID'"
+              v-if="transactionData[0]?.payment_status == 'PENDING' || transactionData[0]?.payment_status == 'UNPAID'"
               class="font-semibold text-red-500">Menunggu Pembayaran
             </p>
             <p 
-              v-else-if="transactionData.payment_status == 'PAID'"
+              v-else-if="transactionData[0]?.payment_status == 'PAID'"
               class="font-semibold text-green-500">Pembayaran Berhasil
             </p>
             <p 
-              v-else-if="transactionData.payment_status == 'EXPIRED'"
+              v-else-if="transactionData[0]?.payment_status == 'EXPIRED'"
               class="font-semibold text-red-500">Pembayaran Kadaluarsa    
             </p>
             <p 
-              v-else-if="transactionData.payment_status == 'CANCELLED'"
+              v-else-if="transactionData[0]?.payment_status == 'CANCELLED'"
               class="font-semibold text-red-500">Pembayaran dibatalkan oleh pengguna
             </p>
           </div>
           <div>
             <p class="text-gray-600">Metode Pembayaran</p>
             <div class="flex items-center -mt-2">
-            <img 
-              :src="transactionData.payment_method === 'QRIS' ?  ('../../../../src/assets/qris.png') : transactionData.payment_image" 
-              alt="Logo Pembayaran" class="w-16 h-16 object-contain mr-2" />
-              <span v-if="transactionData.payment_channel === 'Virtual Account'"> Virtual Account {{ transactionData.payment_method }}</span>
-              <span v-else>{{ transactionData.payment_method }}</span>
+              <img 
+                v-if="transactionData[0]?.payment_method === 'QRIS'"
+                src="../../../../src/assets/qris.png"
+                alt="Logo Pembayaran" class="w-16 h-16 object-contain mr-2" />
+              <img 
+                v-else
+                :src="transactionData[0]?.payment_image" 
+                alt="Logo Pembayaran" class="w-16 h-16 object-contain mr-2" />
+              <span v-if="transactionData[0]?.payment_channel === 'Virtual Account'"> Virtual Account {{ transactionData[0]?.payment_method }}</span>
+              <span v-else>{{ transactionData[0]?.payment_method }}</span>
             </div>
           </div>
           <div>
             <p class="text-gray-600">Nomor Pembayaran</p>
             <p
-              v-if="transactionData.payment_channel == 'Virtual Account'" 
+              v-if="transactionData[0]?.payment_channel == 'Virtual Account'" 
               class="font-semibold flex items-center mt-2">
-              {{ transactionData.payment_number }}
+              {{ transactionData[0]?.payment_number }}
               <button 
-                @click="copyToClipboard(transactionData.payment_number)"
+                @click="copyToClipboard(transactionData[0]?.payment_number)"
                 class="ml-2 text-blue-500">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-7 8h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
@@ -73,11 +79,11 @@
 
             <!-- button if payment channel is EWALLET -->
             <p
-              v-else-if="transactionData.payment_channel == 'ID_DANA' || transactionData.payment_channel == 'ID_LINKAJA'"
+              v-else-if="transactionData[0]?.payment_channel == 'ID_DANA' || transactionData[0]?.payment_channel == 'ID_LINKAJA'"
               class="font-semibold flex items-center">
               <a 
-                v-if="transactionData.payment_channel == 'ID_DANA' || transactionData.payment_channel == 'ID_LINKAJA'"
-                :href="transactionData.payment_number"
+                v-if="transactionData[0]?.payment_channel == 'ID_DANA' || transactionData[0]?.payment_channel == 'ID_LINKAJA'"
+                :href="transactionData[0]?.payment_number"
                 target="_blank"
                 class="mt-2 bg-blue-500 text-white px-2 py-1 rounded-md">
                 Open App
@@ -85,25 +91,24 @@
             </p>
 
              <!-- QR code if payment channel is QRIS -->
-            <div v-else-if="transactionData.payment_channel == 'QRIS'" class="mt-4 flex flex-col items-center">
-              <qrcode-vue :value="transactionData.payment_number" :size="200" />
+            <div v-else-if="transactionData[0]?.payment_channel == 'QRIS'" class="mt-4 flex flex-col items-center">
+              <qrcode-vue :value="transactionData[0]?.payment_number" :size="200" />
               <p class="font-semibold mt-4">Scan QR Code untuk pembayaran</p>
             </div>
           </div>
           <div>
-            <div v-if="transactionData.payment_status === 'PAID'">
+            <div v-if="transactionData[0]?.payment_status === 'PAID'">
               <p class="text-gray-600">Dibayarkan pada</p>
-              <p class="font-semibold text-green-500">{{ formatDateTime(transactionData.payment_date) }}</p>
+              <p class="font-semibold text-green-500">{{ formatDateTime(transactionData[0]?.payment_date) }}</p>
             </div>
             <div v-else>
               <p class="text-gray-600">Batas Pembayaran</p>
               <p class="font-semibold text-red-500">{{ paymentDeadline }}</p>
             </div>
-        
           </div>
           <div>
             <p class="text-gray-600">Kode Promo</p>
-            <p class="font-semibold">{{ transactionData.voucher_code ?? '-' }}</p>
+            <p class="font-semibold">{{ transactionData[0]?.voucher_code ?? '-' }}</p>
           </div>
         </div>
 
@@ -111,15 +116,13 @@
         <div class="grid grid-cols-1 gap-4 mb-6">
           <div class="p-4 rounded-lg shadow-2xl bg-white">
             <div class="flex justify-between">
-              <h4 class="text-lg font-semibold mb-2">{{ transactionData.package?.name }}</h4>
+              <h4 class="text-lg font-semibold mb-2">{{ transactionData[0]?.package?.name }}</h4>
               <div class="flex items-center">
-                <span v-if="transactionData.package?.discount" class="text-red-400 font-semibold">Rp {{ formatRupiah(transactionData.package?.discount) }}</span>
-                <span v-if="transactionData.package?.discount" class="text-gray-400 line-through ml-2">Rp {{ formatRupiah(transactionData.package?.price) }}</span>
-                <span v-if="transactionData.package?.discount" class="text-green-500 ml-2 font-semibold">-{{ Math.round(((transactionData.package?.price - transactionData.package?.discount) / transactionData.package?.price) * 100) }}%</span>
-                <span v-else class="text-red-400">Rp {{ formatRupiah(transactionData.package?.price) }}</span>
-                <!-- <span>Rp{{ formatRupiah(transactionData.package?.price) }}</span>
-                <span class="line-through">Rp149.000</span> -->
-                </div>
+                <span v-if="transactionData[0]?.package?.discount" class="text-red-400 font-semibold">Rp {{ formatRupiah(transactionData[0]?.package?.discount) }}</span>
+                <span v-if="transactionData[0]?.package?.discount" class="text-gray-400 line-through ml-2">Rp {{ formatRupiah(transactionData[0]?.package?.price) }}</span>
+                <span v-if="transactionData[0]?.package?.discount" class="text-green-500 ml-2 font-semibold">-{{ Math.round(((transactionData[0]?.package?.price - transactionData[0]?.package?.discount) / transactionData[0]?.package?.price) * 100) }}%</span>
+                <span v-else class="text-red-400">Rp {{ formatRupiah(transactionData[0]?.package?.price) }}</span>
+              </div>
             </div>
             <div class="flex justify-between">
               <span>Diskon Promo/Referral</span>
@@ -131,14 +134,17 @@
             </div>
             <div class="flex justify-between font-semibold">
               <span>Total Pembayaran</span>
-              <span>Rp{{ formatRupiah(transactionData.total_amount) }}</span>
+              <span>Rp{{ formatRupiah(totalPayment) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Jumlah</span>
+              <span>x{{ totalQuantity }}</span>
             </div>
           </div>
-          
         </div>
 
         <!-- Accordion Tata Cara Pembayaran -->
-        <div v-if="transactionData.payment_channel === 'Virtual Account'" class="accordion mt-4 mb-4">
+        <div v-if="transactionData[0]?.payment_channel === 'Virtual Account'" class="accordion mt-4 mb-4">
           <h2 class="text-xl font-bold mb-4">Instruksi Pembayaran</h2>
           <div v-if="loading" class="text-center">Loading...</div>
           <div v-if="error" class="text-red-500">{{ error }}</div>
@@ -149,7 +155,7 @@
               {{ methodName }}
               <span v-if="isAccordionOpen(methodName)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414L10 3.586l4.707 4.707a1 1 0 01-1.414 1.414L10 6.414l-3.293 3.293a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414L10 3.586l4.707 4.707a1 1 01-1.414 1.414L10 6.414l-3.293 3.293a1 1 01-1.414 0z" clip-rule="evenodd" />
                 </svg>
               </span>
               <span v-else>
@@ -173,11 +179,11 @@
         <button 
           @click="showCancelModal = true" 
           :class="{
-            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID' || transactionData.payment_status == 'CANCELLED',
-            'bg-red-500 hover:bg-red-700': transactionData.payment_status !== 'EXPIRED' && transactionData.payment_status !== 'PAID' || transactionData.payment_status !== 'CANCELLED'
+            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED',
+            'bg-red-500 hover:bg-red-700': transactionData[0]?.payment_status !== 'EXPIRED' && transactionData[0]?.payment_status !== 'PAID' || transactionData[0]?.payment_status !== 'CANCELLED'
           }"
           class="flex items-center py-2 px-4 rounded-md text-white"
-          :disabled="transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID' || transactionData.payment_status == 'CANCELLED'">
+          :disabled="transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED'">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
@@ -187,11 +193,11 @@
         <button 
           @click="fetchTransaction" 
           :class="{
-            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID' || transactionData.payment_status == 'CANCELLED',
-            'bg-blue-500 hover:bg-blue-700': transactionData.payment_status !== 'EXPIRED' && transactionData.payment_status !== 'PAID' || transactionData.payment_status !== 'CANCELLED'
+            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED',
+            'bg-blue-500 hover:bg-blue-700': transactionData[0]?.payment_status !== 'EXPIRED' && transactionData[0]?.payment_status !== 'PAID' || transactionData[0]?.payment_status !== 'CANCELLED'
           }"
           class="flex py-2 px-4 rounded-md text-white mr-2 items-center"
-          :disabled="transactionData.payment_status == 'EXPIRED' || transactionData.payment_status == 'PAID' || transactionData.payment_status == 'CANCELLED'">
+          :disabled="transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED'">
           <!-- icon check -->
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -219,23 +225,19 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useStore } from 'vuex';
-import { mapGetters } from 'vuex';
 import { useRouter } from 'vue-router';
 import api from '@/api/Api.js';
-import { formatRupiah } from '@/filters';
-import { formatDateTime } from '@/filters';
+import { formatRupiah, formatDateTime } from '@/filters';
 import QrcodeVue from 'qrcode.vue';
 import { useToast } from 'vue-toastification';
 
 import MemberLayouts from "@/components/MemberLayouts.vue";
-import Accordion from "@/components/member/dashboard/Accordion.vue";
 
 const router = useRouter();
-const transactionData = ref({});
-const transactionId = localStorage.getItem('transactionId');
+const transactionData = ref([]);
 const paymentInstructions = ref({});
 const openAccordions = ref([]);
 const loading = ref(true);
@@ -244,8 +246,6 @@ const showCancelModal = ref(false);
 const toast = useToast();
 
 const paymentDeadline = ref('');
-
-
 
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text).then(() => {
@@ -256,15 +256,14 @@ const copyToClipboard = (text) => {
 };
 
 const fetchTransaction = async () => {
-  // Fetch transaction data from API
-  // ambil transactionId dari params router
+  const transactionIds = JSON.parse(localStorage.getItem('transactionIds'));
+  const promises = transactionIds.map(id => api.get(`/v1/tryout/transactions/${id}`));
   try {
-    const response = await api.get(`/v1/tryout/transactions/${transactionId}`);
-    transactionData.value = response.data.data;
-    startCountdown(response.data.data.payment_expired);
-    // console.log(response.data);
+    const responses = await Promise.all(promises);
+    transactionData.value = responses.map(response => response.data.data);
+    startCountdown(transactionData.value[0].payment_expired);
 
-    if (transactionData.value.payment_status === 'PAID') {
+    if (transactionData.value[0].payment_status === 'PAID') {
       router.push({ name: 'payment-success' });
     }
   } catch (error) {
@@ -295,10 +294,10 @@ const startCountdown = (paymentExpired) => {
 
 const confirmCancel = async () => {
   try {
-    const response = await api.post(`/v1/tryout/transactions/${transactionData.value.id}/cancel`);
+    const response = await api.post(`/v1/tryout/transactions/${transactionData.value[0].id}/cancel`);
     if (response.data.meta.status === 'success') {
       toast.success('Transaksi berhasil dibatalkan');
-      transactionData.value.payment_status = 'CANCELLED';
+      transactionData.value.forEach(trx => trx.payment_status = 'CANCELLED');
       window.location.reload();
     } else {
       toast.error('Gagal membatalkan transaksi');
@@ -316,13 +315,9 @@ const openApp = (paymentNumber) => {
 };
 
 const fetchPaymentInstructions = async () => {
-  const bankCode = transactionData.value.payment_method;
-  console.log("bank", bankCode);
+  const bankCode = transactionData.value[0]?.payment_method;
   loading.value = true;
   try {
-    // bankCode is get from transactionData.payment_method
-    // hilangkan tanda kutip pada bankCode 
-
     const response = await api.get(`/payment-instructions/${bankCode}`);
     paymentInstructions.value = response.data.data;
   } catch (err) {
@@ -344,6 +339,9 @@ const isAccordionOpen = (methodName) => {
   return openAccordions.value.includes(methodName);
 };
 
+const totalQuantity = computed(() => transactionData.value.length);
+const totalPayment = computed(() => transactionData.value.reduce((acc, trx) => acc + trx.total_amount, 0));
+
 async function fetchData() { 
   loading.value = true;
 
@@ -352,13 +350,11 @@ async function fetchData() {
     fetchPaymentInstructions();
   } catch (error) {
     console.error(error);
-    // Set a more specific error message if needed
     error.value = "Failed to load transaction data or payment instructions." 
   } finally {
     loading.value = false;
   }
 }
-
 
 onMounted(() => {
   fetchData();
@@ -472,4 +468,3 @@ onMounted(() => {
   background-color: #f8f8f8;
 }
 </style>
-
