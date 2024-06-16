@@ -25,6 +25,11 @@ const auth = {
         state.notifications[index].is_read = true;
       }
     },
+    MARK_ALL_AS_READ(state) {
+      state.notifications.forEach(notification => {
+        notification.is_read = true;
+      });
+    },
     SET_VERIFIED(state, status) {
       state.isVerified = status; // Tambahkan ini
       localStorage.setItem('isVerified', status); // Simpan ke localStorage
@@ -194,6 +199,14 @@ const auth = {
       try {
         await Api.patch(`/v1/notifications/${notificationId}/read`);
         commit("MARK_AS_READ", notificationId);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async markAllAsRead({ commit }) {
+      try {
+        await Api.patch(`/v1/notifications/read-all`);
+        commit("MARK_ALL_AS_READ");
       } catch (error) {
         console.error(error);
       }

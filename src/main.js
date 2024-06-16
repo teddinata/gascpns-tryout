@@ -15,6 +15,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import { ObserveVisibility } from 'vue-observe-visibility';
 
 // Import Vue3EasyDataTable
 import Vue3EasyDataTable from 'vue3-easy-data-table';
@@ -25,6 +26,8 @@ const app = createApp(App);
 Object.keys(filters).forEach((filterName) => {
   app.config.globalProperties.$filters = filters;
 });
+
+app.directive('observe-visibility', ObserveVisibility);
 
 // Register the Vue3EasyDataTable component globally
 app.component('EasyDataTable', Vue3EasyDataTable);

@@ -40,6 +40,7 @@
                       :key="transaction.id"
                       :transaction="transaction"
                     />
+                    <div v-observe-visibility="loadMorePending" class="h-10"></div>
                   </div>
                 </TabPanel>
 
@@ -50,6 +51,7 @@
                       :key="transaction.id"
                       :transaction="transaction"
                     />
+                    <div v-observe-visibility="loadMoreCancelled" class="h-10"></div>
                   </div>
                 </TabPanel>
 
@@ -60,13 +62,11 @@
                       :key="transaction.id"
                       :transaction="transaction"
                     />
+                    <div v-observe-visibility="loadMoreCompleted" class="h-10"></div>
                   </div>
                 </TabPanel>
               </TabPanels>
             </TabGroup>
-            <div class="mt-4">
-              <Pagination :current-page="currentPage" :last-page="lastPage" @change-page="fetchTransactionHistory" />
-            </div>
           </div>
         </div>
       </div>
@@ -74,13 +74,14 @@
   </MemberLayouts>
 </template>
 
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import MemberLayouts from '@/components/MemberLayouts.vue';
 import TransactionCard from '@/components/member/dashboard/TransactionCard.vue';
-import Pagination from '@/components/member/dashboard/Pagination.vue';
 import api from '@/api/Api.js';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
+import { ObserveVisibility } from 'vue-observe-visibility';
 
 const activeTab = ref('pending');
 
@@ -90,8 +91,23 @@ const transactions = ref({
   completed: [],
 });
 
-const currentPage = ref(1);
-const lastPage = ref(1);
+const currentPage = ref({
+  pending: 1,
+  cancelled: 1,
+  completed: 1,
+});
+
+const lastPage = ref({
+  pending: 1,
+  cancelled: 1,
+  completed: 1,
+});
+
+const loading = ref({
+  pending: false,
+  cancelled: false,
+  completed: false,
+});
 
 const mapTransactionStatus = (status) => {
   if (status === 'PAID') return 'completed';
@@ -99,31 +115,57 @@ const mapTransactionStatus = (status) => {
   return 'pending';
 };
 
-const fetchTransactionHistory = async (page = 1) => {
+const fetchTransactionHistory = async (page = 1, status = 'pending') => {
+  if (loading.value[status] || currentPage.value[status] > lastPage.value[status]) return;
+
+  loading.value[status] = true;
+  
   try {
     const response = await api.get(`/v1/transactions/history?page=${page}`);
     if (response.data.meta.code === 200) {
       const allTransactions = response.data.data.data;
-      transactions.value.pending = allTransactions.filter(t => mapTransactionStatus(t.payment_status) === 'pending');
-      transactions.value.cancelled = allTransactions.filter(t => mapTransactionStatus(t.payment_status) === 'cancelled');
-      transactions.value.completed = allTransactions.filter(t => mapTransactionStatus(t.payment_status) === 'completed');
+      const newTransactions = allTransactions.filter(t => mapTransactionStatus(t.payment_status) === status);
+      transactions.value[status] = transactions.value[status].concat(newTransactions);
 
-      currentPage.value = response.data.data.current_page;
-      lastPage.value = response.data.data.last_page;
+      currentPage.value[status] = response.data.data.current_page;
+      lastPage.value[status] = response.data.data.last_page;
 
-      console.log('Fetched transactions:', transactions.value);
+      console.log(`Fetched ${status} transactions:`, transactions.value[status]);
     } else {
       console.error('Failed to fetch transaction history:', response.data.meta.message);
     }
   } catch (error) {
     console.error('Error fetching transaction history:', error);
+  } finally {
+    loading.value[status] = false;
+  }
+};
+
+const loadMorePending = (isVisible) => {
+  if (isVisible && currentPage.value.pending < lastPage.value.pending) {
+    fetchTransactionHistory(currentPage.value.pending + 1, 'pending');
+  }
+};
+
+const loadMoreCancelled = (isVisible) => {
+  if (isVisible && currentPage.value.cancelled < lastPage.value.cancelled) {
+    fetchTransactionHistory(currentPage.value.cancelled + 1, 'cancelled');
+  }
+};
+
+const loadMoreCompleted = (isVisible) => {
+  if (isVisible && currentPage.value.completed < lastPage.value.completed) {
+    fetchTransactionHistory(currentPage.value.completed + 1, 'completed');
   }
 };
 
 onMounted(() => {
-  fetchTransactionHistory();
+  fetchTransactionHistory(1, 'pending');
+  fetchTransactionHistory(1, 'cancelled');
+  fetchTransactionHistory(1, 'completed');
 });
 </script>
+
 
 <style scoped>
 /* Add any additional styles here */
