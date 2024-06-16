@@ -80,14 +80,18 @@
             <!-- button if payment channel is EWALLET -->
             <p
               v-else-if="transactionData[0]?.payment_channel == 'ID_DANA' || transactionData[0]?.payment_channel == 'ID_LINKAJA'"
-              class="font-semibold flex items-center">
+              class="font-semibold flex flex-col items-start">
               <a 
                 v-if="transactionData[0]?.payment_channel == 'ID_DANA' || transactionData[0]?.payment_channel == 'ID_LINKAJA'"
                 :href="transactionData[0]?.payment_number"
                 target="_blank"
                 class="mt-2 bg-blue-500 text-white px-2 py-1 rounded-md">
-                Open App
+                Buka Aplikasi di HP
               </a>
+              <!-- text information -->
+              <span class="mt-2">
+                Salin link di atas dan buka di browser untuk melanjutkan pembayaran
+              </span>
             </p>
 
              <!-- QR code if payment channel is QRIS -->
