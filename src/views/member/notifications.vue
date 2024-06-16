@@ -83,11 +83,11 @@ const handleNotificationClick = (notification) => {
 
 const getNotificationIcon = (type) => {
   if (type === 'transaction') {
-    return '/src/assets/transaction-history.png';
+    return '/transaction-history.png';
   } else if (type === 'information') {
-    return '/src/assets/information.png';
+    return '/information.png';
   }
-  return '/src/assets/wallet.png';
+  return '/wallet.png';
 };
 
 const markAsRead = async (id) => {
