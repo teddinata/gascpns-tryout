@@ -86,11 +86,11 @@ const navigateToUrl = (url) => {
 
 const getNotificationIcon = (type) => {
   if (type === 'transaction') {
-    return '/public/transaction-history.png';
+    return '/transaction-history.png';
   } else if (type === 'information') {
-    return '/public/information.png';
+    return '/information.png';
   }
-  return '/src/assets/wallet.png';
+  return '/wallet.png';
 };
 
 </script>
