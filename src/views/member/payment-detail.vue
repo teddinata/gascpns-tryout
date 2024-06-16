@@ -51,7 +51,7 @@
             <div class="flex items-center -mt-2">
               <img 
                 v-if="transactionData[0]?.payment_method === 'QRIS'"
-                src="../../../../src/assets/qris.png"
+                src="../../../src/assets/qris.png"
                 alt="Logo Pembayaran" class="w-16 h-16 object-contain mr-2" />
               <img 
                 v-else
