@@ -356,8 +356,8 @@ const proceedToEwalletPayment = async (method) => {
       const mobileNumber = prompt("Please enter your OVO mobile number (e.g., +628123123123):");
       requestData.mobile_number = mobileNumber;
     } else if (['DANA', 'LINKAJA'].includes(method.code)) {
-      requestData.success_redirect_url = 'https://example.com/success';
-      requestData.failure_redirect_url = 'https://example.com/failure';
+      requestData.success_redirect_url = 'https://staging.gascpns.com/member/transaksi/success';
+      requestData.failure_redirect_url = 'https://staging.gascpns.com/member/notfound';
     }
 
     const response = await api.post('/v1/tryout/transactions/ewallet', requestData);
