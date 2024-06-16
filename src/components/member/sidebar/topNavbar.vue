@@ -86,9 +86,9 @@ const navigateToUrl = (url) => {
 
 const getNotificationIcon = (type) => {
   if (type === 'transaction') {
-    return '/src/assets/transaction-history.png';
+    return '/public/transaction-history.png';
   } else if (type === 'information') {
-    return '/src/assets/information.png';
+    return '/public/information.png';
   }
   return '/src/assets/wallet.png';
 };
