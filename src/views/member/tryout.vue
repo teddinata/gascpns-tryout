@@ -274,6 +274,7 @@ const saveAndNextQuestion = async () => {
     if (response.data.meta.code === 200) {
       if (response.data.data.next !== null) {
         router.push(`/member/tryout/${response.data.data.next}`);
+        selectedAnswer.value = null;
         getQuestionDetail(response.data.data.next);
       } else {
         toast.success('Jawaban berhasil disimpan');

@@ -74,7 +74,6 @@
   </MemberLayouts>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import MemberLayouts from '@/components/MemberLayouts.vue';
@@ -115,6 +114,21 @@ const mapTransactionStatus = (status) => {
   return 'pending';
 };
 
+const groupTransactionsByInvoice = (transactions) => {
+  const grouped = transactions.reduce((acc, transaction) => {
+    const key = transaction.invoice_code;
+    if (!acc[key]) {
+      acc[key] = { ...transaction, quantity: 1 };
+    } else {
+      acc[key].quantity += 1;
+      acc[key].total_amount += transaction.total_amount;
+    }
+    return acc;
+  }, {});
+
+  return Object.values(grouped);
+};
+
 const fetchTransactionHistory = async (page = 1, status = 'pending') => {
   if (loading.value[status] || currentPage.value[status] > lastPage.value[status]) return;
 
@@ -124,7 +138,7 @@ const fetchTransactionHistory = async (page = 1, status = 'pending') => {
     const response = await api.get(`/v1/transactions/history?page=${page}`);
     if (response.data.meta.code === 200) {
       const allTransactions = response.data.data.data;
-      const newTransactions = allTransactions.filter(t => mapTransactionStatus(t.payment_status) === status);
+      const newTransactions = groupTransactionsByInvoice(allTransactions.filter(t => mapTransactionStatus(t.payment_status) === status));
       transactions.value[status] = transactions.value[status].concat(newTransactions);
 
       currentPage.value[status] = response.data.data.current_page;
@@ -165,7 +179,6 @@ onMounted(() => {
   fetchTransactionHistory(1, 'completed');
 });
 </script>
-
 
 <style scoped>
 /* Add any additional styles here */

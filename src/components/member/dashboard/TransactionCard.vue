@@ -49,8 +49,12 @@ const props = defineProps({
 
 const router = useRouter();
 
-const goToTransactionDetail = (id) => {
-  router.push({ name: 'detail-transaksi', params: { id } });
+const goToTransactionDetail = () => {
+  if (props.transaction.payment_status === 'UNPAID') {
+    router.push({ path: `/member/transaksi/${props.transaction.invoice_code}/payment` });
+  } else {
+    router.push({ name: 'detail-transaksi', params: { id: props.transaction.id } });
+  }
 };
 
 const buyPackageAgain = () => {
