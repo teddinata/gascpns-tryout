@@ -13,8 +13,18 @@ const auth = {
     selectedPaymentMethod: null, // Data selected payment method disimpan di sini
     transactionData: null,
     isVerified: JSON.parse(localStorage.getItem('isVerified')) || false,
+    notifications: [],
   },
   mutations: {
+    SET_NOTIFICATIONS(state, notifications) {
+      state.notifications = notifications
+    },
+    MARK_AS_READ(state, notificationId) {
+      const index = state.notifications.findIndex(notification => notification.id === notificationId);
+      if (index !== -1) {
+        state.notifications[index].is_read = true;
+      }
+    },
     SET_VERIFIED(state, status) {
       state.isVerified = status; // Tambahkan ini
       localStorage.setItem('isVerified', status); // Simpan ke localStorage
@@ -169,6 +179,26 @@ const auth = {
       });
     },
 
+    // notifications
+    async fetchNotifications({ commit }) {
+      try {
+        const response = await Api.get(`/v1/notifications`);
+        commit("SET_NOTIFICATIONS", response.data.notifications);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    // mark notification as read
+    async markAsRead({ commit }, notificationId) {
+      try {
+        await Api.patch(`/v1/notifications/${notificationId}/read`);
+        commit("MARK_AS_READ", notificationId);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     logout({ commit }) {
       return new Promise((resolve) => {
         commit("AUTH_LOGOUT");
@@ -191,6 +221,12 @@ const auth = {
   },
   
   getters: {
+    allNotifications: (state) => state.notifications,
+    unreadNotifications: (state) => state.notifications.filter(notification => !notification.is_read),
+    transactionNotifications: state => state.notifications.filter(notification => notification.type === 'transaction'),
+    informationNotifications: state => state.notifications.filter(notification => notification.type === 'information'),
+    latestTransactionNotifications: state => state.notifications.filter(notification => notification.type === 'transaction').slice(0, 4),
+    latestInformationNotifications: state => state.notifications.filter(notification => notification.type === 'information').slice(0, 4),
     user(state) {
       return state.user;
     },

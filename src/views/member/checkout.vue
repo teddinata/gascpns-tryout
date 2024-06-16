@@ -1,6 +1,6 @@
 <template>
   <MemberLayouts>
-    <div class="w-full mx-auto p-6" v-if="transactionData">
+    <div class="w-full mx-auto p-6" v-if="transactionData.length > 0">
       <!-- Metode Pembayaran -->
       <div class="mb-6">
         <h1 class="text-3xl font-bold">Checkout</h1>
@@ -17,12 +17,12 @@
         </div>
         <div class="flex items-center">
           <img 
-            :src="transactionData.payment_method === 'QRIS' ? ('../../../../src/assets/qris.png') : transactionData.payment_image" 
+            :src="transactionData[0].payment_method === 'QRIS' ? ('../../../../src/assets/qris.png') : transactionData[0].payment_image" 
             alt="Metode Pembayaran"
             class="w-20 h-20 object-contain" />
           <h2 class="text-lg ml-4 mt-3 font-semibold items-center">
-            <span v-if="transactionData.payment_channel === 'Virtual Account'"> Virtual Account {{ transactionData.payment_method }}</span>
-            <span v-else>{{ transactionData.payment_method }}</span>
+            <span v-if="transactionData[0].payment_channel === 'Virtual Account'"> Virtual Account {{ transactionData[0].payment_method }}</span>
+            <span v-else>{{ transactionData[0].payment_method }}</span>
           </h2>
         </div>
       </div>
@@ -40,28 +40,27 @@
       </div>
   
       <!-- Checkout Pembelian -->
-      <div class="mt-10" v-if="transactionData.package">
+      <div class="mt-10">
         <h3 class="text-lg font-semibold">Checkout Pembelian</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <!-- Informasi Paket -->
           <div class="p-4 rounded-lg shadow-2xl bg-white">
             <div class="flex items-center mb-6 shadow-2xl bg-white p-4">
               <img 
-                v-if="transactionData.package.cover_path" 
-                :src="transactionData.package.cover_path" 
+                v-if="transactionData[0].package.cover_path" 
+                :src="transactionData[0].package.cover_path" 
                 alt="Paket CPNS Premium" 
                 class="w-40 rounded mr-4" 
                 style="object-fit: cover; object-position: center; border-radius: 10px; border: 1px solid #000000;" />
               <div class="flex flex-col">
-                <h4 class="text-lg font-semibold mb-2">{{ transactionData.package.name }}</h4>
+                <h4 class="text-lg font-semibold mb-2">{{ transactionData[0].package.name }}</h4>
                 <div class="flex items-center">
-                  <p v-if="transactionData.package.discount" class="text-red-400 font-semibold">Rp {{ formatRupiah(transactionData.package.discount) }}</p>
-                  <p v-if="transactionData.package.discount" class="text-gray-400 line-through ml-2">Rp {{ formatRupiah(transactionData.package.price) }}</p>
-                  <span v-else class="text-red-400">Rp {{ formatRupiah(transactionData.package.price) }}</span>
-                  <!-- count quantity from details array -->
+                  <p v-if="transactionData[0].package.discount" class="text-red-400 font-semibold">Rp {{ formatRupiah(transactionData[0].package.discount) }}</p>
+                  <p v-if="transactionData[0].package.discount" class="text-gray-400 line-through ml-2">Rp {{ formatRupiah(transactionData[0].package.price) }}</p>
+                  <span v-else class="text-red-400">Rp {{ formatRupiah(transactionData[0].package.price) }}</span>
                 </div>
                 <span class="text-black mt-2">Jumlah:
-                  <span class="text-black font-semibold">x{{ transactionData.details.reduce((acc, item) => acc + item.quantity, 0) }}</span>
+                  <span class="text-black font-semibold">x{{ totalQuantity }}</span>
                 </span>
               </div>
             </div>
@@ -73,7 +72,7 @@
           <div class="flex justify-between mb-2">
             <span>Subtotal</span>
             <div class="flex items-center">
-              <span class="text-gray-700">Rp {{ formatRupiah(transactionData.details.reduce((acc, item) => acc + item.price * item.quantity, 0)) }}</span>
+              <span class="text-gray-700">Rp {{ formatRupiah(subtotal) }}</span>
             </div>
           </div>
           <div class="flex justify-between mb-2">
@@ -82,11 +81,11 @@
           </div>
           <div class="flex justify-between mb-2">
             <span>Pajak</span>
-            <span>Rp{{ formatRupiah(transactionData.tax) }}</span>
+            <span>Rp{{ formatRupiah(totalTax) }}</span>
           </div>
           <div class="flex justify-between font-semibold">
             <span>Total Pembayaran</span>
-            <span>Rp{{ formatRupiah(transactionData.total_amount) }}</span>
+            <span>Rp{{ formatRupiah(totalPayment) }}</span>
           </div>
           <button 
             @click="proceedToPaymentModal" 
@@ -121,8 +120,8 @@
         <h1 class="text-xl font-bold mb-4">Lanjutkan Pembayaran</h1>
         <p class="text-gray-500 mb-2">Apakah kamu sudah yakin ingin melanjutkan pembayaran?</p>
         <p class="text-gray-500 mb-4">Kamu tidak bisa mengubah metode pembayaran setelah melanjutkan pembayaran.</p>
-        <p class="text-gray-500">Total pembayaran: <strong> Rp{{ formatRupiah(transactionData.total_amount) }}</strong></p>
-        <p class="text-gray-500 mb-2">Metode pembayaran: <strong>{{ transactionData.payment_method }}</strong></p>
+        <p class="text-gray-500">Total pembayaran: <strong> Rp{{ formatRupiah(totalPayment) }}</strong></p>
+        <p class="text-gray-500 mb-2">Metode pembayaran: <strong>{{ transactionData[0].payment_method }}</strong></p>
         <div class="flex justify-end gap-4">
           <button @click="showProceedToPaymentModal = false" class="text-blue-500">Batal</button>
           <button 
@@ -168,24 +167,40 @@ const proceedToPaymentModal = () => {
   showProceedToPaymentModal.value = true;
 };
 
-const confirmProceedToPayment = () => {
-  router.push({ name: 'Payment', params: { invoiceId: transactionData.value.invoice_id } });  
+const confirmProceedToPayment = () => { 
+  router.push({ name: 'Payment', params: { invoiceId: transactionData.value[0].invoice_id } });
   showProceedToPaymentModal.value = false;
 };
 
 const fetchTransaction = async () => {
   // Fetch transaction data from API
   // use endpoint api/v1/tryout/transactions/:id
-  const transactionId = localStorage.getItem('transactionId');
+  // const transactionId = localStorage.getItem('transactionId');
+  
+  // try {
+  //   const response = await api.get(`/v1/tryout/transactions/${transactionId}`);
+  //   transactionData.value = response.data.data;
+  //   // console.log(response.data);
+  // } catch (error) {
+  //   console.error(error);
+  // }
+  const transactionIds = JSON.parse(localStorage.getItem('transactionIds'));
+  const promises = transactionIds.map(id => api.get(`/v1/tryout/transactions/${id}`));
   try {
-    const response = await api.get(`/v1/tryout/transactions/${transactionId}`);
-    transactionData.value = response.data.data;
-    // console.log(response.data);
+    const responses = await Promise.all(promises);
+    transactionData.value = responses.map(response => response.data.data);
   } catch (error) {
     console.error(error);
   }
 };
 
+// Hitung total quantity, subtotal, pajak, dan total pembayaran
+const totalQuantity = computed(() => transactionData.value.length);
+const subtotal = computed(() => transactionData.value.reduce((acc, trx) => acc + trx.total_amount, 0));
+const totalTax = computed(() => {
+  return transactionData.value.reduce((acc, trx) => acc + trx.tax, 0);
+});
+const totalPayment = computed(() => subtotal.value + totalTax.value);
 
 // Menggunakan mapGetters untuk mengambil data selected payment method dari store
 const selectedPaymentMethod = computed(() => store.getters.getSelectedPaymentMethod);
@@ -213,9 +228,9 @@ const additionalPackage = ref({
 const promoCode = ref('');
 const promoApplied = ref(false);
 
-const subtotal = computed(() => {
-  return selectedProduct.value.price;
-});
+// const subtotal = computed(() => {
+//   return selectedProduct.value.price;
+// });
 
 const discount = computed(() => {
   return promoApplied.value ? 15000 : 0; // Contoh diskon Rp 15.000
@@ -223,9 +238,9 @@ const discount = computed(() => {
 
 const adminFee = ref(938);
 
-const totalPayment = computed(() => {
-  return subtotal.value - discount.value + adminFee.value;
-});
+// const totalPayment = computed(() => {
+//   return subtotal.value - discount.value + adminFee.value;
+// });
 
 
 const selectRameanItem = (item) => {

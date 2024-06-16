@@ -325,45 +325,31 @@ const proceedToPayment = () => {
 const proceedToBankPayment = async (method) => {
   try {
     isLoading.value = true;
-    // const transactionId = store.state.transactionId; // Get transactionId from Vuex store
-    // get transactionId from Local Storage
-    console.log('method:', method)
-    const transactionId = localStorage.getItem('transactionId');
+    const transactionIds = JSON.parse(localStorage.getItem('transactionIds'));
     const requestData = {
-      transaction_id: transactionId,
+      transaction_ids: transactionIds,
       payment_method: 'VA',
-      // get bank_code from selected method value bank.code
       bank_code: method.code,
     };
     const response = await api.post('/v1/tryout/transactions/va-payment', requestData);
-    // Handle response for bank payment
 
-    // Simpan data transaksi ke Vuex setelah transaksi berhasil
-    // store.dispatch('auth/saveTransactionData', response.data.data);
-    // localStorage.setItem('transactionData', JSON.stringify(response.data));
-    // console log sukses simpan ke Vuex
-    // console.log('response:', 'auth/saveTransactionData', response.data.data)
-
-    // router push to confirm payment
     router.push({ name: 'Checkout' });
     isLoading.value = false;
   } catch (error) {
+    toast.error('Pemilihan metode pembayaran gagal: ' + error.response.data.meta.message);
     console.error('Failed to process bank payment:', error);
+    isLoading.value = false;
   }
 };
 
 const proceedToEwalletPayment = async (method) => {
   try {
     isLoading.value = true;
-    // const transactionId = store.state.transactionId; // Get transactionId from Vuex store
-    // get transactionId from Local Storage
-    const transactionId = localStorage.getItem('transactionId');
+    const transactionIds = JSON.parse(localStorage.getItem('transactionIds'));
     const requestData = {
-      transaction_id: transactionId,
+      transaction_ids: transactionIds,
       payment_method: 'EWALLET',
       ewallet_type: method.code,
-      // if use ovo then use phone_number, if use dana & linkaja then use success_url & failure_url
-      // success_redirect_url: 'https://example.com/success',
     };
 
     if (method.code === 'OVO') {
@@ -371,7 +357,6 @@ const proceedToEwalletPayment = async (method) => {
       requestData.mobile_number = mobileNumber;
     } else if (['DANA', 'LINKAJA'].includes(method.code)) {
       requestData.success_redirect_url = 'https://example.com/success';
-      // Add failure_redirect_url if needed
       requestData.failure_redirect_url = 'https://example.com/failure';
     }
 
@@ -384,6 +369,7 @@ const proceedToEwalletPayment = async (method) => {
     // store.dispatch('auth/saveTransactionData', response.data.data);
     // Handle response for e-wallet payment
   } catch (error) {
+    toast.error('Pemilihan metode pembayaran gagal: ' + error.response.data.meta.message);
     console.error('Failed to process e-wallet payment:', error);
   }
 };
@@ -391,11 +377,9 @@ const proceedToEwalletPayment = async (method) => {
 const proceedToQrisPayment = async (method) => {
   try {
     isLoading.value = true;
-    // const transactionId = store.state.transactionId; // Get transactionId from Vuex store
-    // get transactionId from Local Storage
-    const transactionId = localStorage.getItem('transactionId');
+    const transactionIds = JSON.parse(localStorage.getItem('transactionIds'));
     const requestData = {
-      transaction_id: transactionId,
+      transaction_ids: transactionIds,
       payment_method: 'QRIS',
     };
     const response = await api.post('/v1/tryout/transactions/qris', requestData);
@@ -404,11 +388,10 @@ const proceedToQrisPayment = async (method) => {
 
     isLoading.value = false;
 
-    // Handle response for QRIS payment
-
     // Simpan data transaksi ke Vuex setelah transaksi berhasil
     // store.dispatch('auth/saveTransactionData', response.data.data);
   } catch (error) {
+    toast.error('Pemilihan metode pembayaran gagal: ' + error.response.data.meta.message);
     console.error('Failed to process QRIS payment:', error);
   }
 };
@@ -416,11 +399,9 @@ const proceedToQrisPayment = async (method) => {
 const proceedSaldoPayment = async (method) => {
   try {
     isLoading.value = true;
-    // const transactionId = store.state.transactionId; // Get transactionId from Vuex store
-    // get transactionId from Local Storage
-    const transactionId = localStorage.getItem('transactionId');
+    const transactionIds = JSON.parse(localStorage.getItem('transactionIds'));
     const requestData = {
-      transaction_id: transactionId,
+      transaction_ids: transactionIds,
       payment_method: 'WALLET',
     };
     const response = await api.post('/v1/tryout/transactions/saldo', requestData);
@@ -439,6 +420,7 @@ const proceedSaldoPayment = async (method) => {
     // Simpan data transaksi ke Vuex setelah transaksi berhasil
     // store.dispatch('auth/saveTransactionData', response.data.data);
   } catch (error) {
+    toast.error('Pembayaran gagal: ' + error.response.data.meta.message);
     console.error('Failed to process QRIS payment:', error);
   }
 };

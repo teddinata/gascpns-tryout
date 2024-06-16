@@ -266,7 +266,7 @@ const router = createRouter({
           { label: 'Dashboard', to: '/member/dashboard' },
           { label: 'Payment Method', to: '/member/payment-method' }
         ],
-        requiresAuth: true,
+        requiresAuth: false,
         // requiresMember: true
       },
       component: () => import('@/views/auth/otp.vue')
@@ -412,6 +412,21 @@ const router = createRouter({
         requiresMember: true
       },
       component: () => import('@/views/member/help.vue')
+    },
+    {
+      path: '/member/notifications-center',
+      name: 'notifications-center',
+      meta: {
+        title: 'Notifikasi | GASCPNS',
+        description: 'Halaman notifikasi',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Notifications', to: '/member/notifications-center' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/notifications.vue')
     },
     { 
       path: '/member/notfound',
