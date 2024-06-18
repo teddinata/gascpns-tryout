@@ -198,7 +198,7 @@ const router = createRouter({
       path: '/member/paket/:slug/checkout',
       name: 'PaymentMethod',
       meta: {
-        title: 'Pilih Metode Pembayaran | GASCPNS',
+        title: 'Metode Pembayaran | GASCPNS',
         description: 'Halaman pilih metode pembayaran',
         links: [
           { label: 'Dashboard', to: '/member/dashboard' },
@@ -228,7 +228,7 @@ const router = createRouter({
       path: '/member/transaksi/:invoiceId/payment',
       name: 'Payment',
       meta: {
-        title: 'Payment | GASCPNS',
+        title: 'Pembayaran | GASCPNS',
         description: 'Halaman pembayaran',
         links: [
           { label: 'Dashboard', to: '/member/dashboard' },
