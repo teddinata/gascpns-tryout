@@ -88,6 +88,13 @@
                 class="mt-2 bg-blue-500 text-white px-2 py-1 rounded-md">
                 Buka Aplikasi di HP
               </a>
+              <a 
+                v-if="transactionData[0]?.payment_channel == 'ID_DANA' || transactionData[0]?.payment_channel == 'ID_LINKAJA'"
+                :href="transactionData[0]?.payment_url"
+                target="_blank"
+                class="mt-2 bg-blue-500 text-white px-2 py-1 rounded-md">
+                Buka di Laptop
+              </a> 
               <!-- text information -->
               <span class="mt-2">
                 Salin link di atas dan buka di browser untuk melanjutkan pembayaran
@@ -95,7 +102,8 @@
             </p>
 
              <!-- QR code if payment channel is QRIS -->
-            <div v-else-if="transactionData[0]?.payment_channel == 'QRIS'" class="mt-4 flex flex-col items-center">
+            <div v-else-if="transactionData[0]?.payment_channel == 'QRIS' || transactionData[0]?.payment_channel == 'ID_SHOPEEPAY'"
+              class="mt-4 flex flex-col items-center">
               <qrcode-vue :value="transactionData[0]?.payment_number" :size="200" />
               <p class="font-semibold mt-4">Scan QR Code untuk pembayaran</p>
             </div>

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { Icon } from '@iconify/vue';
 import { formatRupiah, relativeTime } from '@/filters';
+import { useToast } from 'vue-toastification';
 
 const props = defineProps({
   title: String,
@@ -18,6 +19,7 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const activeTab = ref('transaction'); // Default tab
+const toast = useToast();
 
 const hideSidebar = computed(() => route.path === "/member/latihan" || route.path === "/member/tryout");
 
@@ -38,6 +40,9 @@ const toggleDropdown = () => {
 
 const handleLogout = () => {
   store.dispatch('auth/logout');
+  localStorage.removeItem("token");
+  toast.success("Anda berhasil logout");
+  router.push("/login");
 };
 
 onMounted(() => {
