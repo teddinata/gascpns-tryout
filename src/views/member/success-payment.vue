@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <MemberLayouts>
+  <!-- <MemberLayouts> -->
     <div class="w-full flex justify-center items-center h-screen gap-4">
       <!-- image -->
       <div class="flex flex-col items-center gap-4">
@@ -23,11 +23,11 @@
         </button>
       </div>
     </div>
-  </MemberLayouts>
+  <!-- </MemberLayouts> -->
 </template>
 
 <script setup>
-import MemberLayouts from "@/components/MemberLayouts.vue";
+// import MemberLayouts from "@/components/MemberLayouts.vue";
 import { Icon } from '@iconify/vue';
 import { useRouter } from 'vue-router';
 
