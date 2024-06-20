@@ -428,6 +428,21 @@ const router = createRouter({
       },
       component: () => import('@/views/member/notifications.vue')
     },
+    {
+      path: '/member/blog/:id',
+      name: 'blog-detail',
+      meta: {
+        title: 'Blog | GASCPNS',
+        description: 'Halaman detail blog GASCPNS',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Blog', to: '/member/blog' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/blog-detail.vue')
+    },
     { 
       path: '/member/notfound',
       name: 'NotFound', 

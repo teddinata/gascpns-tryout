@@ -109,7 +109,7 @@ const faqs = ref([
   {
     question: 'Bisakah saya mengulang tryout yang telah selesai?',
     answer: 
-      "Ya, Anda dapat mengulang tryout yang telah selesai. Hasil percobaan sebelumnya akan tersimpan sehingga Anda dapat melihat kemajuan Anda dari waktu ke waktu.",
+      "Kami memahami bahwa Anda mungkin ingin mengulang tryout untuk memperbaiki skor Anda. Namun, demi memaksimalkan potensi Anda, sistem kami tidak mendukung pengulangan tryout yang telah selesai. Kebijakan ini dirancang untuk mendorong Anda memberikan yang terbaik pada kesempatan pertama. Persiapkan diri dengan baik dan manfaatkan setiap tryout secara optimal.",
   },
   {
     question: 'Bagaimana cara melihat hasil dan analisis tryout?',
