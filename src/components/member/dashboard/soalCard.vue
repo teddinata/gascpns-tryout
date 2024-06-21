@@ -32,7 +32,8 @@ const router = useRouter();
 </script>
 <template>
   <div
-    class="w-full max-w-[300px] flex flex-col gap-4 bg-white rounded-xl p-3 shadow-lg justify-between"
+    class="w-full max-w-[300px] flex flex-col gap-4 bg-white rounded-xl p-3 shadow-lg justify-between
+     hover:bg-gray-100 transition duration-200"
   >
     <img :src="soal.cover_path" class="w-full h-40" :alt="soal.title" />
     <h1 class="text-xl font-semibold text-text-primary">{{ soal.name }}</h1>

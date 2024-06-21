@@ -94,6 +94,14 @@ const settings = [
   },
 ];
 
+const news = [
+  {
+    name: "Berita CPNS",
+    url: "/member/news",
+    icons: "fluent:news-20-regular",
+  },
+];
+
 const settings2 = [
   {
     name: "Log Out 2",
@@ -158,6 +166,12 @@ const settings2 = [
     <div class="flex flex-col gap-4">
       <h1 class="text-md font-medium text-text-tertiary">SETTINGS</h1>
       <NavigationLink :links="settings" />
+    </div>
+
+    <!-- NEWS section -->
+    <div class="flex flex-col gap-4">
+      <h1 class="text-md font-medium text-text-tertiary">NEWS</h1>
+      <NavigationLink :links="news" />
     </div>
 
     <!-- LOGOUT section -->
