@@ -17,7 +17,7 @@ onMounted(async () => {
   try {
     const responseSoal = await api.get(`/v1/tryout/favorite`);
     soalData.value = responseSoal.data.data.data;
-    console.log('Soal details:', soalData.value[0].discount);
+    // console.log('Soal details:', soalData.value[0].discount);
     
     const responseBlog = await api.get(`/v1/blog`);
     blogData.value = responseBlog.data.data.data;
