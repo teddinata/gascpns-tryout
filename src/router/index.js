@@ -428,15 +428,30 @@ const router = createRouter({
       },
       component: () => import('@/views/member/notifications.vue')
     },
+    // blog
     {
-      path: '/member/blog/:id',
-      name: 'blog-detail',
+      path: '/member/news',
+      name: 'news',
       meta: {
-        title: 'Blog | GASCPNS',
+        title: 'News | GASCPNS',
+        description: 'Halaman blog GASCPNS',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'News', to: '/member/news' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/blog.vue')
+    },
+    {
+      path: '/member/news/:slug',
+      name: 'news-detail',
+      meta: {
         description: 'Halaman detail blog GASCPNS',
         links: [
           { label: 'Dashboard', to: '/member/dashboard' },
-          { label: 'Blog', to: '/member/blog' }
+          { label: 'News', to: '/member/news' }
         ],
         requiresAuth: true,
         requiresMember: true

@@ -28,7 +28,8 @@ onMounted(async () => {
 
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+  const locale = 'id-ID'; // Set the locale to 'id-ID' for Indonesian format
+  return new Date(dateString).toLocaleDateString(locale, options);
 };
 
 const truncateContent = (content) => {
@@ -103,7 +104,7 @@ const truncatedBlogData = computed(() => {
           <router-link
             v-for="blog in truncatedBlogData"
             :key="blog.id"
-            :to="{ name: 'blog-detail', params: { id: blog.id } }"
+            :to="{ name: 'news-detail', params: { slug: blog.slug } }"
             class="bg-white rounded-lg shadow-lg p-4 block hover:bg-gray-100 transition duration-200"
           >
             <img :src="blog.image" alt="Blog Image" class="w-full h-48 object-cover rounded-lg">
