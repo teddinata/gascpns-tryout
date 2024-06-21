@@ -3,6 +3,7 @@
 import DashboardCard from "@/components/member/dashboard/dashboardCard.vue";
 import SoalCard from "@/components/member/dashboard/soalCard.vue";
 import MemberLayouts from "@/components/MemberLayouts.vue";
+import { formatRupiah } from "@/filters";
 
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
@@ -10,6 +11,7 @@ import api from '@/api/Api.js'; // Mengimpor instansi Axios
 
 const soalData = ref([]);
 const blogData = ref([]);
+const dashboardData = ref({});
 
 onMounted(async () => {
   try {
@@ -20,6 +22,10 @@ onMounted(async () => {
     const responseBlog = await api.get(`/v1/blog`);
     blogData.value = responseBlog.data.data.data;
     console.log('Blog details:', blogData.value);
+
+    const dashboard = await api.get(`/v1/dashboard`);
+    dashboardData.value = dashboard.data.data;
+    console.log('Dashboard details:', dashboard.data.data);
   } catch (error) {
     console.error('Error fetching details:', error);
     // Handle error, tampilkan pesan error, dll.
@@ -56,33 +62,41 @@ const truncatedBlogData = computed(() => {
     <div class="flex flex-col space-y-10">
       <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5">
         <DashboardCard
-          title="Soal Tryout Anda"
+          title="Paket Tryoutmu"
           icon="mage:message-question-mark-fill"
-          content="10"
+          :content="dashboardData.total_purchased_package"
           content-color="text-text-primary"
           bg-icon-color="bg-[#E0F3FE]"
           icon-color="text-primary"
         />
-        <DashboardCard
+        <!-- <DashboardCard
           title="Rangking Terakhir"
           icon="fa6-solid:ranking-star"
           content="10"
           content-color="text-text-primary"
           bg-icon-color="bg-[#FDFEE0]"
           icon-color="text-[#E8C444]"
-        />
+        /> -->
         <DashboardCard
-          title="Soal yang Dikerjakan"
+          title="Tryout Dikerjakan"
           icon="mage:message-question-mark-fill"
-          content="10"
+          :content="dashboardData.total_tryout_worked"
           content-color="text-text-primary"
           bg-icon-color="bg-[#FEE0E0]"
           icon-color="text-[#E30B3F]"
         />
         <DashboardCard
+          title="Transaksi Kamu"
+          icon="fa6-solid:money-bill-wave"
+          :content="formatRupiah(dashboardData.total_transaction)"
+          content-color="text-text-primary"
+          bg-icon-color="bg-[#E0FEE0]"
+          icon-color="text-[#0BE361]"
+        />
+        <DashboardCard
           title="Total User"
           icon="mage:users-fill"
-          content="1000"
+          :content="dashboardData.total_user"
           content-color="text-text-primary"
           bg-icon-color="bg-[#E0FEEE]"
           icon-color="text-[#0BE361]"
