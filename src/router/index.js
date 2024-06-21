@@ -397,6 +397,52 @@ const router = createRouter({
       },
       component: () => import('@/views/member/profile-setting.vue')
     },
+    {
+      path: '/member/my-profile',
+      name: 'my-profile',
+      meta: {
+        title: 'Profil Saya | GASCPNS',
+        description: 'Halaman menampilkan profile',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Profile', to: '/member/profile' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/show-profile.vue')
+    },
+    // topup
+    {
+      path: '/member/topup',
+      name: 'topup',
+      meta: {
+        title: 'Topup | GASCPNS',
+        description: 'Halaman topup saldo',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Topup', to: '/member/topup' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/topup.vue')
+    },
+    {
+      path: '/member/topup/:id',
+      name: 'topup-detail',
+      meta: {
+        title: 'Topup Detail | GASCPNS',
+        description: 'Halaman detail topup saldo',
+        links: [
+          { label: 'Dashboard', to: '/member/dashboard' },
+          { label: 'Topup', to: '/member/topup' }
+        ],
+        requiresAuth: true,
+        requiresMember: true
+      },
+      component: () => import('@/views/member/topup-detail.vue'),
+    },
     // help page
     {
       path: '/member/help',
