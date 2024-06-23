@@ -266,7 +266,7 @@ const router = createRouter({
           { label: 'Dashboard', to: '/member/dashboard' },
           { label: 'Payment Method', to: '/member/payment-method' }
         ],
-        requiresAuth: false,
+        requiresAuth: true,
         // requiresMember: true
       },
       component: () => import('@/views/auth/otp.vue')
