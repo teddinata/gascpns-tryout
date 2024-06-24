@@ -168,7 +168,7 @@ const getNotificationIcon = (type) => {
         
         <div class="relative">
           <button @click="toggleDropdown" class="flex items-center gap-2">
-            <img :src="props.image" class="w-8 h-8 rounded-full" alt="Profile Image" />
+            <img :src="user.avatar" class="w-8 h-8 rounded-full" alt="Profile Image" />
             <p class="text-text-primary font-medium">Hi, {{ user?.name }}!</p>
             <Icon icon="fa-solid:chevron-down" class="text-xl" />
           </button>

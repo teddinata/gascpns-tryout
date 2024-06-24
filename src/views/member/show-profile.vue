@@ -14,7 +14,7 @@
           <h3 class="text-xl font-bold mb-2">Saldo Anda</h3>
           <p class="text-2xl font-semibold text-green-600">{{ formatRupiah(user.wallet_balance) }}</p>
         </div>
-        <router-link to="/member/topup" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700">Top-Up Saldo</router-link>
+        <router-link to="/member/topup" class="mt-4 inline-block bg-primary rounded-full text-white px-4 py-2 shadow hover:bg-blue-700">Top-Up Saldo</router-link>
       </div>
       
       <!-- Riwayat Pengisian Saldo -->
