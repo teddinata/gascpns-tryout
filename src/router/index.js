@@ -260,12 +260,8 @@ const router = createRouter({
       path: '/verify-otp',
       name: 'verify-otp',
       meta: {
-        title: 'Verification | GASCPNS',
+        title: 'Verifikasi Akun | GASCPNS',
         description: 'Halaman OTP',
-        links: [
-          { label: 'Dashboard', to: '/member/dashboard' },
-          { label: 'Payment Method', to: '/member/payment-method' }
-        ],
         requiresAuth: true,
         // requiresMember: true
       },

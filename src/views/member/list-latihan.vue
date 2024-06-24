@@ -45,7 +45,7 @@
                     <button
                       v-if="item.status === 'Belum Dikerjakan' && !item.is_enrolled"
                       @click="claimPackage(item.id)"
-                      class="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                      class="px-4 py-2 rounded-full bg-primary text-white font-semibold hover:bg-secondary"
                     >
                       Klaim
                     </button>

@@ -25,34 +25,32 @@ const togglePassword = () => {
 };
 
 const login = async () => {
-    try {
-        isLoading.value = true; // Set loading menjadi true sebelum request dimulai
-        const response = await store.dispatch("auth/login", userData.value);
+  try {
+    isLoading.value = true;
+    const response = await store.dispatch("auth/login", userData.value);
 
-        isLoading.value = false; // Set loading menjadi false setelah request selesai
+    isLoading.value = false;
 
-        const isVerified = store.getters["auth/isVerified"];
-        
-        // save email to session storage
-        localStorage.setItem('verificationEmail', userData.value.email_or_username); // Simpan ke localStorage
-        
-        if (!isVerified) { // Gunakan isVerified yang sudah diupdate di Vuex store
-            router.push('/verify-otp'); 
-            toast.error(response.data.message || 'Email kamu belum terverifikasi nih. Silakan cek email kamu untuk verifikasi ya.');
-        } else {
-            router.push(store.getters["auth/isAdmin"] ? "/admin/dashboard" : "/member/dashboard");
-            toast.success("Login berhasil! Selamat datang di GASCPNS.🙂");
-        }
-    } catch (error) {
-        isLoading.value = false; // Set loading menjadi false jika request gagal
-        if (error.meta.code === 400 && error.meta.message === 'Unverified Email') {
-            localStorage.setItem('verificationEmail', userData.value.email_or_username); // Simpan ke localStorage
-            router.push('/verify-otp');
-            toast.error(error.data.message);
-        } else {
-            toast.error(error.message || 'Login gagal! Pastikan email atau username dan password kamu benar.');
-        }
+    const isVerified = store.getters["auth/isVerified"];
+    
+    localStorage.setItem('verificationEmail', userData.value.email_or_username);
+    
+    if (!isVerified) {
+      router.push('/verify-otp');
+      toast.error(response.data.message || 'Email kamu belum terverifikasi nih. Silakan cek email kamu untuk verifikasi ya.');
+    } else {
+      router.push(store.getters["auth/userRole"] === "admin" ? "/admin/dashboard" : "/member/dashboard");
+      toast.success("Login berhasil! Selamat datang di GASCPNS.🙂");
     }
+  } catch (error) {
+    isLoading.value = false;
+    if (error.message === 'Unverified Email') {
+      router.push('/verify-otp');
+      toast.error(error.data.message);
+    } else {
+      toast.error(error.message || 'Login gagal! Pastikan email atau username dan password kamu benar.');
+    }
+  }
 };
 
 
@@ -60,7 +58,7 @@ const login = async () => {
 
 
 <template>
-  <div class="flex flex-row min-h-screen w-full relative">
+  <div class="flex flex-col md:flex-row min-h-screen w-full relative">
 
     <!-- loading -->
     <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500">
@@ -84,124 +82,74 @@ const login = async () => {
       </div>
     </div>
 
-    <div
-      class="w-2/5 min-h-screen bg-gradient-to-b from-primary to-secondary rounded-r-3xl"
-    >
+    <div class="md:w-2/5 min-h-screen bg-gradient-to-b from-primary to-secondary rounded-r-3xl hidden md:flex">
       <div class="flex flex-col justify-between items-center h-full pt-10">
         <img src="/logo-white.png" class="w-48 pb-20" />
         <div class="flex flex-col h-full">
-          <img src="/pramana-2.png" 
-            class="w-full transform" />
+          <img src="/pramana-2.png" class="w-full transform" />
         </div>
       </div>
     </div>
-    <div class="w-3/5 h-full">
-      <div class="w-full flex justify-center py-48">
-        <div class="flex flex-col space-y-4 w-[400px]">
-          <h5 class="text-text-primary font-bold text-[20px] text-center">
-            Login ke Akun GASCPNS Anda
-          </h5>
-          <form class="flex flex-col gap-5" @submit.prevent="login">
-            <!-- <div class="flex flex-col gap-1">
-              <label for="email" class="text-text-primary font-medium text-sm"
-                >Email*</label
-              >
+
+    <div class="w-full md:w-3/5 h-full flex justify-center items-center py-12 md:py-24 px-4 md:px-0">
+      <div class="flex flex-col space-y-4 w-full md:w-[400px]">
+        <h5 class="text-text-primary font-bold text-[32px] md:text-[40px] text-center">
+          Login ke Akun GASCPNS Kamu
+        </h5>
+        <form class="flex flex-col gap-5" @submit.prevent="login">
+          <div class="flex flex-col gap-1">
+            <label for="email_or_username" class="text-text-primary font-medium text-sm">
+              Username atau Email Anda
+              <small class="text-xs text-[#ff4545]">*</small>
+            </label>
+            <input
+              type="text"
+              v-model="userData.email_or_username"
+              id="email_or_username"
+              name="email_or_username"
+              class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl"
+              placeholder="Masukkan Email atau Username Anda"
+              required
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="password" class="text-text-primary font-medium text-sm">
+              Password
+              <small class="text-xs text-[#ff4545]">*</small>
+            </label>
+            <div class="password-container">
               <input
-                type="email"
-                v-model="userData.email"
-                id="email"
-                name="email"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Email Anda"
+                :type="showPassword ? 'text' : 'password'"
+                v-model="userData.password"
+                id="password"
+                name="password"
+                class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl"
+                placeholder="Masukkan Password Anda"
+                minlength="8"
                 required
               />
-            </div> -->
-            <div class="flex flex-col gap-1">
-              <label
-                for="email_or_username"
-                class="text-text-primary font-medium text-sm"
-                >Username atau Email Anda
-                <small class="text-xs text-[#ff4545]">*</small>
-                </label
-              >
-              <input
-                type="text"
-                v-model="userData.email_or_username"
-                id="email_or_username"
-                name="email_or_username"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Email atau Username Anda"
-                required
-              />
+              <button type="button" class="password-toggle" @click="togglePassword">
+                <Icon icon="ph:eye-light" class="text-xl" v-if="!showPassword" />
+                <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
+              </button>
             </div>
-            <div class="flex flex-col gap-1">
-              <label
-                for="password"
-                class="text-text-primary font-medium text-sm"
-                >Password
-                <small class="text-xs text-[#ff4545]">*</small>
-                </label
-              >
-              <div class="password-container">
-                <input
-                  :type="showPassword ? 'text' : 'password'"
-                  v-model="userData.password"
-                  id="password"
-                  name="password"
-                  class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                  placeholder="Masukkan Password Anda"
-                  minlength="8"
-                  required
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  @click="togglePassword"
-                >
-                  <Icon
-                    icon="ph:eye-light"
-                    class="text-xl"
-                    v-if="!showPassword"
-                  />
-                  <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
-                </button>
-              </div>
-              <div class="flex justify-end">
-                <p class="text-sm text-text-tertiary">
-                  Must be at least 8 Characters.
-                </p>
-              </div>
+            <div class="flex justify-end">
+              <p class="text-sm text-text-tertiary">Must be at least 8 Characters.</p>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              class="bg-primary text-white w-full rounded-xl py-3"
-            >
-              Login
-            </button>
-            <button class="bg-white drop-shadow-md w-full rounded-xl py-3">
-              <router-link
-                to="#"
-                aria-lable="Google Sign In"
-                class="w-full flex justify-center items-center"
-              >
-                <Icon icon="flat-color-icons:google" class="text-2xl" />
-                <span class="ml-3">Sign up with Google</span>
-              </router-link>
-            </button>
-            <div
-              class="text-sm text-text-primary flex items-center gap-1 justify-center"
-            >
-              <p>Apakah kamu belum punya akun?</p>
-
-              <router-link
-                to="/register"
-                class="text-primary underline cursor-pointer"
-                >Daftar</router-link
-              >
-            </div>
-          </form>
-        </div>
+          <button type="submit" class="bg-primary text-white w-full rounded-xl py-3">Login</button>
+          <button class="bg-white drop-shadow-md w-full rounded-xl py-3">
+            <router-link to="#" aria-label="Google Sign In" class="w-full flex justify-center items-center">
+              <Icon icon="flat-color-icons:google" class="text-2xl" />
+              <span class="ml-3">Sign up with Google</span>
+            </router-link>
+          </button>
+          <div class="text-sm text-text-primary flex items-center gap-1 justify-center">
+            <p>Apakah kamu belum punya akun?</p>
+            <router-link to="/register" class="text-primary underline cursor-pointer">Daftar</router-link>
+          </div>
+        </form>
       </div>
     </div>
   </div>

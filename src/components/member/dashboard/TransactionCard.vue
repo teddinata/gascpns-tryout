@@ -26,8 +26,8 @@
     <div class="border-b border-gray-200 mb-4"></div>
     <div class="flex justify-between items-center">
       <div class="flex gap-2">
-        <button class="bg-primary text-white px-4 py-2 rounded-md shadow hover:bg-blue-700" @click.stop="buyPackageAgain">Beli Paket Lagi</button>
-        <button class="bg-secondary text-white px-4 py-2 rounded-md shadow hover:bg-green-700" @click.stop="goToTransactionDetail(transaction.id)">Lihat Invoice</button>
+        <button class="bg-primary text-white px-4 py-2 rounded-full shadow hover:bg-blue-700" @click.stop="buyPackageAgain">Beli Paket Lagi</button>
+        <button class="bg-secondary text-white px-4 py-2 rounded-full shadow hover:bg-green-700" @click.stop="goToTransactionDetail(transaction.id)">Lihat Invoice</button>
       </div>
       <div class="text-lg font-semibold text-gray-900">{{ formatRupiah(transaction.total_amount) }}</div>
     </div>

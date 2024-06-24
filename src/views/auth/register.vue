@@ -10,7 +10,7 @@ import { formatRupiah } from "@/filters";
 const store = useStore();
 const router = useRouter();
 const toast = useToast();
-const isLoading = ref(false); // Menambahkan state untuk loading
+const isLoading = ref(false);
 
 const userData = ref({
   name: "",
@@ -36,54 +36,34 @@ const togglePasswordConfirmation = () => {
 
 const register = async () => {
   try {
-    isLoading.value = true; // Set isLoading menjadi true
+    isLoading.value = true;
     const userResponse = await store.dispatch("auth/register", userData.value);
-    // console.log('User response:', userResponse);
-    const user = userResponse.data.data.user; // Ambil data user dari respons API
+    const user = userResponse.data.data.user;
 
-    isLoading.value = false; // Set isLoading menjadi false
+    isLoading.value = false;
 
-    // Simpan data yang diperlukan ke sessionStorage 
     localStorage.setItem('verificationEmail', user.email);
-    localStorage.setItem('userId', user.id); // Jika Anda memerlukan ID pengguna di backend
+    localStorage.setItem('userId', user.id);
 
-    // Redirect ke halaman verifikasi
     router.push('/verify-otp');
-
-    // Redirect to the appropriate page based on user role.
-    // router.push(
-    //   store.getters["auth/isAdmin"] ? "/admin/dashboard" : "/member/dashboard"
-    // );
-    // get response data from store and show toast with conditional message
-    // if (user.wallet_balance > 0) {
-    //   toast.success('Selamat! Anda mendapatkan saldo sebesar Rp. ' +  formatRupiah(user.wallet_balance) + ' dari kode referral. Anda dapat menggunakan saldo ini untuk bertransaksi');
-    // } else {
-    //   toast.success('Registrasi berhasil! Selamat datang di platform kami. Silahkan top up saldo anda untuk mulai bertransaksi');
-    // }
-    // toast.success('Registrasi berhasil! Selamat datang di platform kami. 🙂');
   } catch (error) {
-    isLoading.value = false; // Set isLoading menjadi false
+    isLoading.value = false;
     console.error("Registration failed:", error);
-    // Penanganan error validasi (422)
-    if (error.meta && error.meta.code === 422 && error.data.errors) { 
-      for (const field in error.data.errors) { // Perhatikan, akses error.data.errors
+    if (error.meta && error.meta.code === 422 && error.data.errors) {
+      for (const field in error.data.errors) {
         error.data.errors[field].forEach(errorMessage => {
           toast.error(errorMessage);
         });
       }
     } else {
-      // Penanganan error lainnya
       toast.error(error.message || 'Registration failed. Please try again.');
     }
   }
 };
 </script>
 
-
-
 <template>
-  <div class="flex flex-row min-h-screen w-full relative">
-
+  <div class="flex flex-col md:flex-row min-h-screen w-full relative">
     <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500">
       <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
         <div class="wheel"></div>
@@ -105,229 +85,82 @@ const register = async () => {
       </div>
     </div>
 
-    <div
-      class="w-2/5 min-h-screen bg-gradient-to-b from-primary to-secondary rounded-r-3xl"
-    >
+    <div class="md:w-2/5 min-h-screen bg-gradient-to-b from-primary to-secondary rounded-r-3xl hidden md:flex">
       <div class="flex flex-col justify-between items-center h-full pt-10">
         <img src="/logo-white.png" class="w-48 pb-20" />
-        <div class="flex flex-col h-full">
-          <img src="/pramana-2.png" 
-            class="w-full transform" />
+        <div class="flex flex-col">
+          <img src="/pramana-2.png" class="w-full transform" />
         </div>
       </div>
     </div>
-    <div class="w-3/5 h-full">
-      <div class="w-full flex justify-center py-24">
-        <div class="flex flex-col space-y-4 w-[400px]">
-          <h1 class="text-text-primary font-bold text-[40px] text-center">
-            Register
-          </h1>
-          <form class="flex flex-col gap-5" @submit.prevent="register">
-            <div class="flex flex-col gap-1">
-              <label for="name" class="text-text-primary font-medium text-sm"
-                >Name
-                <small class="text-xs text-[#ff4545]">*</small>
-                </label
-              >
-              <input
-                type="text"
-                v-model="userData.name"
-                id="name"
-                name="name"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Nama Anda"
-                required
-              />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label for="email" class="text-text-primary font-medium text-sm"
-                >Email
-                <small class="text-xs text-[#ff4545]">*</small>
-                </label
-              >
-              <input
-                type="email"
-                v-model="userData.email"
-                id="email"
-                name="email"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Email Anda"
-                required
-              />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label
-                for="username"
-                class="text-text-primary font-medium text-sm"
-                >Username
-                <small class="text-xs text-[#ff4545]">*</small>
-                </label
-                >
-              <input
-                type="text"
-                v-model="userData.username"
-                id="username"
-                name="username"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Username Anda"
-                required
-              />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label for="phone" class="text-text-primary font-medium text-sm"
-                >Phone
-                <small class="text-xs text-[#ff4545]">*</small>
-              </label
-              >
-              <input
-                type="tel"
-                v-model="userData.phone"
-                id="phone"
-                name="phone"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan No HP Anda"
-                required
-              />
-            </div>
-            
-            <!-- birth date -->
-            <div class="flex flex-col gap-1">
-              <label for="birthdate" class="text-text-primary font-medium text-sm"
-              >Tanggal Lahir
-              <small class="text-xs text-[#ff4545]">*</small>
-            </label>
-              
-              <input
-                type="date"
-                v-model="userData.birthdate"
-                id="birthdate"
-                name="birthdate"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Tanggal Lahir Anda"
-                required
-              />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label
-                for="password"
-                class="text-text-primary font-medium text-sm"
-                >Password
-                <small class="text-xs text-[#ff4545]">*</small>
-                
-                </label
-              >
-              <div class="password-container">
-                <input
-                  :type="showPassword ? 'text' : 'password'"
-                  v-model="userData.password"
-                  id="password"
-                  name="password"
-                  class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                  placeholder="Masukkan Password Anda"
-                  minlength="8"
-                  required
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  @click="togglePassword"
-                >
-                  <Icon
-                    icon="ph:eye-light"
-                    class="text-xl"
-                    v-if="!showPassword"
-                  />
-                  <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
-                </button>
-              </div>
 
-              <div class="flex justify-end">
-                <p class="text-sm text-text-tertiary">
-                  Must be at least 8 Characters.
-                </p>
-              </div>
+    <div class="w-full md:w-3/5 h-full flex justify-center items-center py-12 md:py-24 px-4 md:px-0">
+      <div class="flex flex-col space-y-4 w-full md:w-[400px]">
+        <h1 class="text-text-primary font-bold text-[32px] md:text-[40px] text-center">Daftar Akun GASCPNS</h1>
+        <form class="flex flex-col gap-5" @submit.prevent="register">
+          <div class="flex flex-col gap-1">
+            <label for="name" class="text-text-primary font-medium text-sm">Name<small class="text-xs text-[#ff4545]">*</small></label>
+            <input type="text" v-model="userData.name" id="name" name="name" class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl" placeholder="Masukkan Nama Anda" required />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="email" class="text-text-primary font-medium text-sm">Email<small class="text-xs text-[#ff4545]">*</small></label>
+            <input type="email" v-model="userData.email" id="email" name="email" class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl" placeholder="Masukkan Email Anda" required />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="username" class="text-text-primary font-medium text-sm">Username<small class="text-xs text-[#ff4545]">*</small></label>
+            <input type="text" v-model="userData.username" id="username" name="username" class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl" placeholder="Masukkan Username Anda" required />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="phone" class="text-text-primary font-medium text-sm">Phone<small class="text-xs text-[#ff4545]">*</small></label>
+            <input type="tel" v-model="userData.phone" id="phone" name="phone" class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl" placeholder="Masukkan No HP Anda" required />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="birthdate" class="text-text-primary font-medium text-sm">Tanggal Lahir<small class="text-xs text-[#ff4545]">*</small></label>
+            <input type="date" v-model="userData.birthdate" id="birthdate" name="birthdate" class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl" placeholder="Masukkan Tanggal Lahir Anda" required />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="password" class="text-text-primary font-medium text-sm">Password<small class="text-xs text-[#ff4545]">*</small></label>
+            <div class="password-container">
+              <input :type="showPassword ? 'text' : 'password'" v-model="userData.password" id="password" name="password" class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl" placeholder="Masukkan Password Anda" minlength="8" required />
+              <button type="button" class="password-toggle" @click="togglePassword">
+                <Icon icon="ph:eye-light" class="text-xl" v-if="!showPassword" />
+                <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
+              </button>
             </div>
-            <div class="flex flex-col gap-1">
-              <label
-                for="password"
-                class="text-text-primary font-medium text-sm"
-                >Confirm Password
-                <small class="text-xs text-[#ff4545]">*</small>
-                </label
-              >
-              <div class="password-container">
-                <input
-                  :type="showPasswordConfirmation ? 'text' : 'password'"
-                  v-model="userData.password_confirmation"
-                  id="password_confirmation"
-                  name="password"
-                  class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                  placeholder="Masukkan Password Anda"
-                  minlength="8"
-                  required
-                />
-                <button
-                  type="button"
-                  class="password-toggle"
-                  @click="togglePasswordConfirmation"
-                >
-                  <Icon
-                    icon="ph:eye-light"
-                    class="text-xl"
-                    v-if="!showPasswordConfirmation"
-                  />
-                  <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
-                </button>
-              </div>
-              <div class="flex justify-end">
-                <p class="text-sm text-text-tertiary">
-                  Must be at least 8 Characters.
-                </p>
-              </div>
+            <div class="flex justify-end">
+              <p class="text-sm text-text-tertiary">Must be at least 8 Characters.</p>
             </div>
-
-            <!-- referral code -->
-            <div class="flex flex-col gap-1">
-              <label for="phone" class="text-text-primary font-medium text-sm"
-                >Referral Code</label>
-              <small class="text-xs text-text-tertiary">Optional</small>
-              <input
-                type="tel"
-                v-model="userData.referral_code"
-                id="referral_code"
-                name="referral_code"
-                class="w-full px-6 py-3 border border-[#C7C9D9] rounded-xl"
-                placeholder="Masukkan Kode Referral Anda"
-              />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="password_confirmation" class="text-text-primary font-medium text-sm">Confirm Password<small class="text-xs text-[#ff4545]">*</small></label>
+            <div class="password-container">
+              <input :type="showPasswordConfirmation ? 'text' : 'password'" v-model="userData.password_confirmation" id="password_confirmation" name="password_confirmation" class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl" placeholder="Masukkan Password Anda" minlength="8" required />
+              <button type="button" class="password-toggle" @click="togglePasswordConfirmation">
+                <Icon icon="ph:eye-light" class="text-xl" v-if="!showPasswordConfirmation" />
+                <Icon icon="ph:eye-slash-light" class="text-xl" v-else />
+              </button>
             </div>
-            <button
-              type="submit"
-              class="bg-primary text-white w-full rounded-xl py-3"
-            >
-              Daftar
-            </button>
-            <button class="bg-white drop-shadow-md w-full rounded-xl py-3">
-              <router-link
-                to="#"
-                aria-lable="Google Sign In"
-                class="w-full flex justify-center items-center"
-              >
-                <Icon icon="flat-color-icons:google" class="text-2xl" />
-                <span class="ml-3">Sign up with Google</span>
-              </router-link>
-            </button>
-            <div
-              class="text-sm text-text-primary flex items-center gap-1 justify-center"
-            >
-              <p>Apakah kamu sudah punya akun?</p>
-              <router-link
-                to="/login"
-                class="text-primary underline cursor-pointer"
-                >Login</router-link
-              >
+            <div class="flex justify-end">
+              <p class="text-sm text-text-tertiary">Must be at least 8 Characters.</p>
             </div>
-          </form>
-        </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="referral_code" class="text-text-primary font-medium text-sm">Referral Code</label>
+            <small class="text-xs text-text-tertiary">Optional</small>
+            <input type="text" v-model="userData.referral_code" id="referral_code" name="referral_code" class="w-full px-4 py-2 md:px-6 md:py-3 border border-[#C7C9D9] rounded-xl" placeholder="Masukkan Kode Referral Anda" />
+          </div>
+          <button type="submit" class="bg-primary text-white w-full rounded-xl py-3">Daftar</button>
+          <button class="bg-white drop-shadow-md w-full rounded-xl py-3">
+            <router-link to="#" aria-label="Google Sign In" class="w-full flex justify-center items-center">
+              <Icon icon="flat-color-icons:google" class="text-2xl" />
+              <span class="ml-3">Sign up with Google</span>
+            </router-link>
+          </button>
+          <div class="text-sm text-text-primary flex items-center gap-1 justify-center">
+            <p>Apakah kamu sudah punya akun?</p>
+            <router-link to="/login" class="text-primary underline cursor-pointer">Login</router-link>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -336,8 +169,7 @@ const register = async () => {
 <style>
 /* Inside your style tag (or in your CSS file if not scoped) */
 .password-container {
-  /* We'll use a wrapper to help position */
-  position: relative; /* Establish a relative positioning context */
+  position: relative;
 }
 
 .password-toggle {
@@ -345,204 +177,7 @@ const register = async () => {
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
-  cursor: pointer; /* Indicate that the button is clickable */
-}
-
-#wifi-loader {
-  --background: #62abff;
-  --front-color: #0BA7E3;
-  --back-color: #c3c8de;
-  --text-color: #414856;
-  width: 64px;
-  height: 64px;
-  border-radius: 50px;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#wifi-loader svg {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#wifi-loader svg circle {
-  position: absolute;
-  fill: none;
-  stroke-width: 6px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transform: rotate(-100deg);
-  transform-origin: center;
-}
-
-#wifi-loader svg circle.back {
-  stroke: var(--back-color);
-}
-
-#wifi-loader svg circle.front {
-  stroke: var(--front-color);
-}
-
-#wifi-loader svg.circle-outer {
-  height: 86px;
-  width: 86px;
-}
-
-#wifi-loader svg.circle-outer circle {
-  stroke-dasharray: 62.75 188.25;
-}
-
-#wifi-loader svg.circle-outer circle.back {
-  animation: circle-outer135 1.8s ease infinite 0.3s;
-}
-
-#wifi-loader svg.circle-outer circle.front {
-  animation: circle-outer135 1.8s ease infinite 0.15s;
-}
-
-#wifi-loader svg.circle-middle {
-  height: 60px;
-  width: 60px;
-}
-
-#wifi-loader svg.circle-middle circle {
-  stroke-dasharray: 42.5 127.5;
-}
-
-#wifi-loader svg.circle-middle circle.back {
-  animation: circle-middle6123 1.8s ease infinite 0.25s;
-}
-
-#wifi-loader svg.circle-middle circle.front {
-  animation: circle-middle6123 1.8s ease infinite 0.1s;
-}
-
-#wifi-loader svg.circle-inner {
-  height: 34px;
-  width: 34px;
-}
-
-#wifi-loader svg.circle-inner circle {
-  stroke-dasharray: 22 66;
-}
-
-#wifi-loader svg.circle-inner circle.back {
-  animation: circle-inner162 1.8s ease infinite 0.2s;
-}
-
-#wifi-loader svg.circle-inner circle.front {
-  animation: circle-inner162 1.8s ease infinite 0.05s;
-}
-
-#wifi-loader .text {
-  position: absolute;
-  bottom: -40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-transform: lowercase;
-  font-weight: 500;
-  font-size: 14px;
-  letter-spacing: 0.2px;
-}
-
-#wifi-loader .text::before, #wifi-loader .text::after {
-  content: attr(data-text);
-}
-
-#wifi-loader .text::before {
-  color: var(--text-color);
-}
-
-#wifi-loader .text::after {
-  color: var(--front-color);
-  animation: text-animation76 3.6s ease infinite;
-  position: absolute;
-  left: 0;
-}
-
-@keyframes circle-outer135 {
-  0% {
-    stroke-dashoffset: 25;
-  }
-
-  25% {
-    stroke-dashoffset: 0;
-  }
-
-  65% {
-    stroke-dashoffset: 301;
-  }
-
-  80% {
-    stroke-dashoffset: 276;
-  }
-
-  100% {
-    stroke-dashoffset: 276;
-  }
-}
-
-@keyframes circle-middle6123 {
-  0% {
-    stroke-dashoffset: 17;
-  }
-
-  25% {
-    stroke-dashoffset: 0;
-  }
-
-  65% {
-    stroke-dashoffset: 204;
-  }
-
-  80% {
-    stroke-dashoffset: 187;
-  }
-
-  100% {
-    stroke-dashoffset: 187;
-  }
-}
-
-@keyframes circle-inner162 {
-  0% {
-    stroke-dashoffset: 9;
-  }
-
-  25% {
-    stroke-dashoffset: 0;
-  }
-
-  65% {
-    stroke-dashoffset: 106;
-  }
-
-  80% {
-    stroke-dashoffset: 97;
-  }
-
-  100% {
-    stroke-dashoffset: 97;
-  }
-}
-
-@keyframes text-animation76 {
-  0% {
-    clip-path: inset(0 100% 0 0);
-  }
-
-  50% {
-    clip-path: inset(0);
-  }
-
-  100% {
-    clip-path: inset(0 0 0 100%);
-  }
+  cursor: pointer;
 }
 
 .wheel-and-hamster {
@@ -707,7 +342,6 @@ const register = async () => {
 		linear-gradient(hsla(0,0%,55%,0) 46.9%,hsl(0,0%,65%) 47% 52.9%,hsla(0,0%,65%,0) 53%) 50% 50% / 99% 99% no-repeat;
 }
 
-/* Animations */
 @keyframes hamster {
   from, to {
     transform: rotate(4deg) translate(-0.8em,1.85em);

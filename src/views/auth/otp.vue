@@ -122,7 +122,7 @@ onMounted(() => {
 
 
 <template>
-  <div class="flex flex-row min-h-screen w-full relative">
+  <div class="flex flex-col md:flex-row min-h-screen w-full relative">
 
     <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500 z-50">
       <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
@@ -145,88 +145,63 @@ onMounted(() => {
       </div>
     </div>
 
-    <div
-      class="w-2/5 min-h-screen bg-gradient-to-b from-primary to-secondary rounded-r-3xl"
-    >
+    <div class="md:w-2/5 min-h-screen bg-gradient-to-b from-primary to-secondary rounded-r-3xl hidden md:flex">
       <div class="flex flex-col justify-between items-center h-full pt-10">
         <img src="/logo-white.png" class="w-48 pb-20" />
         <div class="flex flex-col h-full">
-          <img src="/pramana-2.png" 
-            class="w-full transform" />
+          <img src="/pramana-2.png" class="w-full transform" />
         </div>
       </div>
     </div>
-    <div class="w-3/5 h-full">
-      <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12">
-        <div class="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
-          <div class="mx-auto flex w-full max-w-md flex-col space-y-16">
-            <div class="flex flex-col items-center justify-center text-center space-y-2">
-              <div class="font-semibold text-3xl">
-                <p>Email Verification</p>
-              </div>
-              <div class="flex flex-row text-sm font-medium text-gray-400">
-                <p>We have sent a code to your email {{ censoredEmail }}</p>
-              </div>
+
+    <div class="w-full md:w-3/5 h-full flex justify-center items-center py-12 md:py-24 px-4 md:px-0">
+      <div class="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
+        <div class="mx-auto flex w-full max-w-md flex-col space-y-16">
+          <div class="flex flex-col items-center justify-center text-center space-y-2">
+            <div class="font-semibold text-[32px] md:text-[40px]">
+              <p>Verifikasi Akun</p>
             </div>
-            <div>
-              <form @submit.prevent="verifyOtp">
-                <div class="flex flex-col space-y-16">
-                  <div class="flex flex-row items-center justify-between mx-auto w-full max-w-xs">
-                    <div 
-                    v-for="(digit, index) in otp" :key="index" 
-                      class="w-16 h-16">
-                      <input
-                        
-                        class="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
-                        v-model="otp[index]" type="text" maxlength="1" 
-                        @input="handleInput($event, index)"
-                        @keydown="handleKeydown($event, index)"
-                        :ref="el => setInputRef(el, index)"
-                        inputmode="numeric"
-                      />
-                      <!-- <input v-for="(digit, index) in otp" :key="index" 
+            <div class="flex flex-row text-sm font-medium text-gray-400">
+              <p>We have sent a code to your email {{ censoredEmail }}</p>
+            </div>
+          </div>
+          <div>
+            <form @submit.prevent="verifyOtp">
+              <div class="flex flex-col space-y-16">
+                <div class="flex flex-row items-center justify-between mx-auto w-full max-w-xs">
+                  <div v-for="(digit, index) in otp" :key="index" class="w-12 h-12">
+                    <input
+                      class="w-full h-full flex flex-col items-center justify-center text-center px-2 md:px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
                       v-model="otp[index]" type="text" maxlength="1" 
                       @input="handleInput($event, index)"
-                      @keydown="handleKeydown($event, index)" 
-                      :ref="el => setInputRef(el, index)" 
-                      class="w-12 h-12 border rounded text-center focus:outline-none focus:ring focus:ring-primary" 
+                      @keydown="handleKeydown($event, index)"
+                      :ref="el => setInputRef(el, index)"
                       inputmode="numeric"
-                      /> -->
-                    </div>
-                  </div>
-                  <div class="flex flex-col space-y-5">
-                    <div>
-                      <button
-                        type="submit"
-                        class="bg-primary text-white w-full rounded-xl py-3"
-                      >
-                        Verification Account
-                      </button>
-                    </div>
-                    <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
-                      <p>Tidak menerima kode?</p>
-                      <button
-                        type="button"
-                        @click="resendOtp"
-                        class="text-primary font-semibold"
-                      >
-                        Kirim Ulang Kode
-                      </button>
-                    </div>
-                    <!-- <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
-                      <p>Ingin mengganti email?</p>
-                      <button
-                        type="button"
-                        @click="changeEmail"
-                        class="text-primary font-semibold"
-                      >
-                        Ganti Email
-                      </button>
-                    </div> -->
+                    />
                   </div>
                 </div>
-              </form>
-            </div>
+                <div class="flex flex-col space-y-5">
+                  <div>
+                    <button
+                      type="submit"
+                      class="bg-primary text-white w-full rounded-xl py-3"
+                    >
+                      Verification Account
+                    </button>
+                  </div>
+                  <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                    <p>Tidak menerima kode?</p>
+                    <button
+                      type="button"
+                      @click="resendOtp"
+                      class="text-primary font-semibold"
+                    >
+                      Kirim Ulang Kode
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>

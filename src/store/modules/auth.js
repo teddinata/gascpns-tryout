@@ -88,30 +88,32 @@ const auth = {
           birthdate: user.birthdate,
           referral_code: user.referral_code,
         })
-          .then((response) => {
-            const token = response.data.data.access_token;
-            const user = response.data.user || {};
-            const role = user && user.role ? user.role : "user";
-            
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user));
-            localStorage.setItem("role", role);
-            Api.defaults.headers.common["Authorization"] = "Bearer " + token;
-  
-            commit("AUTH_SUCCESS", { token, user }); // Pass an object with token and user
-            commit("GET_USER", user);
-            resolve(response);
-          })
-          .catch((error) => {
-            localStorage.removeItem("token");
-            if (error.response && error.response.data) {
-              reject(error.response.data); // Kirim data error dari backend
-            } else {
-              reject({ message: 'Terjadi kesalahan saat registrasi.' }); // Pesan error default
-            }
-          });
+        .then((response) => {
+          const token = response.data.data.access_token;
+          const user = response.data.data.user; // Corrected the user data path
+          const role = user && user.role ? user.role : "user";
+    
+          localStorage.setItem("token", token);
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("role", role);
+          localStorage.setItem('verificationEmail', user.email); // Save email for OTP verification
+          localStorage.setItem('userId', user.id); // Save user ID for further operations
+          Api.defaults.headers.common["Authorization"] = "Bearer " + token;
+    
+          commit("AUTH_SUCCESS", { token, user });
+          commit("GET_USER", user);
+          resolve(response);
+        })
+        .catch((error) => {
+          localStorage.removeItem("token");
+          if (error.response && error.response.data) {
+            reject(error.response.data);
+          } else {
+            reject({ message: 'Terjadi kesalahan saat registrasi.' });
+          }
+        });
       });
-    },
+    },    
     verifyOtp({ commit }, { email, otp }) {
       return new Promise((resolve, reject) => {
         Api.post('/v1/otp/verify', { email, otp })
@@ -155,34 +157,38 @@ const auth = {
   
     login({ commit }, user) {
       return new Promise((resolve, reject) => {
-        Api.post("/v1/login", {
-          email_or_username: user.email_or_username,
-          password: user.password,
-        })
-          .then((response) => {
+        Api.post("/v1/login", user)
+          .then(response => {
             const token = response.data.data.access_token;
-            const user = response.data.user || {};
+            const user = response.data.data.user;
             const role = user && user.role ? user.role : "user";
-            const isVerified = response.data.data.user.email_verified_at !== null;
-            
+            const isVerified = user.email_verified_at !== null;
+
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
             localStorage.setItem("role", role);
-            Api.defaults.headers.common["Authorization"] = "Bearer " + token;
-            
-            commit("AUTH_SUCCESS", { token, user }); // Pass an object with token and user
+            localStorage.setItem('verificationEmail', user.email_or_username);
+            Api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+            commit("AUTH_SUCCESS", { token, user });
             commit("GET_USER", user);
-            commit('SET_VERIFIED', isVerified); 
+            commit('SET_VERIFIED', isVerified);
             resolve(response);
           })
-          .catch((error) => {
+          .catch(error => {
             localStorage.removeItem("token");
             localStorage.removeItem("role");
-            // reject(error.response.data.error);
-            reject(error.response.data);
+
+            if (error.response && error.response.data && error.response.data.meta.code === 400 && error.response.data.meta.message === 'Unverified Email') {
+              localStorage.setItem('verificationEmail', user.email_or_username);
+              commit('SET_VERIFIED', false);
+              reject({ message: 'Unverified Email', data: error.response.data });
+            } else {
+              reject(error.response.data);
+            }
           });
       });
-    },
+    },   
 
     // notifications
     async fetchNotifications({ commit }) {

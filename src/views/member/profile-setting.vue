@@ -310,10 +310,21 @@ const updateAccountInfo = async () => {
     formData.append('phone', accountInfo.value.phone);
     formData.append('address', accountInfo.value.address);
     formData.append('birthdate', accountInfo.value.birthdate);
-    formData.append('province_id', accountInfo.value.province_id);
-    formData.append('regency_id', accountInfo.value.regency_id);
-    formData.append('district_id', accountInfo.value.district_id);
-    formData.append('village_id', accountInfo.value.village_id);
+
+    // Only append if the value is not empty or null
+    if (accountInfo.value.province_id) {
+      formData.append('province_id', accountInfo.value.province_id);
+    }
+    if (accountInfo.value.regency_id) {
+      formData.append('regency_id', accountInfo.value.regency_id);
+    }
+    if (accountInfo.value.district_id) {
+      formData.append('district_id', accountInfo.value.district_id);
+    }
+    if (accountInfo.value.village_id) {
+      formData.append('village_id', accountInfo.value.village_id);
+    }
+    
     if (accountInfo.value.avatar instanceof File) {
       formData.append('avatar', accountInfo.value.avatar);
     }
@@ -328,10 +339,12 @@ const updateAccountInfo = async () => {
     isLoading.value = false;
     toast.success('Akun kamu berhasil diperbarui');
   } catch (error) {
+    isLoading.value = false;
     toast.error('Gagal memperbarui akun');
     console.error('Failed to update account info:', error);
   }
 };
+
 
 const updatePassword = async () => {
   isLoading.value = true;
