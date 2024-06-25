@@ -127,6 +127,7 @@ const truncatedBlogData = computed(() => {
               <div class="text-gray-700 mb-4 truncate-ellipsis">{{ blog.truncatedContent }}</div>
               <div class="flex justify-between items-center text-gray-500 text-sm">
                 <span>{{ formatDate(blog.created_at) }}</span>
+                <span>{{ blog.readTime }} menit estimasi waktu baca </span>
                 <span>{{ blog.views }} views</span>
               </div>
             </div>

@@ -6,11 +6,21 @@
         <div class="flex items-center mb-4">
           <img :src="user.avatar" alt="Profile Picture" class="h-20 w-20 object-cover rounded-full mr-4">
           <div>
-            <h2 class="text-xl font-semibold">{{ user.name }}</h2>
+            <h2 class="text-xl font-semibold flex items-center">
+              {{ user.name }}
+              <span class="ml-4 bg-yellow-100 text-yellow-700 p-2 rounded-lg text-sm cursor-pointer" @click="copyReferralCode">
+                {{ user.referral_code }}
+                <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-7 8h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V6z"></path>
+                </svg>
+              </span>
+            </h2>
             <p class="text-gray-600">{{ user.email }}</p>
+            <p class="text-gray-600">Usia: {{ user.age }}</p>
           </div>
         </div>
-        <div class="bg-gray-100 p-4 rounded-lg">
+        <div class="bg-gray-100 p-4 rounded-lg mb-4">
           <h3 class="text-xl font-bold mb-2">Saldo Anda</h3>
           <p class="text-2xl font-semibold text-green-600">{{ formatRupiah(user.wallet_balance) }}</p>
         </div>
@@ -51,9 +61,11 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import MemberLayouts from "@/components/MemberLayouts.vue";
 import api from '@/api/Api.js';
+import { useToast } from 'vue-toastification';
 
 const store = useStore();
 const router = useRouter();
+const toast = useToast();
 const user = ref({});
 const topupHistory = ref([]);
 
@@ -78,6 +90,17 @@ const goToTransactionDetail = (id) => {
   router.push({ name: 'topup-detail', params: { id } });
 };
 
+const copyReferralCode = () => {
+  navigator.clipboard.writeText(user.value.referral_code)
+    .then(() => {
+      toast.success('Kode referral berhasil disalin!');
+    })
+    .catch(err => {
+      toast.error('Gagal menyalin kode referral');
+      console.error('Failed to copy referral code:', err);
+    });
+};
+
 onMounted(async () => {
   if (!store.state.auth.user) {
     router.push('/login');
@@ -95,6 +118,14 @@ onMounted(async () => {
 
 <style scoped>
 .container {
-  max-width: 800px;
+  max-width: 1200px;
+}
+
+.bg-yellow-100 {
+  background-color: #FEF3C7;
+}
+
+.text-yellow-700 {
+  color: #B45309;
 }
 </style>

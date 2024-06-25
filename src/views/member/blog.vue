@@ -14,6 +14,8 @@
           <div class="p-6">
             <h2 class="text-xl font-semibold mb-2">{{ blogs[0].title }}</h2>
             <p class="text-gray-500 mb-4">{{ formatDate(blogs[0].created_at) }}</p>
+            <!-- readtime -->
+            <p class="text-gray-500 mb-4">{{ blogs[0].readTime }} menit estimasi waktu baca</p>
             <p class="text-gray-700 mb-4" v-html="truncateContent(blogs[0].content, 50)"></p>
             <span class="text-blue-500 hover:underline">Baca selengkapnya</span>
           </div>
@@ -30,6 +32,8 @@
           <div class="p-6">
             <h2 class="text-xl font-semibold mb-2">{{ blog.title }}</h2>
             <p class="text-gray-500 mb-4">{{ formatDate(blog.created_at) }}</p>
+            <!-- readtime -->
+            <p class="text-gray-500 mb-4">{{ blog.readTime }} menit estimasi waktu baca</p>
             <p class="text-gray-700 mb-4" v-html="truncateContent(blog.content, 50)"></p>
             <span class="text-blue-500 hover:underline">Baca selengkapnya</span>
           </div>
