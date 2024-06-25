@@ -173,11 +173,11 @@ const getNotificationIcon = (type) => {
             <Icon icon="fa-solid:chevron-down" class="text-xl" />
           </button>
           <div v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 py-2 bg-white rounded-lg shadow-xl">
-            <button @click="goToProfile" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <button @click="goToProfile" class="flex items-center w-full gap-2 px-4 py-2 hover:bg-gray-100">
                 <Icon icon="fa-solid:user" class="text-xl" />
               <p class="text-text-primary font-medium">Profil Saya</p>
             </button>
-            <button @click="handleLogout" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <button @click="handleLogout" class="flex items-center w-full gap-2 px-4 py-2 hover:bg-gray-100">
               <Icon icon="fa-solid:sign-out-alt" class="text-xl" />
               <p class="text-text-primary font-medium">Logout</p>
             </button>
