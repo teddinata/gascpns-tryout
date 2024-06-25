@@ -8,7 +8,7 @@
           <div>
             <h2 class="text-xl font-semibold flex items-center">
               {{ user.name }}
-              <span class="ml-4 bg-yellow-100 text-yellow-700 p-2 rounded-lg text-sm cursor-pointer" @click="copyReferralCode">
+              <span class="ml-4 bg-yellow-100 text-yellow-700 p-2 rounded-lg text-sm cursor-pointer flex items-center" @click="copyReferralCode">
                 {{ user.referral_code }}
                 <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-7 8h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
@@ -20,9 +20,19 @@
             <p class="text-gray-600">Usia: {{ user.age }}</p>
           </div>
         </div>
-        <div class="bg-gray-100 p-4 rounded-lg mb-4">
-          <h3 class="text-xl font-bold mb-2">Saldo Anda</h3>
-          <p class="text-2xl font-semibold text-green-600">{{ formatRupiah(user.wallet_balance) }}</p>
+        <div class="bg-blue-50 p-4 rounded-lg mt-6">
+          <h3 class="text-2xl font-semibold text-blue-800 mb-2">Ajak Teman dan Dapatkan Keuntungan!</h3>
+          <p class="text-gray-700 mb-4">
+            Bagikan kode referral Anda kepada teman-teman. Teman Anda akan mendapatkan saldo bonus ketika mendaftar menggunakan kode Anda. Anda juga akan mendapatkan saldo bonus setiap kali teman Anda mendaftar.
+            Semakin banyak teman yang Anda ajak, semakin banyak keuntungan yang Anda dapatkan!
+          </p>
+          <div class="bg-yellow-100 text-yellow-700 p-3 rounded-lg flex items-center justify-between">
+            <span class="font-semibold">Kode Referral Anda:</span>
+            <span class="font-mono">{{ user.referral_code }}</span>
+            <button @click="copyReferralCode" class="bg-yellow-500 text-white px-3 py-1 rounded-lg ml-4">
+              Salin Kode
+            </button>
+          </div>
         </div>
         <router-link to="/member/topup" class="mt-4 inline-block bg-primary rounded-full text-white px-4 py-2 shadow hover:bg-blue-700">Top-Up Saldo</router-link>
       </div>
