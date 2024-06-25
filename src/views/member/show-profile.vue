@@ -23,7 +23,7 @@
         <div class="bg-blue-50 p-4 rounded-lg mt-6">
           <h3 class="text-2xl font-semibold text-blue-800 mb-2">Ajak Teman dan Dapatkan Keuntungan!</h3>
           <p class="text-gray-700 mb-4">
-            Bagikan kode referral Anda kepada teman-teman. Teman Anda akan mendapatkan saldo bonus ketika mendaftar menggunakan kode Anda. Anda juga akan mendapatkan saldo bonus setiap kali teman Anda mendaftar.
+            Bagikan kode referral Anda kepada teman-teman. Teman Anda akan mendapatkan saldo bonus sebesar <strong>Rp 10.000</strong> ketika mendaftar menggunakan kode Anda. Anda juga akan mendapatkan saldo bonus sebesar <strong>Rp 10.000</strong> setiap kali teman Anda mendaftar.
             Semakin banyak teman yang Anda ajak, semakin banyak keuntungan yang Anda dapatkan!
           </p>
           <div class="bg-yellow-100 text-yellow-700 p-3 rounded-lg flex items-center justify-between">
