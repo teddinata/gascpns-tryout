@@ -239,7 +239,8 @@ const formatAmount = () => {
 
 const formatRupiah = (amount) => {
   if (!amount) return '';
-  const formatted = amount.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const amountStr = amount.toString(); // Ubah amount menjadi string
+  const formatted = amountStr.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   return formatted;
 };
 </script>
