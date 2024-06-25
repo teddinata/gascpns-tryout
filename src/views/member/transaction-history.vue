@@ -2,9 +2,9 @@
   <MemberLayouts>
     <section class="py-12">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8">Transaksi Saya</h2>
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Riwayat Transaksi</h2>
         <p class="text-gray-600 mb-8">
-          Berisi transaksi saya yang sudah, belum dan batal terbayar.
+          Berisi transaksi kamu yang sudah, belum dan batal terbayar.
         </p>
         <div class="w-full">
           <div class="bg-white p-6 rounded-lg shadow">
