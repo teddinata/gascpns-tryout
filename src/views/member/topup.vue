@@ -12,7 +12,7 @@
               <div class="control maximize"></div>
             </div>
           </div>
-          <div class="text">Loading...</div>
+          <div class="text">Transaksi anda sedang diproses...</div>
         </div>        
       </div>
 
