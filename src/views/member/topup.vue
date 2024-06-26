@@ -299,8 +299,8 @@ const formatRupiah = (amount) => {
   }
   45%,
   55% {
-    width: 6.2em;
-  } /* adjust width based on content */
+    width: 28ch; /* adjust width based on content */
+  }
   90%,
   100% {
     width: 0;
@@ -314,7 +314,7 @@ const formatRupiah = (amount) => {
   font-family: "Courier New", Courier, monospace;
   font-size: 1em;
   padding: 1.5em 1em;
-  width: 12em;
+  width: 30em;
   margin: 100px auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
@@ -372,7 +372,7 @@ const formatRupiah = (amount) => {
   white-space: nowrap;
   overflow: hidden;
   border-right: 0.2em solid green; /* Cursor */
-  animation: typeAndDelete 4s steps(11) infinite,
+  animation: typeAndDelete 5s steps(28) infinite,
     blinkCursor 0.5s step-end infinite alternate;
   margin-top: 1.5em;
 }
