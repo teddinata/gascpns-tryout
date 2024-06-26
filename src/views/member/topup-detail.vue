@@ -15,6 +15,7 @@
             <span v-else class="px-2 py-1 bg-red-500 text-white rounded-md">Topup Gagal</span>
           </p>
           <p><strong>Waktu Kadaluarsa:</strong> {{ formatDateTime(transaction.payment_expired) }}</p>
+          <p><strong>Waktu Pembayaran:</strong> {{ transaction.payment_date ? formatDateTime(transaction.payment_date) : '-' }}</p>
         </div>
       </div>
     </div>

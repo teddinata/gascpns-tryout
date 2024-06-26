@@ -61,10 +61,11 @@ const memberLinks = [
   //   icons: "solar:volleyball-outline",
   // },
   {
-    name: "Latihan Soal",
+    name: "Tryout Gratis",
     url: "/member/latihan-soal",
     // icons exercise use outline
     icons: "fluent:book-question-mark-24-regular",
+    badge: "Terbatas",
   },
   // riwayat transaksi
   {
@@ -118,67 +119,79 @@ const settings2 = [
 <template>
   <!-- <div class="fixed inset-0 bg-black opacity-70 z-40"></div> -->
   <div class="w-full max-w-[275px] min-h-screen items-center p-5 border-r-2 flex flex-col gap-8 text-text-primary 
-    fixed z-[99999] bg-white max-h-screen overflow-y-auto">
-    <div class="flex justify-between items-center">
-      <div class="w-full">
-        <Logo />
-      </div>
+  fixed z-[99999] bg-white max-h-screen overflow-y-auto">
+  <div class="flex justify-between items-center">
+    <div class="w-full">
+      <Logo />
     </div>
-    
-    <!-- <div class="flex justify-center items-center w-auto bg-primary rounded-full mt-5">
-      <img src="/profile.png" alt="profile" class="w-14  rounded-full" />
-    </div>
-    <div class="flex flex-col justify-between items-center mt-2">
-      <div class="flex justify-center items-center w-full">
-        <h4 class="mr-2">{{ user?.name }}</h4>
-        <div class="flex justify-center items-center w-5 h-5 bg-primary rounded-full">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        </div>
-      </div>
-      <div class="flex text-sm text-gray-500 mt-2">
-        <Icon class="text-xl text-primary mr-1" icon="fa6-solid:wallet" />
-        <span class="mr-1">Saldo:</span>
-        <span>Rp {{ formatRupiah(user?.wallet_balance) }}.00</span>
-      </div>
-    </div> -->
-    
-
-    <!-- MENU section -->
-    <div class="flex flex-col gap-4">
-      <h1 class="text-md font-medium text-text-tertiary">MENU</h1>
-      <NavigationLink :links="memberLinks" />
-    </div>
-
-    <!-- SETTINGS section -->
-    <div class="flex flex-col gap-4">
-      <h1 class="text-md font-medium text-text-tertiary">SETTINGS</h1>
-      <NavigationLink :links="settings" />
-    </div>
-
-    <!-- NEWS section -->
-    <div class="flex flex-col gap-4">
-      <h1 class="text-md font-medium text-text-tertiary">NEWS</h1>
-      <NavigationLink :links="news" />
-    </div>
-
-    <!-- LOGOUT section -->
-      <button @click="logoutAction" class="flex w-full justify-center items-center py-2 px-4 bg-secondary rounded-full transition-all duration-300">
-          <Icon icon="fa-solid:sign-out-alt" class="text-xl text-white mr-4"></Icon>
-          <p class="text-white text-lg">Logout</p>
-      </button>
-    
   </div>
+
+  <!-- MENU section -->
+  <div class="flex flex-col gap-4">
+    <h1 class="text-md font-medium text-text-tertiary">MENU</h1>
+    <NavigationLink :links="memberLinks" />
+  </div>
+
+  <!-- SETTINGS section -->
+  <div class="flex flex-col gap-4">
+    <h1 class="text-md font-medium text-text-tertiary">SETTINGS</h1>
+    <NavigationLink :links="settings" />
+  </div>
+
+  <!-- NEWS section -->
+  <div class="flex flex-col gap-4">
+    <h1 class="text-md font-medium text-text-tertiary">NEWS</h1>
+    <NavigationLink :links="news" />
+  </div>
+
+  <!-- LOGOUT section -->
+  <button @click="logoutAction" class="flex w-full justify-center items-center py-2 px-4 bg-secondary rounded-full transition-all duration-300">
+    <Icon icon="fa-solid:sign-out-alt" class="text-xl text-white mr-4"></Icon>
+    <p class="text-white text-lg">Logout</p>
+  </button>
+</div>
 </template>
+
+<style scoped>
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-pulse {
+  animation: blink 1s infinite;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.bg-primary {
+  background-color: #3490dc; /* Ganti dengan warna utama Anda */
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+.hover\:bg-gray-300:hover {
+  background-color: #d1d5db; /* Warna hover yang lebih jelas */
+}
+
+.hover\:text-gray-900:hover {
+  color: #1a202c; /* Warna teks saat dihover */
+}
+
+.bg-gray-300 {
+  background-color: #d1d5db;
+}
+
+.text-gray-900 {
+  color: #1a202c;
+}
+</style>
