@@ -9,6 +9,10 @@ const props = defineProps({
   links: Array,
 });
 
+const isActiveLink = (url) => {
+  return route.path === url;
+};
+
 const openDropdown = ref(null);
 
 onMounted(() => {
@@ -32,65 +36,25 @@ onMounted(() => {
 
 <template>
   <nav class="flex flex-col gap-2">
-    <template v-for="link in props.links" :key="link.name">
+    <template v-for="link in links" :key="link.name">
       <div class="relative">
-        <div class="flex items-center">
-          <router-link
-            :to="link.url"
-            class="flex justify-between w-full items-center py-2 px-4 rounded-full transition-all duration-300"
-            :class="{
-              'hover:bg-tertiary text-text-tertiary': route.path !== link.url,
-            }"
-            :active-class="
-              route.path === link.url
-                ? 'text-[#0BA7E3] bg-tertiary'
-                : 'text-text-tertiary'
-            "
-          >
-            <div class="flex gap-5 items-center">
-              <Icon :icon="link.icons" class="text-3xl"></Icon>
-              <p class="text-md">{{ link.name }}</p>
-            </div>
-            <!-- <button
-              v-if="link.name === 'Soal & Paket'"
-              @click="toggleDropdown(index)"
-              class="focus:outline-none transition-transform duration-300 transform"
-              :class="{
-                'rotate-0': !openDropdown,
-                'rotate-180': openDropdown === index,
-              }"
-            >
-              <Icon icon="ri:arrow-drop-down-line" class="text-3xl" />
-            </button> -->
-          </router-link>
-        </div>
-
-        <!-- Use transition element for fade effect -->
-        <!-- <Transition name="slide-fade">
-
-          <template v-if="link.children && openDropdown === index">
-            <div class="flex flex-col w-full bg-white space-y-2 pt-2">
-              
-              <router-link
-                v-for="childLink in link.children"
-                :key="childLink.label"
-                :to="childLink.to"
-                class="flex gap-5 items-center ml-12 py-2 px-4 rounded-full transition-all duration-300"
-                :class="{
-                  'hover:bg-tertiary text-text-tertiary':
-                    route.path !== childLink.to,
-                }"
-                :active-class="
-                  route.path === childLink.to
-                    ? 'text-primary bg-tertiary'
-                    : 'text-text-tertiary'
-                "
-              >
-                <p class="text-md">{{ childLink.label }}</p>
-              </router-link>
-            </div>
-          </template>
-        </Transition> -->
+        <router-link
+          :to="link.url"
+          class="flex items-center gap-4 py-3 px-4 rounded-lg text-lg transition-colors duration-300"
+          :class="{
+            'bg-primary text-white': isActiveLink(link.url),
+            'hover:bg-gray-300 hover:text-gray-900': !isActiveLink(link.url)
+          }"
+        >
+          <Icon :icon="link.icons" class="text-2xl"></Icon>
+          <div class="flex flex-col">
+            <span>{{ link.name }}</span>
+            <!-- Badge -->
+            <span v-if="link.badge" class="mt-1 px-2 py-1 text-sm font-semibold bg-red-500 text-white rounded-full animate-pulse">
+              {{ link.badge }}
+            </span>
+          </div>
+        </router-link>
       </div>
     </template>
   </nav>
@@ -110,4 +74,46 @@ onMounted(() => {
   transform: translateY(-5px);
   opacity: 0;
 }
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-pulse {
+  animation: blink 1s infinite;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.bg-primary {
+  background-color: #3490dc; /* Ganti dengan warna utama Anda */
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+.hover\:bg-gray-300:hover {
+  background-color: #d1d5db; /* Warna hover yang lebih jelas */
+}
+
+.hover\:text-gray-900:hover {
+  color: #1a202c; /* Warna teks saat dihover */
+}
+
+.bg-gray-300 {
+  background-color: #d1d5db;
+}
+
+.text-gray-900 {
+  color: #1a202c;
+}
+
 </style>
