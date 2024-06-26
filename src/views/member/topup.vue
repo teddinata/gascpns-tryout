@@ -1,6 +1,21 @@
 <template>
   <MemberLayouts>
     <div class="container mx-auto py-8">
+
+      <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500">
+        <div class="terminal-loader">
+          <div class="terminal-header">
+            <div class="terminal-title">Status</div>
+            <div class="terminal-controls">
+              <div class="control close"></div>
+              <div class="control minimize"></div>
+              <div class="control maximize"></div>
+            </div>
+          </div>
+          <div class="text">Transaksi anda sedang diproses...</div>
+        </div>        
+      </div>
+
       <h1 class="text-3xl font-bold mb-6">Top-Up Saldo</h1>
       <div class="bg-white p-6 rounded-lg shadow-md">
         <div class="mb-4">
@@ -100,6 +115,8 @@ import api from '@/api/Api.js';
 import { formatDateTime } from '@/filters';
 import ConfirmationModal from "@/components/ConfirmationModal.vue";
 import QrcodeVue from 'qrcode.vue';
+import { set } from 'date-fns';
+import { is } from 'date-fns/locale';
 
 const amount = ref('');
 const formattedAmount = ref('');
@@ -113,6 +130,7 @@ const showModal = ref(false);
 const selectedBankOrEwallet = ref('');
 const store = useStore();
 const router = useRouter();
+const isLoading = ref(false);
 
 const createTransaction = async () => {
   try {
@@ -168,15 +186,17 @@ const proceedToEwalletPayment = async (ewalletType) => {
     } else if (['DANA', 'LINKAJA', 'SHOPEEPAY', 'ASTRAPAY'].includes(ewalletType)) {
       requestData.success_redirect_url = 'https://app.gascpns.com/member/transaksi/success';
     }
-
+    isLoading.value = true;
     const response = await api.post('/v1/topup/payment', requestData);
     transactionDetail.value = response.data.transaction;
     message.value = 'Metode pembayaran berhasil dipilih, silakan selesaikan pembayaran Anda.';
     messageClass.value = 'bg-green-100 text-green-800';
+    isLoading.value = false;
   } catch (error) {
     console.error(error);
     message.value = error.response?.data?.message || 'Terjadi kesalahan saat memilih metode pembayaran.';
     messageClass.value = 'bg-red-100 text-red-800';
+    isLoading.value = false;
   }
 };
 
@@ -188,14 +208,17 @@ const proceedToVAPayment = async (bank) => {
       bank_code: bank,
     };
 
+    isLoading.value = true; 
     const response = await api.post('/v1/topup/payment', requestData);
     transactionDetail.value = response.data.transaction;
     message.value = 'Metode pembayaran berhasil dipilih, silakan selesaikan pembayaran Anda.';
     messageClass.value = 'bg-green-100 text-green-800';
+    isLoading.value = false;
   } catch (error) {
     console.error(error);
     message.value = error.response?.data?.message || 'Terjadi kesalahan saat memilih metode pembayaran.';
     messageClass.value = 'bg-red-100 text-red-800';
+    isLoading.value = false;
   }
 };
 
@@ -207,27 +230,40 @@ const proceedToQRISPayment = async (QRIS) => {
       payment_method: QRIS,
     };
 
+    isLoading.value = true;
     const response = await api.post('/v1/topup/payment', requestData);
     transactionDetail.value = response.data.transaction;
     message.value = 'Metode pembayaran berhasil dipilih, silakan selesaikan pembayaran Anda.';
     messageClass.value = 'bg-green-100 text-green-800';
+    isLoading.value = false;
   } catch (error) {
     console.error(error);
     message.value = error.response?.data?.message || 'Terjadi kesalahan saat memilih metode pembayaran.';
     messageClass.value = 'bg-red-100 text-red-800';
+    isLoading.value = false;
   }
 };
 
 const checkPaymentStatus = async () => {
   try {
+    isLoading.value = true;
     const response = await api.get(`/v1/topup/check`,  { params: { transaction_id: transactionId.value } });
     transactionDetail.value.payment_status = response.data.status;
     message.value = response.data.message;
     messageClass.value = 'bg-yellow-100 text-yellow-800';
+    isLoading.value = false;
+    if (response.data.status === 'PAID') {
+      message.value = 'Pembayaran berhasil, saldo Anda akan bertambah dalam beberapa saat.';
+      messageClass.value = 'bg-green-100 text-green-800';
+      setTimeout(() => {
+        router.go();
+      }, 3000);
+    }
   } catch (error) {
     console.error(error);
     message.value = error.response?.data?.message || 'Terjadi kesalahan saat memeriksa status pembayaran.';
     messageClass.value = 'bg-red-100 text-red-800';
+    isLoading.value = false;
   }
 };
 
@@ -249,4 +285,96 @@ const formatRupiah = (amount) => {
 .container {
   max-width: 800px;
 }
+
+@keyframes blinkCursor {
+  50% {
+    border-right-color: transparent;
+  }
+}
+
+@keyframes typeAndDelete {
+  0%,
+  10% {
+    width: 0;
+  }
+  45%,
+  55% {
+    width: 6.2em;
+  } /* adjust width based on content */
+  90%,
+  100% {
+    width: 0;
+  }
+}
+
+.terminal-loader {
+  border: 0.1em solid #333;
+  background-color: #1a1a1a;
+  color: #0f0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1em;
+  padding: 1.5em 1em;
+  width: 12em;
+  margin: 100px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.terminal-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5em;
+  background-color: #333;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  padding: 0 0.4em;
+  box-sizing: border-box;
+}
+
+.terminal-controls {
+  float: right;
+}
+
+.control {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  margin-left: 0.4em;
+  border-radius: 50%;
+  background-color: #777;
+}
+
+.control.close {
+  background-color: #e33;
+}
+
+.control.minimize {
+  background-color: #ee0;
+}
+
+.control.maximize {
+  background-color: #0b0;
+}
+
+.terminal-title {
+  float: left;
+  line-height: 1.5em;
+  color: #eee;
+}
+
+.text {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 0.2em solid green; /* Cursor */
+  animation: typeAndDelete 4s steps(11) infinite,
+    blinkCursor 0.5s step-end infinite alternate;
+  margin-top: 1.5em;
+}
+
 </style>
