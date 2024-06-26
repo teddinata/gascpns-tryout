@@ -1,5 +1,19 @@
 <template>
   <MemberLayouts>
+    <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500 z-50">
+      <div class="terminal-loader">
+        <div class="terminal-header">
+          <div class="terminal-title">Status</div>
+          <div class="terminal-controls">
+            <div class="control close"></div>
+            <div class="control minimize"></div>
+            <div class="control maximize"></div>
+          </div>
+        </div>
+        <div class="text">Loading...</div>
+      </div>        
+    </div>
+
     <div id="app" class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div class="max-w-full mx-auto sm:px-6 lg:px-8">
         <h2 class="text-3xl font-bold text-gray-900 mb-4">Rank</h2>
@@ -75,6 +89,7 @@ const store = useStore();
 const totalParticipants = ref(0);
 const passedParticipants = ref(0);
 const failedParticipants = ref(0);
+const isLoading = ref(false);
 
 const headers = ref([
   { text: "RANK", value: "rank" },
@@ -99,6 +114,7 @@ const fetchData = async () => {
   if (!selectedPackageId.value) return;
 
   try {
+    isLoading.value = true;
     const response = await api.get('/v1/rankings-by-package', {
       params: {
         package_id: selectedPackageId.value,
@@ -112,6 +128,8 @@ const fetchData = async () => {
     totalParticipants.value = data.length;
     passedParticipants.value = data.filter(item => item.keterangan === 'Lulus').length;
     failedParticipants.value = totalParticipants.value - passedParticipants.value;
+
+    isLoading.value = false;
 
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -243,6 +261,97 @@ const getRowClass = (item) => {
   --easy-table-loading-mask-background-color: #2d3a4f;
 
   --easy-table-no-data-font-color: #c0c7d2;
+}
+
+@keyframes blinkCursor {
+  50% {
+    border-right-color: transparent;
+  }
+}
+
+@keyframes typeAndDelete {
+  0%,
+  10% {
+    width: 0;
+  }
+  45%,
+  55% {
+    width: 14ch; /* adjust width based on content */
+  }
+  90%,
+  100% {
+    width: 0;
+  }
+}
+
+.terminal-loader {
+  border: 0.1em solid #333;
+  background-color: #1a1a1a;
+  color: #0f0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1em;
+  padding: 1.5em 1em;
+  width: 30em;
+  margin: 100px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.terminal-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5em;
+  background-color: #333;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  padding: 0 0.4em;
+  box-sizing: border-box;
+}
+
+.terminal-controls {
+  float: right;
+}
+
+.control {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  margin-left: 0.4em;
+  border-radius: 50%;
+  background-color: #777;
+}
+
+.control.close {
+  background-color: #e33;
+}
+
+.control.minimize {
+  background-color: #ee0;
+}
+
+.control.maximize {
+  background-color: #0b0;
+}
+
+.terminal-title {
+  float: left;
+  line-height: 1.5em;
+  color: #eee;
+}
+
+.text {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 0.2em solid green; /* Cursor */
+  animation: typeAndDelete 4s steps(28) infinite,
+    blinkCursor 0.5s step-end infinite alternate;
+  margin-top: 1.5em;
 }
 
 </style>
