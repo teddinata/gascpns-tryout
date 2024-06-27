@@ -11,7 +11,7 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const user = ref(null);
-const sidebarOpen = ref(false);  // Tambahkan state ini untuk mengontrol sidebar
+const sidebarOpen = ref(true);  // Tambahkan state ini untuk mengontrol sidebar
 
 const hideSidebar = computed(
   () => route.path === "/member/latihan" || route.path === "/member/tryout"
