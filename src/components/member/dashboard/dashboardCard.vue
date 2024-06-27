@@ -12,7 +12,7 @@ import { Icon } from "@iconify/vue";
 
 <template>
   <div
-    class="w-full max-w-[400px] py-3 px-7 flex flex-col gap-4 bg-white rounded-xl shadow-lg
+    class="w-full py-3 px-7 flex flex-col gap-4 bg-white rounded-xl shadow-lg
      hover:bg-gray-100 transition duration-200"
   >
     <div class="flex gap-3 items-center">
