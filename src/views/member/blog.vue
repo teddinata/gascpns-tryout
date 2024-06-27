@@ -1,5 +1,5 @@
 <template>
-  <BlogLayouts>
+  <MemberLayouts>
     <div class="max-w-7xl mx-auto p-6">
       <h1 class="text-3xl font-bold mb-4">Daftar Berita</h1>
       <p class="text-gray-500 mb-8">Berita dan artikel terbaru seputar dunia CPNS, PPPK, BUMN dan instansi lainnya.</p>
@@ -40,13 +40,13 @@
         </router-link>
       </div>
     </div>
-  </BlogLayouts>
+  </MemberLayouts>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '@/api/Api.js';
-import BlogLayouts from "@/components/BlogLayouts.vue";
+import MemberLayouts from "@/components/MemberLayouts.vue";
 
 const blogs = ref([]);
 

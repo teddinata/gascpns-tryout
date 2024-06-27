@@ -1,6 +1,12 @@
-<!-- eslint-disable vue/multi-word-component-names -->
+<!-- logo.vue -->
 <template>
-  <div class="w-full">
-    <img src="/logo.png" alt="logo" class="w-40" />
+  <div class="logo">
+    <img src="/logo.png" alt="Logo" class="h-8 w-auto" />
   </div>
 </template>
+
+<style scoped>
+.logo img {
+  height: 48px; /* Sesuaikan ukuran logo */
+}
+</style>

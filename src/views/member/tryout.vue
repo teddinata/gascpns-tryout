@@ -381,92 +381,74 @@ onMounted(() => {
 
 <template>
   <MemberLayouts>
-    <div class="px-16 grid grid-cols-5 gap-10">
+    <div class="p-4 sm:px-6 lg:px-16 grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10">
       <div class="flex flex-col space-y-7 col-span-3">
         <ol>
           <li class="list-decimal-1">
             <div class="flex items-center mt-4 mb-4 gap-4">
-              <h2> Pertanyaan</h2>
+              <h2>Pertanyaan</h2>
               <img src="/public/arrow-circle-right.svg" class="-ml-2 w-6 rotate-90" />
             </div>
-
+  
             <div v-if="questionDetail?.data?.image">
-              <img :src="questionDetail?.data?.image" class="w-auto h-[300px] object-cover" />
+              <img :src="questionDetail?.data?.image" class="w-full h-auto object-cover" />
             </div>
-
+  
             <div v-html="questionDetail?.data?.question" class="question-content"></div>
             <div class="flex gap-4 items-center">
-              <div class="flex flex-col space-y-3 pt-4">
+              <div class="flex flex-col space-y-3 pt-4 w-full">
                 <div
-                    v-for="(answer) in questionDetail?.data?.answers"
-                    :key="answer.id"
-                    class="group flex items-center justify-between rounded-full w-full border border-slate-600 p-[18px_20px] gap-[14px] 
-                      transition-all duration-300 cursor-pointer"
-                    :class="{
-                        'border-[#EEEEEE]': selectedAnswer !== answer.id,
-                        'border-2 border-[#0A090B] bg-secondary text-white': selectedAnswer === answer.id,
-                        'hover:bg-secondary hover:text-white hover:border-none': selectedAnswer !== answer.id
-                    }"
-                    @click="selectedAnswer = answer.id"
+                  v-for="(answer) in questionDetail?.data?.answers"
+                  :key="answer.id"
+                  class="group flex items-center justify-between rounded-full w-full border border-slate-600 p-4 gap-4 transition-all duration-300 cursor-pointer"
+                  :class="{
+                    'border-[#EEEEEE]': selectedAnswer !== answer.id,
+                    'border-2 border-[#0A090B] bg-secondary text-white': selectedAnswer === answer.id,
+                    'hover:bg-secondary hover:text-white hover:border-none': selectedAnswer !== answer.id
+                  }"
+                  @click="selectedAnswer = answer.id"
                 >
-                <!-- {{ selectedAnswer === answer.id}} -->
-                  <div class="flex items-center gap-[14px]">
-                    <span class="font-semibold text-xl leading-[30px]">{{ answer.label }}.</span>
-                    <span class="font-semibold text-xl leading-[30px]">{{ answer.text }}</span>
+                  <div class="flex items-center gap-4">
+                    <span class="font-semibold text-lg">{{ answer.label }}.</span>
+                    <span class="font-semibold text-lg">{{ answer.text }}</span>
                   </div>
-                  <!-- <div v-if="selectedAnswer === answer.id">
-                    <img src="/public/tick-circle.svg" style="color: #22C55E;" />
-                  </div> -->
-                  <!-- <input
-                    type="radio"
-                    :name="`answer_${questionDetail?.data?.id}`"
-                    :id="answer.id"
-                    :value="answer.id"
-                    v-model="selectedAnswer"
-                    class="hidden"
-                  /> -->
                 </div>
                 <!-- button simpan dan lanjutkan -->
-             <button
-             class="bg-primary text-white rounded-full py-4 px-4 hover:bg-secondary" 
-             @click="saveAndNextQuestion" v-if="questionDetail?.data?.next !== null"
-           >
-             Simpan dan Lanjutkan
-           </button>
-            <button
-              class="bg-secondary text-white rounded-full py-4 px-4 hover:bg-primary"
-              @click="saveAndNextQuestion" v-else
-            >
-              Selesai dan Kirim Tryout
-            </button>
+                <div class="flex flex-col space-y-4 mt-4">
+                  <button
+                    class="bg-primary text-white rounded-full py-2 px-4 hover:bg-secondary"
+                    @click="saveAndNextQuestion" v-if="questionDetail?.data?.next !== null"
+                  >
+                    Simpan dan Lanjutkan
+                  </button>
+                  <button
+                    class="bg-secondary text-white rounded-full py-2 px-4 hover:bg-primary"
+                    @click="saveAndNextQuestion" v-else
+                  >
+                    Selesai dan Kirim Tryout
+                  </button>
+                </div>
               </div>
-              
             </div>
           </li>
         </ol>
       </div>
-      <div class="flex flex-col gap-3 w-[500px] ">
-        <div
-          class="bg-white drop-shadow-md flex flex-col space-y-5 px-10 py-5 rounded-lg"
-        >
+      <div class="flex flex-col gap-3 w-full lg:w-[500px]">
+        <div class="bg-white drop-shadow-md flex flex-col space-y-5 px-4 sm:px-10 py-5 rounded-lg">
           <div class="flex justify-end">
-            <div
-              class="text-primary flex items-center gap-4 px-3 py-2 rounded-lg"
-            >
+            <div class="text-primary flex items-center gap-4 px-3 py-2 rounded-lg">
               <img src="/countdown-blue.svg" />
               <p>{{ countdown }}</p>
             </div>
           </div>
-          <div
-            class="flex flex-wrap justify-start items-center gap-3 max-w-[440px]"
-          >
+          <div class="flex flex-wrap justify-start items-center gap-3 max-w-full sm:max-w-[440px]">
             <button
               v-for="(number) in navigationData?.tryout_details"
               :key="number"
               :class="[
                 'aspect-square',
-                'w-[30px]',
-                'h-[30px]',
+                'w-8 h-8 sm:w-[30px]',
+                'h-8 sm:h-[30px]',
                 'rounded-md',
                 'border',
                 'border-[#90989F]',
@@ -478,13 +460,9 @@ onMounted(() => {
             >
               {{ number.question_number }}
             </button>
-             
           </div>
-          
         </div>
-        <div
-          class="w-fit bg-white drop-shadow-md flex flex-col space-y-5 px-10 py-5 rounded-lg"
-        >
+        <div class="bg-white drop-shadow-md flex flex-col space-y-5 px-4 sm:px-10 py-5 rounded-lg">
           <ul class="list-inside">
             <p>Informasi Pengerjaan Soal :</p>
             <li class="list-disc pl-2">
@@ -498,14 +476,6 @@ onMounted(() => {
                 <img src="/done.svg" alt="done" class="w-5 h-5" />
                 <p>Sudah Dikerjakan</p>
               </div>
-              <!-- <div class="flex items-center gap-4">
-                <img src="/wrong-indicator.svg" alt="done" class="w-5 h-5" />
-                <p>Jawaban Salah</p>
-              </div> -->
-              <!-- <div class="flex items-center gap-4">
-                <img src="/skip.svg" alt="done" class="w-5 h-5" />
-                <p>Dilewati</p>
-              </div> -->
               <div class="flex items-center gap-4">
                 <img src="/blank.svg" alt="done" class="w-5 h-5" />
                 <p>Belum diisi</p>
@@ -514,17 +484,18 @@ onMounted(() => {
           </div>
         </div>
         <button
-            class="bg-secondary text-white rounded-full py-4 px-4 hover:bg-primary"
-            :class="{ 'opacity-50 cursor-not-allowed': questionDetail?.data?.unanswered_questions > 0 }"
-            :disabled="questionDetail?.data?.unanswered_questions > 0"
-            @click="finishModal"
-            :title="questionDetail?.data?.unanswered_questions > 0 ? 'Jawaban kamu belum lengkap' : 'Kamu bisa kirim tryout'"
-          >
-            Selesai dan Kirim Tryout
-          </button>
+          class="bg-secondary text-white rounded-full py-4 px-4 hover:bg-primary"
+          :class="{ 'opacity-50 cursor-not-allowed': questionDetail?.data?.unanswered_questions > 0 }"
+          :disabled="questionDetail?.data?.unanswered_questions > 0"
+          @click="finishModal"
+          :title="questionDetail?.data?.unanswered_questions > 0 ? 'Jawaban kamu belum lengkap' : 'Kamu bisa kirim tryout'"
+        >
+          Selesai dan Kirim Tryout
+        </button>
       </div>
     </div>
   </MemberLayouts>
+  
   <div v-if="showConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
     <div class="modal-container bg-white rounded-lg shadow-xl max-w-sm">
       <div class="modal-header">
@@ -540,7 +511,6 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  
   
   
 </template>

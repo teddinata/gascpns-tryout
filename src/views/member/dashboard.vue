@@ -59,8 +59,8 @@ const truncatedBlogData = computed(() => {
 
 <template>
   <MemberLayouts>
-    <div class="flex flex-col space-y-10">
-      <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5">
+    <div class="flex flex-col space-y-10 mt-8">
+      <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4">
         <DashboardCard
           title="Paket Tryoutmu"
           icon="mage:message-question-mark-fill"
@@ -104,7 +104,7 @@ const truncatedBlogData = computed(() => {
       </div>
       <div class="flex flex-col space-y-4">
         <h1 class="text-lg font-medium text-black">Soal Favorite</h1>
-        <div class="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5">
+        <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5">
           <SoalCard v-for="soal in soalData"
               :key="soal.id"
               :slug="soal.slug"

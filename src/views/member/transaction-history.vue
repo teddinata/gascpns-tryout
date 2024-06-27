@@ -1,15 +1,15 @@
 <template>
   <MemberLayouts>
-    <section class="py-12">
+    <section class="py-6 sm:py-12">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8">Riwayat Transaksi</h2>
-        <p class="text-gray-600 mb-8">
+        <h2 class="text-xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-8">Riwayat Transaksi</h2>
+        <p class="text-gray-600 mb-4 sm:mb-8">
           Berisi transaksi kamu yang sudah, belum dan batal terbayar.
         </p>
         <div class="w-full">
-          <div class="bg-white p-6 rounded-lg shadow">
+          <div class="bg-white p-4 sm:p-6 rounded-lg shadow">
             <TabGroup>
-              <TabList class="flex space-x-1 bg-blue-900/20 p-1 rounded-lg justify-center">
+              <TabList class="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-1 bg-blue-900/20 p-1 rounded-lg justify-center">
                 <Tab
                   class="w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
                   :class="{ 'bg-primary text-white': activeTab === 'pending', 'bg-white text-gray-800': activeTab !== 'pending' }"
@@ -32,8 +32,8 @@
                   Pembayaran Berhasil
                 </Tab>
               </TabList>
-              <TabPanels class="mt-6">
-                <TabPanel v-show="activeTab === 'pending'" class="bg-white p-6 rounded-lg shadow-md">
+              <TabPanels class="mt-4 sm:mt-6">
+                <TabPanel v-show="activeTab === 'pending'" class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
                   <div>
                     <TransactionCard
                       v-for="transaction in transactions.pending"
@@ -44,7 +44,7 @@
                   </div>
                 </TabPanel>
 
-                <TabPanel v-show="activeTab === 'cancelled'" class="bg-white p-6 rounded-lg shadow-md">
+                <TabPanel v-show="activeTab === 'cancelled'" class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
                   <div>
                     <TransactionCard
                       v-for="transaction in transactions.cancelled"
@@ -55,7 +55,7 @@
                   </div>
                 </TabPanel>
 
-                <TabPanel v-show="activeTab === 'completed'" class="bg-white p-6 rounded-lg shadow-md">
+                <TabPanel v-show="activeTab === 'completed'" class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
                   <div>
                     <TransactionCard
                       v-for="transaction in transactions.completed"

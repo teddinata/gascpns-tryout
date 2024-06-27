@@ -1,6 +1,6 @@
 <template>
   <MemberLayouts>
-    <div id="app" class="p-6 bg-gray-100 min-h-screen">
+    <div id="app" class="p-6 bg-gray-100 min-h-screen mt-8">
       <div class="header mb-6">
         <h2 class="text-2xl font-bold mb-4">Raport</h2>
       </div>

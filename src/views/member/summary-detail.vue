@@ -589,26 +589,21 @@ onMounted(() => {
 
 <template>
   <MemberLayouts>
-    <div class="px-16 grid grid-cols-5 gap-10">
+    <div class="p-4 sm:p-6 lg:px-16 grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10 mt-4">
       <div class="flex flex-col space-y-7 col-span-3">
         <ol>
           <li class="list-decimal-1">
             <div class="flex items-center mt-4 mb-4 gap-4">
-              <h2> Pertanyaan</h2>
+              <h2>Pertanyaan</h2>
               <img src="/public/arrow-circle-right.svg" class="-ml-2 w-6 rotate-90" />
             </div>
-
             <div v-if="questionDetail?.data?.image">
-              <img :src="questionDetail?.data?.image" class="w-auto h-[300px] object-cover" />
+              <img :src="questionDetail?.data?.image" class="w-full h-auto object-cover" />
             </div>
-
             <div v-html="questionDetail?.data?.question" class="question-content"></div>
             <div class="flex gap-4 items-center">
               <div class="flex flex-col space-y-3 pt-4">
-                <div
-                  v-for="(answer) in questionDetail?.data?.answers"
-                  :key="answer.id" 
-                  class="flex items-center gap-2 radio-answer">
+                <div v-for="(answer) in questionDetail?.data?.answers" :key="answer.id" class="flex items-center gap-2 radio-answer">
                   <input
                     type="radio"
                     disabled
@@ -618,7 +613,7 @@ onMounted(() => {
                     :value="answer.id"
                     class="w-0 h-0 opacity-0"
                   />
-                  <label :for="answer.id" class="radio-label flex items-center gap-4 text-lg">
+                  <label :for="answer.id" class="radio-label flex items-center gap-4 text-base sm:text-lg">
                     <span class="radio-button gap-2"></span>
                     {{ answer.label }}. {{ answer.text }}
                   </label>
@@ -626,83 +621,57 @@ onMounted(() => {
                   <img v-else src="/wrong.svg" alt="wrong answer" />
                 </div>
               </div>
-              <!-- <div class="flex flex-col space-y-[14px] pt-4">
-                <img src="/wrong.svg" alt="wrong answer" />
-                <img src="/wrong.svg" alt="wrong answer" />
-                <img src="/wrong.svg" alt="wrong answer" />
-                <img src="/true.svg" alt="true answer" />
-                <img src="/wrong.svg" alt="wrong answer" />
-              </div> -->
             </div>
           </li>
-
           <div class="flex items-center mt-14 mb-4 gap-4">
-            <h2> Pembahasan</h2>
+            <h2>Pembahasan</h2>
             <img src="/public/arrow-circle-right.svg" class="-ml-2 w-6 rotate-90" />
           </div>
           <div class="explanation-container bg-gray-300 p-4 rounded-lg">
-            <div v-html="questionDetail?.data?.questions?.explanation" class="question-content" 
-              style="line-height: 1.6; letter-spacing: 0.5px; font-size: 16px;"></div>
+            <div v-html="questionDetail?.data?.questions?.explanation" class="question-content" style="line-height: 1.6; letter-spacing: 0.5px; font-size: 16px;"></div>
           </div>
         </ol>
       </div>
-      <div class="flex flex-col gap-3 w-[500px]">
-        <div
-          class="bg-white drop-shadow-md flex flex-col space-y-5 px-10 py-5"
-        >
+      <div class="flex flex-col gap-3 w-full lg:w-[500px]">
+        <div class="bg-white drop-shadow-md flex flex-col space-y-5 px-4 sm:px-10 py-5">
           <div class="flex justify-center">
-
             <div class="flex items-center gap-6">
               <div class="rounded-lg bg-gray-100 p-2">
                 <div class="flex items-center gap-1">
                   <img src="/true.svg" class="w-4 h-4" />
-                  <span class="text-lg font-semibold">{{ questionDetail?.data?.is_correct }}</span>
+                  <span class="text-base sm:text-lg font-semibold">{{ questionDetail?.data?.is_correct }}</span>
                 </div>
                 <span>Benar</span>
               </div>
               <div class="rounded-lg bg-gray-100 p-2">
                 <div class="flex items-center gap-1">
                   <img src="/wrong.svg" class="w-4 h-4" />
-                  <span class="text-lg font-semibold">{{ questionDetail?.data?.is_false }}</span>
+                  <span class="text-base sm:text-lg font-semibold">{{ questionDetail?.data?.is_false }}</span>
                 </div>
                 <span>Salah</span>
               </div>
               <div class="rounded-lg bg-gray-100 p-2">
                 <div class="flex items-center gap-1">
                   <img src="/blank.svg" class="w-4 h-4" />
-                  <span class="text-lg font-semibold">{{ questionDetail?.data?.is_blank }}</span>
+                  <span class="text-base sm:text-lg font-semibold">{{ questionDetail?.data?.is_blank }}</span>
                 </div>
                 <span>Kosong</span>
               </div>
             </div>
-            
-            
-
-            <!-- <div
-              class="text-primary flex items-center gap-4 px-3 py-2 rounded-lg"
-            >
-              <img src="/countdown-blue.svg" />
-              <p>{{ countdown }}</p>
-            </div> -->
           </div>
-          <!-- divider -->
           <div class="border-b border-[#E0E0E0]"></div>
-
           <div class="mt-4">
             Kamu mengerjakan soal ini selama <strong>{{ timeTaken }}</strong>
           </div>
-
           <div class="border-b border-[#E0E0E0]"></div>
-          <div
-            class="flex flex-wrap justify-start items-center gap-3 max-w-[440px]"
-          >
+          <div class="flex flex-wrap justify-start items-center gap-3 max-w-full sm:max-w-[440px]">
             <button
               v-for="(number) in navigationData?.tryout_details"
               :key="number"
               :class="[
                 'aspect-square',
-                'w-[30px]',
-                'h-[30px]',
+                'w-8 h-8 sm:w-[30px]',
+                'h-8 sm:h-[30px]',
                 'rounded-md',
                 'border',
                 'border-[#90989F]',
@@ -716,9 +685,7 @@ onMounted(() => {
             </button>
           </div>
         </div>
-        <div
-          class="w-fit bg-white drop-shadow-md flex flex-col space-y-5 px-10 py-5 rounded-lg"
-        >
+        <div class="bg-white drop-shadow-md flex flex-col space-y-5 px-4 sm:px-10 py-5 rounded-lg">
           <ul class="list-inside">
             <p>Informasi Rangkuman Tryout</p>
             <li class="list-disc pl-2">
@@ -736,14 +703,6 @@ onMounted(() => {
                 <img src="/wrong-indicator.svg" alt="done" class="w-5 h-5" />
                 <p>Jawaban Salah</p>
               </div>
-              <!-- <div class="flex items-center gap-4">
-                <img src="/skip.svg" alt="done" class="w-5 h-5" />
-                <p>Dilewati</p>
-              </div> -->
-              <!-- <div class="flex items-center gap-4">
-                <img src="/blank.svg" alt="done" class="w-5 h-5" />
-                <p>Belum diisi</p>
-              </div> -->
             </div>
           </div>
         </div>

@@ -21,6 +21,10 @@ const toast = useToast();
 //   user: Object,
 // });
 
+const props = defineProps({
+  show: Boolean
+});
+
 const logoutAction = async () => {
   try {
     await store.dispatch("auth/logout"); 
@@ -116,43 +120,81 @@ const settings2 = [
 //   store.sidebarOpen = !store.sidebarOpen;
 // };
 </script>
+
 <template>
-  <!-- <div class="fixed inset-0 bg-black opacity-70 z-40"></div> -->
-  <div class="w-full max-w-[275px] min-h-screen items-center p-5 border-r-2 flex flex-col gap-8 text-text-primary 
-  fixed z-[99999] bg-white max-h-screen overflow-y-auto">
-  <div class="flex justify-between items-center">
-    <div class="w-full">
-      <Logo />
+  <div :class="['sidebar', { 'show': show }]">
+    <div class="w-full max-w-[275px] min-h-screen items-center p-5 border-r-2 flex flex-col gap-8 text-text-primary fixed z-[99999] bg-white max-h-screen overflow-y-auto">
+      <div class="flex justify-between items-center w-full">
+        <Logo class="mr-4 mb-3" /> <!-- Tambahkan logo di sini -->
+        <!-- Add button to close sidebar -->
+        <button @click="$emit('closeSidebar')" class="md:hidden p-2">
+          <Icon icon="fa-solid:times" class="text-2xl" />
+        </button>
+      </div>
+
+      <!-- MENU section -->
+      <div class="flex flex-col gap-4 w-full">
+        <h1 class="text-md font-medium text-text-tertiary">MENU</h1>
+        <NavigationLink :links="memberLinks" />
+      </div>
+
+      <!-- SETTINGS section -->
+      <div class="flex flex-col gap-4 w-full">
+        <h1 class="text-md font-medium text-text-tertiary">SETTINGS</h1>
+        <NavigationLink :links="settings" />
+      </div>
+
+      <!-- NEWS section -->
+      <div class="flex flex-col gap-4 w-full">
+        <h1 class="text-md font-medium text-text-tertiary">NEWS</h1>
+        <NavigationLink :links="news" />
+      </div>
+
+      <!-- LOGOUT section -->
+      <button @click="logoutAction" class="flex w-full justify-center items-center py-2 px-4 bg-secondary rounded-full transition-all duration-300">
+        <Icon icon="fa-solid:sign-out-alt" class="text-xl text-white mr-4"></Icon>
+        <p class="text-white text-lg">Logout</p>
+      </button>
     </div>
   </div>
-
-  <!-- MENU section -->
-  <div class="flex flex-col gap-4">
-    <h1 class="text-md font-medium text-text-tertiary">MENU</h1>
-    <NavigationLink :links="memberLinks" />
-  </div>
-
-  <!-- SETTINGS section -->
-  <div class="flex flex-col gap-4">
-    <h1 class="text-md font-medium text-text-tertiary">SETTINGS</h1>
-    <NavigationLink :links="settings" />
-  </div>
-
-  <!-- NEWS section -->
-  <div class="flex flex-col gap-4">
-    <h1 class="text-md font-medium text-text-tertiary">NEWS</h1>
-    <NavigationLink :links="news" />
-  </div>
-
-  <!-- LOGOUT section -->
-  <button @click="logoutAction" class="flex w-full justify-center items-center py-2 px-4 bg-secondary rounded-full transition-all duration-300">
-    <Icon icon="fa-solid:sign-out-alt" class="text-xl text-white mr-4"></Icon>
-    <p class="text-white text-lg">Logout</p>
-  </button>
-</div>
 </template>
 
+
 <style scoped>
+.sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+    background-color: white;
+    overflow-y: auto;
+    transform: translateX(-100%);
+  }
+  .sidebar.show {
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: 769px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 275px;
+    transform: translateX(-275px);
+  }
+  .sidebar.show {
+    transform: translateX(0);
+  }
+}
+
 @keyframes blink {
   50% {
     opacity: 0;

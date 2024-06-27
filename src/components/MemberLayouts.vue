@@ -1,3 +1,4 @@
+<!-- MemberLayout.vue -->
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -10,6 +11,7 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const user = ref(null);
+const sidebarOpen = ref(false);  // Tambahkan state ini untuk mengontrol sidebar
 
 const hideSidebar = computed(
   () => route.path === "/member/latihan" || route.path === "/member/tryout"
@@ -31,6 +33,10 @@ onMounted(async () => {
   NProgress.done();
 });
 
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value;  // Tambahkan fungsi ini untuk toggle sidebar
+};
+
 const logoutAction = () => {
   store.dispatch('auth/logout');
   router.push('/login');
@@ -39,9 +45,9 @@ const logoutAction = () => {
 
 <template>
   <div class="flex flex-row min-h-screen w-full">
-    <!-- <Sidebar v-if="!hideSidebar && user" :user="user" /> -->
-    <Sidebar v-if="!hideSidebar" />
-    <div class="flex flex-col w-full">
+    <!-- Add v-if binding with sidebarOpen -->
+    <Sidebar :show="sidebarOpen" @closeSidebar="sidebarOpen = false" />
+    <div :class="{'w-full': true, 'ml-0': !sidebarOpen, 'ml-72': sidebarOpen}">
       <TopNavbar
         v-if="user"
         :title="route.meta.title"
@@ -49,12 +55,13 @@ const logoutAction = () => {
         :user="user"
         icon1="mage:notification-bell"
         image="/profile.png"
+        @toggleSidebar="toggleSidebar" 
         @logout="logoutAction"
       />
 
       <main
-        class="flex flex-col min-h-screen md:pl-72 w-full px-7 py-20 bg-background"
-        :class="{ 'md:!pl-0 bg-white': hideSidebar }"
+        class="flex flex-col min-h-screen w-full px-7 py-20 bg-background"
+        :class="{ 'bg-white': hideSidebar }"
       >
         <slot />
       </main>
