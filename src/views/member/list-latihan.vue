@@ -323,7 +323,7 @@
               <img src="../../assets/empty-folder.svg" class="w-96" />
               <h1 class="text-lg font-semibold text-text-primary mt-4">Belum ada tryout yang kamu ambil</h1>
               <p class="text-sm font-medium text-text-quaternary text-center mt-2">
-                Silahkan cek tryout yang sudah kamu ambil di tab <span class="font-bold">Sudah Diambil</span>
+                Silahkan pilih paket tryout gratis yang ingin kamu ambil di tab <span class="font-semibold">Belum Dikerjakan</span>
               </p>
             </div>
           </TabPanel>
@@ -377,7 +377,7 @@ const fetchFreeTryout = async () => {
         items.value = tryouts.map(tryout => ({
             id: tryout.id, // Tambahkan id untuk klaim paket
             image: tryout.cover_path,
-            
+
             judulTes: tryout.name,
             status: tryout.is_enrolled ? 'Dikerjakan' : 'Belum Dikerjakan',
             jumlahSoal: tryout.total_question,
