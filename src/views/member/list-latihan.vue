@@ -2,7 +2,13 @@
   <MemberLayouts>
     <div id="app" class="p-4 sm:p-6 bg-gray-100 min-h-screen mt-8">
       <div class="header mb-6">
-        <h2 class="text-lg sm:text-2xl font-bold mb-4">Latihan Soal CPNS</h2>
+        <h2 class="sm:text-2xl font-bold mb-4">Latihan Soal CPNS</h2>
+        <!-- description -->
+        <p class="text-sm sm:text-base text-text-quaternary">
+          Latihan soal CPNS ini adalah latihan soal yang disusun khusus untuk membantu kamu mempersiapkan diri menghadapi ujian CPNS. 
+          Soal-soal yang disediakan merupakan soal-soal yang sering keluar dalam ujian CPNS. 
+          Dengan latihan soal ini, kamu bisa mengukur kemampuanmu dalam menjawab soal-soal CPNS.
+        </p>
       </div>
       <TabGroup>
         <TabList class="flex space-x-1 bg-blue-900/20 p-1 rounded-lg">
@@ -166,14 +172,14 @@
             </div>
           </TabPanel> -->
 
-          <TabPanel v-show="tab === 'Belum Dikerjakan'" class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <TabPanel v-show="tab === 'Belum Dikerjakan'" class=" p-4 sm:p-6 rounded-lg">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div 
                   v-for="(item, index) in filteredItems" :key="index" 
                   class="w-full flex flex-col gap-4 bg-white rounded-xl p-3 shadow-lg justify-between
                   hover:bg-gray-100 transition duration-200"
                 >
-                  <img :src="item.image" class="w-full h-40" :alt="item.title" />
+                  <img :src="item.image" class="w-full h-auto" :alt="item.title" />
                   <h1 class="text-xl font-semibold text-text-primary">{{ item.judulTes }}</h1>
                   <div class="flex flex-col space-y-2">
                     <div class="flex gap-3 justify-between items-center">
@@ -247,14 +253,14 @@
             </div>
           </TabPanel>
 
-          <TabPanel v-show="tab === 'Dikerjakan'" class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <TabPanel v-show="tab === 'Dikerjakan'" class=" p-4 sm:p-6 rounded-lg">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div 
                   v-for="(item, index) in filteredItems" :key="index" 
                   class="w-full flex flex-col gap-4 bg-white rounded-xl p-3 shadow-lg justify-between
                   hover:bg-gray-100 transition duration-200"
                 >
-                  <img :src="item.image" class="w-full h-40" :alt="item.title" />
+                  <img :src="item.image" class="w-full h-auto" :alt="item.title" />
                   <h1 class="text-xl font-semibold text-text-primary">{{ item.judulTes }}</h1>
                   <div class="flex flex-col space-y-2">
                     <div class="flex gap-3 justify-between items-center">
