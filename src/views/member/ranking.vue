@@ -20,14 +20,14 @@
         
         <div class="flex items-center space-x-4 mb-8 justify-between">
           <!-- Dropdown Filter -->
-          <select v-model="selectedPackageId" @change="fetchData" class="block w-48 md:w-72 py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+          <select v-model="selectedPackageId" @change="fetchData" class="block w-40 md:w-72 py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
             <option value="" disabled>Pilih Paket</option>
             <option v-for="packageOption in packageOptions" :key="packageOption.id" :value="packageOption.id">
               {{ packageOption.name }}
             </option>
           </select>
           <!-- Search Input -->
-          <input type="text" v-model="searchQuery" @input="filterData" placeholder="Cari Nama..." class="block w-48 md:w-64 py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+          <input type="text" v-model="searchQuery" @input="filterData" placeholder="Cari Nama..." class="block w-32 md:w-64 py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
         </div>
       </div>
   

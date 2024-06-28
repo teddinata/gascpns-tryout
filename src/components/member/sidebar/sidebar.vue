@@ -49,7 +49,7 @@ const memberLinks = [
     icons: "fluent:brain-circuit-20-regular",
   },
   {
-    name: "Rangking",
+    name: "Ranking",
     url: "/member/ranking",
     icons: "flowbite:chart-line-up-outline",
   },

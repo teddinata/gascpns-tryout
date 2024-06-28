@@ -29,6 +29,9 @@ const getUser = async () => {
 
 onMounted(async () => {
   NProgress.start();
+  if (window.innerWidth >= 1024) {
+    sidebarOpen.value = true;
+  }
   await getUser();
   NProgress.done();
 });

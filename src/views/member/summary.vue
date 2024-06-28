@@ -2,7 +2,7 @@
 <template>
   <MemberLayouts>
     <!-- <div class="container mx-auto p-4"> -->
-      <h1 class="text-2xl font-semibold mb-4">Summary Hasil Tryout CPNS</h1>
+      <h1 class="text-2xl font-semibold mt-8 mb-4">Ringkasan Hasil Tryout CPNS</h1>
       <div class="flex items-center w-60 mb-4">
         <button 
         @click="viewSummary"
