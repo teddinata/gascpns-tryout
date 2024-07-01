@@ -33,14 +33,38 @@
   
       <div class="max-w-full mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-          <EasyDataTable
-            :headers="headers"
-            :items="filteredItems"
-            :row-class="getRowClass"
-            table-class-name="customize-table"
-          />
-
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th v-for="header in headers" :key="header.value" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {{ header.text }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="item in paginatedItems" :key="item.id" :class="getRowClass(item)">
+                <td class="px-6 py-4 whitespace-nowrap">{{ item.rank }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ item.name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ item.provinsi }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ item.twk }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ item.tiu }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ item.tkp }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ item.total }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ item.keterangan }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+  
+        <!-- Pagination -->
+        <div class="flex justify-between items-center mt-4">
+          <button @click="prevPage" :disabled="currentPage === 1" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Previous</button>
+          <span class="text-gray-700">Page {{ currentPage }} of {{ totalPages }}</span>
+          <button @click="nextPage" :disabled="currentPage === totalPages" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Next</button>
+        </div>
+  
+        <div v-if="message" class="mt-4 p-4 rounded-md" :class="messageClass">{{ message }}</div>  
+  
         <div class="bg-white p-6 rounded-lg mt-8">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -107,6 +131,15 @@ const filteredItems = ref([]);
 const packageOptions = ref([]);
 const selectedPackageId = ref('');
 const searchQuery = ref('');
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+const totalPages = computed(() => Math.ceil(filteredItems.value.length / itemsPerPage.value));
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredItems.value.slice(start, end);
+});
+
 
 const loggedInUserName = computed(() => store.state.user.name); // Ambil nama user dari Vuex
 
@@ -151,6 +184,18 @@ const filterData = () => {
   );
 };
 
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
 // Ambil data paket saat komponen dipasang
 onMounted(() => {
   fetchPackageOptions();
@@ -178,6 +223,32 @@ const getRowClass = (item) => {
 </script>
 
 <style scoped>
+.container {
+  max-width: 800px;
+}
+.customize-table th, .customize-table td {
+  padding: 0.75rem;
+}
+.customize-table th {
+  background-color: #f3f4f6;
+  font-weight: bold;
+}
+.customize-table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+.customize-table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+.customize-table tbody tr.highlight {
+  background-color: #e3fcec;
+}
+.customize-table tbody tr.passed {
+  background-color: #d1fae5;
+  
+}
+.customize-table tbody tr.failed {
+  background-color: #fee2e2;
+}
 .header {
   display: flex;
   justify-content: space-between;
@@ -208,15 +279,15 @@ const getRowClass = (item) => {
   background-color: yellow; /* Highlight color */
 }
 
-.passed {
-  background-color: green; /* Background color for "Lulus" */
-  color: white; /* Text color for better readability */
-}
+/* .passed {
+  background-color: green; /* Background color for "Lulus" 
+  color: white;
+} 
 
 .failed {
-  background-color: red; /* Background color for "Tidak Lulus" */
-  color: white; /* Text color for better readability */
-}
+  background-color: red; 
+  color: white; 
+} */
 
 .customize-table {
   --easy-table-border: 1px solid #445269;
