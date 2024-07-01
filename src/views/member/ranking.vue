@@ -33,27 +33,36 @@
   
       <div class="max-w-full mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th v-for="header in headers" :key="header.value" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {{ header.text }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="item in paginatedItems" :key="item.id" :class="getRowClass(item)">
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.rank }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.provinsi }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.twk }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.tiu }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.tkp }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.total }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ item.keterangan }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div v-if="items.length === 0" class="text-center text-gray-500">Tidak ada data.</div>
+          <div v-else>
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th v-for="header in headers" :key="header.value" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{ header.text }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="item in filteredItems" :key="item.id" :class="getRowClass(item)" class="hover:bg-gray-100">
+                  <td class="px-6 py-4 whitespace-nowrap">{{ item.rank }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ item.name }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ item.provinsi }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ item.twk }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ item.tiu }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ item.tkp }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ item.total }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{ item.keterangan }}</td>
+                </tr>
+              </tbody>
+            </table>
+      
+            <!-- <div class="flex justify-between items-center py-3">
+              <button @click="prevPage" :disabled="currentPage === 1" class="px-3 py-1 rounded bg-gray-300 text-gray-600 hover:bg-gray-400">Previous</button>
+              <span>Page {{ currentPage }} of {{ totalPages }}</span>
+              <button @click="nextPage" :disabled="currentPage === totalPages" class="px-3 py-1 rounded bg-gray-300 text-gray-600 hover:bg-gray-400">Next</button>
+            </div> -->
+          </div>
         </div>
   
         <!-- Pagination -->
@@ -109,11 +118,8 @@ import { useStore } from 'vuex';
 import api from '@/api/Api.js';
 
 const store = useStore();
+const loggedInUserName = computed(() => store.getters['auth/user'].name);
 
-const totalParticipants = ref(0);
-const passedParticipants = ref(0);
-const failedParticipants = ref(0);
-const isLoading = ref(false);
 
 const headers = ref([
   { text: "RANK", value: "rank" },
@@ -132,18 +138,13 @@ const packageOptions = ref([]);
 const selectedPackageId = ref('');
 const searchQuery = ref('');
 const currentPage = ref(1);
-const itemsPerPage = ref(10);
-const totalPages = computed(() => Math.ceil(filteredItems.value.length / itemsPerPage.value));
-const paginatedItems = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredItems.value.slice(start, end);
-});
+const totalPages = ref(1);
+const totalParticipants = ref(0);
+const passedParticipants = ref(0);
+const failedParticipants = ref(0);
+const isLoading = ref(false);
 
-
-const loggedInUserName = computed(() => store.state.user.name); // Ambil nama user dari Vuex
-
-const fetchData = async () => {
+const fetchData = async (page = 1) => {
   if (!selectedPackageId.value) return;
 
   try {
@@ -151,19 +152,22 @@ const fetchData = async () => {
     const response = await api.get('/v1/rankings-by-package', {
       params: {
         package_id: selectedPackageId.value,
+        page: page,
+        search_name: searchQuery.value
       }
     });
 
-    const data = response.data.data.data; // Akses ke data ranking
-    items.value = data;
-    filteredItems.value = data;
+    const data = response.data.data; // Akses ke data ranking
+    items.value = data.data;
+    filteredItems.value = data.data;
+    currentPage.value = data.current_page;
+    totalPages.value = data.last_page;
 
-    totalParticipants.value = data.length;
-    passedParticipants.value = data.filter(item => item.keterangan === 'Lulus').length;
+    totalParticipants.value = data.total;
+    passedParticipants.value = data.data.filter(item => item.keterangan === 'Lulus').length;
     failedParticipants.value = totalParticipants.value - passedParticipants.value;
 
     isLoading.value = false;
-
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -179,20 +183,20 @@ const fetchPackageOptions = async () => {
 };
 
 const filterData = () => {
-  filteredItems.value = items.value.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+  fetchData(currentPage.value);
 };
 
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
+    fetchData(currentPage.value);
   }
 };
 
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
+    fetchData(currentPage.value);
   }
 };
 
@@ -201,10 +205,9 @@ onMounted(() => {
   fetchPackageOptions();
 });
 
-watch(selectedPackageId, fetchData);
+watch(selectedPackageId, () => fetchData(1));
 watch(searchQuery, filterData);
 
-// Function to return row class based on the logged-in user's name and keterangan
 const getRowClass = (item) => {
   const classes = [];
 
@@ -225,6 +228,20 @@ const getRowClass = (item) => {
 <style scoped>
 .container {
   max-width: 800px;
+}
+.table-striped tbody tr:nth-child(odd) {
+  background-color: #f9fafb; /* Light gray color for odd rows */
+}
+
+.table-striped tbody tr:hover {
+  background-color: #f1f5f9; /* Slightly darker gray for hover effect */
+}
+
+.selected {
+  border: 2px solid #1d4ed8; /* Tailwind primary color */
+}
+.bg-primary {
+  background-color: #1d4ed8;
 }
 .customize-table th, .customize-table td {
   padding: 0.75rem;
