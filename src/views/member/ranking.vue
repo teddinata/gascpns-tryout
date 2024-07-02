@@ -158,13 +158,13 @@ const fetchData = async (page = 1) => {
     });
 
     const responseData = response.data.data; // Akses ke data ranking
-    items.value = Object.values(responseData.data); // Ubah objek data menjadi array
+    items.value = Array.isArray(responseData.data) ? responseData.data : Object.values(responseData.data);
     filteredItems.value = items.value;
     currentPage.value = responseData.current_page;
     totalPages.value = responseData.last_page;
 
     totalParticipants.value = responseData.total;
-    passedParticipants.value = items.value.filter(item => item.keterangan === 'Lulus').length;
+    passedParticipants.value = Array.isArray(items.value) ? items.value.filter(item => item.keterangan === 'Lulus').length : 0;
     failedParticipants.value = totalParticipants.value - passedParticipants.value;
 
     isLoading.value = false;
