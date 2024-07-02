@@ -44,7 +44,7 @@
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="item in filteredItems" :key="item.id" :class="getRowClass(item)" class="hover:bg-gray-100">
+                <tr v-for="item in filteredItems" :key="item.rank" :class="getRowClass(item)" class="hover:bg-gray-100">
                   <td class="px-6 py-4 whitespace-nowrap">{{ item.rank }}</td>
                   <td class="px-6 py-4 whitespace-nowrap">{{ item.name }}</td>
                   <td class="px-6 py-4 whitespace-nowrap">{{ item.provinsi }}</td>
@@ -53,7 +53,7 @@
                   <td class="px-6 py-4 whitespace-nowrap">{{ item.tkp }}</td>
                   <td class="px-6 py-4 whitespace-nowrap">{{ item.total }}</td>
                   <td class="px-6 py-4 whitespace-nowrap">{{ item.keterangan }}</td>
-                </tr>
+                </tr>                
               </tbody>
             </table>
       
@@ -157,21 +157,23 @@ const fetchData = async (page = 1) => {
       }
     });
 
-    const data = response.data.data; // Akses ke data ranking
-    items.value = data.data;
-    filteredItems.value = data.data;
-    currentPage.value = data.current_page;
-    totalPages.value = data.last_page;
+    const responseData = response.data.data; // Akses ke data ranking
+    items.value = Object.values(responseData.data); // Ubah objek data menjadi array
+    filteredItems.value = items.value;
+    currentPage.value = responseData.current_page;
+    totalPages.value = responseData.last_page;
 
-    totalParticipants.value = data.total;
-    passedParticipants.value = data.data.filter(item => item.keterangan === 'Lulus').length;
+    totalParticipants.value = responseData.total;
+    passedParticipants.value = items.value.filter(item => item.keterangan === 'Lulus').length;
     failedParticipants.value = totalParticipants.value - passedParticipants.value;
 
     isLoading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
+    isLoading.value = false;
   }
 };
+
 
 const fetchPackageOptions = async () => {
   try {
