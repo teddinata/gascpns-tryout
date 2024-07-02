@@ -163,9 +163,13 @@ const fetchData = async (page = 1) => {
     currentPage.value = responseData.current_page;
     totalPages.value = responseData.last_page;
 
-    totalParticipants.value = responseData.total;
-    passedParticipants.value = Array.isArray(items.value) ? items.value.filter(item => item.keterangan === 'Lulus').length : 0;
-    failedParticipants.value = totalParticipants.value - passedParticipants.value;
+    // totalParticipants.value = responseData.total;
+    // passedParticipants.value = Array.isArray(items.value) ? items.value.filter(item => item.keterangan === 'Lulus').length : 0;
+    // failedParticipants.value = totalParticipants.value - passedParticipants.value;
+
+    totalParticipants.value = response.data.total_participants;
+    passedParticipants.value = response.data.passed_participants; // Total lulus
+    failedParticipants.value = response.data.failed_participants; // Total tidak lulus
 
     isLoading.value = false;
   } catch (error) {
