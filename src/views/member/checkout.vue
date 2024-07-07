@@ -30,11 +30,13 @@
       <!-- Kode Promo -->
       <div class="p-4 rounded-lg shadow-2xl items-center bg-white">
         <div class="flex items-center gap-4 justify-between">
-          <h3 class="text-lg font-semibold">Kode Promo/Referral (Apabila ada)</h3>
-          <button @click="applyPromoCode" class="text-blue-500">Lihat Voucher Saya</button>
+          <h3 class="text-lg font-semibold">Kode Promo / Voucher yang digunakan</h3>
+          <!-- <button @click="applyPromoCode" class="text-blue-500">Lihat Voucher Saya</button> -->
         </div>
         <div class="mt-4 flex flex-col card p-4 rounded-lg shadow-2xl bg-white">
-          <input v-model="promoCode" type="text" class="p-2 border rounded w-full" placeholder="Masukkan kode promo" />
+          <input v-model="transactionData[0].voucher_code"
+            type="text" disabled class="p-2 border rounded w-full font-extrabold text-lg"
+            placeholder="Tidak menggunakan kode promo" />
           <p v-if="promoApplied" class="text-green-500 mt-2">Kode voucher berhasil digunakan!</p>
         </div>
       </div>
@@ -77,7 +79,10 @@
           </div>
           <div class="flex justify-between mb-2">
             <span>Diskon Kode Promo</span>
-            <span>Rp0</span>
+            <!-- if discount amount not null then show data discount -->
+            <span v-if="discountAmount !== 0" class="text-red-400">- Rp{{ formatRupiah(discountAmount) }}</span>
+            <!-- if discount amount null then show data discount -->
+            <span v-else class="text-red-400">- Rp{{ formatRupiah(discount) }}</span>
           </div>
           <div class="flex justify-between mb-2">
             <span>Pajak</span>
@@ -196,11 +201,23 @@ const fetchTransaction = async () => {
 
 // Hitung total quantity, subtotal, pajak, dan total pembayaran
 const totalQuantity = computed(() => transactionData.value.length);
-const subtotal = computed(() => transactionData.value.reduce((acc, trx) => acc + trx.total_amount, 0));
+// const subtotal = computed(() => transactionData.value.reduce((acc, trx) => acc + trx.total_amount, 0));
+const subtotal = computed(() => {
+  return transactionData.value.reduce((acc, trx) => {
+    const price = trx.discount_price !== null ? trx.discount_price : trx.original_price;
+    return acc + price;
+  }, 0);
+});
 const totalTax = computed(() => {
   return transactionData.value.reduce((acc, trx) => acc + trx.tax, 0);
 });
-const totalPayment = computed(() => subtotal.value + totalTax.value);
+// count disccount_amount
+const discountAmount = computed(() => {
+  return transactionData.value.reduce((acc, trx) => acc + trx.discount_amount, 0);
+});
+const totalPayment = computed(() => {
+  return subtotal.value + totalTax.value - discountAmount.value;
+});
 
 // Menggunakan mapGetters untuk mengambil data selected payment method dari store
 const selectedPaymentMethod = computed(() => store.getters.getSelectedPaymentMethod);

@@ -6,21 +6,21 @@
         <p class="font-semibold">Berhasil!</p>
         <p>Transaksi berhasil dibuat, mohon untuk melakukan pembayaran sebelum batas waktu berakhir.</p>
       </div>
-
+    
       <!-- Detail Transaksi -->
       <div class="bg-white p-6 rounded-lg shadow-2xl">
-        <div class="flex items-center mb-6">
+        <div class="flex flex-col md:flex-row items-center mb-6">
           <img 
             v-if="transactionData[0]?.package?.cover_path"
             :src="transactionData[0]?.package?.cover_path"
-            alt="Paket SKD CPNS Premium" class="w-40 h-40 object-contain mr-4" />
+            alt="Paket SKD CPNS Premium" class="w-40 h-40 object-contain mb-4 md:mb-0 md:mr-4" />
           <div>
             <h2 class="text-xl font-semibold">{{ transactionData[0]?.package?.name }}</h2>
             <p class="text-lg font-bold">Total Pembayaran</p>
             <p class="text-2xl font-bold text-green-600">Rp{{ formatRupiah(totalPayment) }}</p>
           </div>
         </div>
-
+    
         <!-- Informasi Transaksi -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>
@@ -76,7 +76,7 @@
                 </svg>
               </button>
             </p>
-
+    
             <!-- button if payment channel is EWALLET -->
             <p
               v-else-if="transactionData[0]?.payment_channel == 'ID_DANA' || transactionData[0]?.payment_channel == 'ID_LINKAJA'"
@@ -100,7 +100,7 @@
                 Salin link di atas dan buka di browser untuk melanjutkan pembayaran
               </span>
             </p>
-
+    
              <!-- QR code if payment channel is QRIS -->
             <div v-else-if="transactionData[0]?.payment_channel == 'QRIS' || transactionData[0]?.payment_channel == 'ID_SHOPEEPAY'"
               class="mt-4 flex flex-col items-center">
@@ -123,38 +123,46 @@
             <p class="font-semibold">{{ transactionData[0]?.voucher_code ?? '-' }}</p>
           </div>
         </div>
-
+    
         <!-- Detail Pembayaran -->
         <div class="grid grid-cols-1 gap-4 mb-6">
           <div class="p-4 rounded-lg shadow-2xl bg-white">
-            <div class="flex justify-between">
+            <div class="flex justify-between flex-col md:flex-row">
               <h4 class="text-lg font-semibold mb-2">{{ transactionData[0]?.package?.name }}</h4>
               <div class="flex items-center">
-                <span v-if="transactionData[0]?.package?.discount" class="text-red-400 font-semibold">Rp {{ formatRupiah(transactionData[0]?.package?.discount) }}</span>
-                <span v-if="transactionData[0]?.package?.discount" class="text-gray-400 line-through ml-2">Rp {{ formatRupiah(transactionData[0]?.package?.price) }}</span>
-                <span v-if="transactionData[0]?.package?.discount" class="text-green-500 ml-2 font-semibold">-{{ Math.round(((transactionData[0]?.package?.price - transactionData[0]?.package?.discount) / transactionData[0]?.package?.price) * 100) }}%</span>
-                <span v-else class="text-red-400">Rp {{ formatRupiah(transactionData[0]?.package?.price) }}</span>
+                <span v-if="transactionData[0]?.package?.discount" class="text-red-400 font-semibold"> Rp {{ formatRupiah(transactionData[0]?.package?.discount) }}</span>
+                <span v-if="transactionData[0]?.package?.discount" class="text-gray-400 line-through ml-2"> Rp {{ formatRupiah(transactionData[0]?.package?.price) }}</span>
+                <span v-if="transactionData[0]?.package?.discount" class="text-green-500 ml-2 font-semibold"> -{{ Math.round(((transactionData[0]?.package?.price - transactionData[0]?.package?.discount) / transactionData[0]?.package?.price) * 100) }}%</span>
+                <span v-else class="text-red-400"> Rp {{ formatRupiah(transactionData[0]?.package?.price) }}</span>
               </div>
             </div>
-            <div class="flex justify-between">
-              <span>Diskon Promo/Referral</span>
-              <span>-Rp0</span>
+    
+            <div class="flex justify-between flex-col md:flex-row">
+              <span>Jumlah Pembelian</span>
+              <span>x{{ totalQuantity }} item </span>
             </div>
-            <div class="flex justify-between">
+            <div class="flex justify-between flex-col md:flex-row">
+              <span>Subtotal Pembelian</span>
+              <span class="">Rp{{ formatRupiah(totalPayment + discountAmount) }}</span>
+            </div>
+            <div class="flex justify-between flex-col md:flex-row">
+              <span>Diskon Voucher</span>
+               <!-- if discount amount not null then show data discount -->
+              <span v-if="discountAmount !== 0" class="text-red-400">- Rp{{ formatRupiah(discountAmount) }}</span>
+              <!-- if discount amount null then show data discount -->
+              <span v-else class="text-red-400">- Rp{{ formatRupiah(discountAmount) }}</span>
+            </div>
+            <div class="flex justify-between flex-col md:flex-row">
               <span>Biaya Admin</span>
               <span>Rp0</span>
             </div>
-            <div class="flex justify-between font-semibold">
+            <div class="flex justify-between flex-col md:flex-row font-semibold">
               <span>Total Pembayaran</span>
               <span>Rp{{ formatRupiah(totalPayment) }}</span>
             </div>
-            <div class="flex justify-between">
-              <span>Jumlah</span>
-              <span>x{{ totalQuantity }}</span>
-            </div>
           </div>
         </div>
-
+    
         <!-- Accordion Tata Cara Pembayaran -->
         <div v-if="transactionData[0]?.payment_channel === 'Virtual Account'" class="accordion mt-4 mb-4">
           <h2 class="text-xl font-bold mb-4">Instruksi Pembayaran</h2>
@@ -184,42 +192,41 @@
             </div>
           </div>
         </div>
-
+    
         <!-- Tombol Pembatalan -->
-        <div class="flex justify-between mt-4">
-
-        <button 
-          @click="showCancelModal = true" 
-          :class="{
-            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED',
-            'bg-red-500 hover:bg-red-700': transactionData[0]?.payment_status !== 'EXPIRED' && transactionData[0]?.payment_status !== 'PAID' || transactionData[0]?.payment_status !== 'CANCELLED'
-          }"
-          class="flex items-center py-2 px-4 rounded-md text-white"
-          :disabled="transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED'">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-          Batalkan Pembelian
-        </button>
-    
-        <button 
-          @click="fetchTransaction" 
-          :class="{
-            'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED',
-            'bg-blue-500 hover:bg-blue-700': transactionData[0]?.payment_status !== 'EXPIRED' && transactionData[0]?.payment_status !== 'PAID' || transactionData[0]?.payment_status !== 'CANCELLED'
-          }"
-          class="flex py-2 px-4 rounded-md text-white mr-2 items-center"
-          :disabled="transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED'">
-          <!-- icon check -->
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Cek Pembayaranmu
-        </button>
-    
+        <div class="flex flex-col md:flex-row justify-between mt-4">
+          <button 
+            @click="showCancelModal = true" 
+            :class="{
+              'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED',
+              'bg-red-500 hover:bg-red-700': transactionData[0]?.payment_status !== 'EXPIRED' && transactionData[0]?.payment_status !== 'PAID' || transactionData[0]?.payment_status !== 'CANCELLED'
+            }"
+            class="flex items-center py-2 px-4 rounded-md text-white mb-2 md:mb-0"
+            :disabled="transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED'">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Batalkan Pembelian
+          </button>
+      
+          <button 
+            @click="fetchTransaction" 
+            :class="{
+              'bg-gray-400 hover:bg-gray-600 cursor-not-allowed': transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED',
+              'bg-blue-500 hover:bg-blue-700': transactionData[0]?.payment_status !== 'EXPIRED' && transactionData[0]?.payment_status !== 'PAID' || transactionData[0]?.payment_status !== 'CANCELLED'
+            }"
+            class="flex py-2 px-4 rounded-md text-white mr-2 items-center"
+            :disabled="transactionData[0]?.payment_status == 'EXPIRED' || transactionData[0]?.payment_status == 'PAID' || transactionData[0]?.payment_status == 'CANCELLED'">
+            <!-- icon check -->
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Cek Pembayaranmu
+          </button>
         </div>
       </div>
     </div>
+    
     <!-- Modal Konfirmasi -->
     <div v-if="showCancelModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-4">
@@ -233,6 +240,7 @@
         </div>
       </div>
     </div>
+    
   </MemberLayouts>
 </template>
 
@@ -351,6 +359,9 @@ const isAccordionOpen = (methodName) => {
   return openAccordions.value.includes(methodName);
 };
 
+const discountAmount = computed(() => {
+  return transactionData.value.reduce((acc, trx) => acc + trx.discount_amount, 0);
+});
 const totalQuantity = computed(() => transactionData.value.length);
 const totalPayment = computed(() => transactionData.value.reduce((acc, trx) => acc + trx.total_amount, 0));
 

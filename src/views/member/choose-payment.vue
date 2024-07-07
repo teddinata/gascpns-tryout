@@ -60,7 +60,7 @@
         </ul>
         
           <!-- Button -->
-          <div>
+          <!-- <div>
             <button @click="openConfirmationModal" 
                     :disabled="!isPaymentMethodSelected"
                     :class="['flex items-center py-2 px-4 rounded-full text-white hover:bg-blue-600',
@@ -68,7 +68,7 @@
               <p class="mr-4">Lanjutkan Pembayaran</p>
               <Icon icon="fa-solid:arrow-right" class="text-xl"></Icon>
             </button>
-          </div>          
+          </div>           -->
         </div>
       </div>
 
@@ -132,8 +132,88 @@
       </div>
       
     
-      
+      <!-- Kode Promo -->
+      <div class="p-4 rounded-lg shadow-2xl items-center bg-white mt-6">
+        <div class="flex items-center gap-4 justify-between">
+          <h3 class="text-lg font-semibold">Kode Voucher (bila ada)</h3>
+          <button @click="toggleVouchers" class="text-blue-500">Lihat Voucher Saya</button>
+        </div>
+        <div v-if="showVouchers" class="mt-4 flex flex-col card p-4 rounded-lg shadow-2xl bg-white">
+          <h3 class="text-lg font-semibold">Daftar Voucher</h3>
+          <div v-for="voucher in availableVouchers" :key="voucher.id" class="p-4 mb-4 border rounded-lg shadow coupon-card relative">
+            <div class="absolute top-0 bottom-0 left-0 w-8 bg-white rounded-full transform -translate-x-1/2"></div>
+            <div class="absolute top-0 bottom-0 right-0 w-8 bg-white rounded-full transform translate-x-1/2"></div>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-2">
+              <p class="text-orange-600 text-lg font-semibold">Diskon</p>
+              <p class="text-gray-500 text-center md:text-right">{{ voucher.description }}</p>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center">
+              <p class="text-gray-700 text-2xl font-bold">{{ voucher.discount_type === 'percentage' ? voucher.discount_amount + '%' : 'Rp' + formatRupiah(voucher.discount_amount) }}</p>
+              <button @click="openConfirmationVoucherModal(voucher)" class="mt-4 md:mt-0 bg-primary text-white py-2 px-4 rounded-lg">Gunakan Voucher</button>
+            </div>
+            <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
+              <div class="flex items-center">
+                <Icon icon="fa-regular:clock" class="mr-2 text-green-500"/>
+                <span>Berlaku hingga {{ formatDate(voucher.valid_to) }}</span>
+              </div>
+              <div class="flex items-center">
+                <Icon icon="fa-solid:money-bill-wave" class="mr-2 text-green-500"/>
+                <span>Min. pembelian: <strong>x{{ voucher.min_quantity }}</strong></span>
+              </div>
+              <div class="flex items-center">
+                <Icon icon="fa-solid:money-bill-wave" class="mr-2 text-green-500"/>
+                <span>Min. transaksi <strong>Rp{{ formatRupiah(voucher.min_purchase) }}</strong></span>
+              </div>
+            </div>
+            <div class="flex justify-start items-center mt-4">
+              <p class="font-semibold">Kode: </p>
+              <!-- <button @click="copyToClipboard(voucher.code)" class="text-blue-500">Copy</button> -->
+              <span class="ml-4 bg-green-700 text-white p-2 rounded-lg text-sm cursor-pointer flex items-center" @click="copyToClipboard(voucher.code)">
+                {{ voucher.code }}
+                <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-7 8h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V6z"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 flex flex-col card p-4 rounded-lg shadow-2xl bg-white">
+          <div class="mt-4 flex flex-col md:flex-row gap-4">
+            <input v-model="voucherCode" type="text" class="p-2 border rounded w-full md:w-full" placeholder="Masukkan kode promo" style="text-transform: uppercase;" :disabled="voucherApplied || isApplyingVoucher">
+            <button @click="applyVoucher" class="mt-2 md:mt-0 bg-primary text-white py-2 px-4 rounded-lg w-full md:w-auto" :disabled="voucherApplied || isApplyingVoucher">Gunakan Kode Promo</button>
+          </div>
+          <p v-if="voucherApplied" class="text-green-500 mt-2">Kode voucher berhasil digunakan! Diskon: Rp {{ formatRupiah(discountAmount) }}</p>
+          <p v-if="!voucherApplied && voucherCode && !isApplyingVoucher" class="text-red-500 mt-2">Kode voucher tidak valid atau sudah kadaluarsa.</p>
+        </div>
+      </div>
+
+  
+      <!-- Modal for confirmation voucher -->
+      <div v-if="showConfirmationVoucherModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl">
+          <h2 class="text-lg font-semibold mb-4">Konfirmasi Penggunaan Voucher</h2>
+          <p class="mb-4">Apakah Anda yakin ingin menggunakan voucher <strong>{{ selectedVoucher?.code }}</strong>?</p>
+          <div class="flex justify-end">
+            <button @click="cancelApplyVoucher" class="px-4 py-2 bg-gray-400 text-white rounded-lg mr-4">Batal</button>
+            <button @click="confirmApplyVoucher" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg">Ya, Gunakan</button>
+          </div>
+        </div>
+      </div>
+
+        <!-- Button -->
+      <div class="flex justify-end mt-6">
+        <button @click="openConfirmationModal" 
+                :disabled="!isPaymentMethodSelected"
+                :class="['flex items-center py-2 px-4 rounded-full text-white hover:bg-blue-600',
+                          isPaymentMethodSelected ? 'bg-primary' : 'bg-slate-500 cursor-not-allowed']">
+          <p class="mr-4">Lanjutkan Pembayaran</p>
+          <Icon icon="fa-solid:arrow-right" class="text-xl"></Icon>
+        </button>
+      </div>
     </div>
+
+    
 
     <!-- Modal for confirmation -->
     <div v-if="showConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -157,6 +237,18 @@
       </div>
     </div>
 
+    <!-- Modal for confirmation without voucher -->
+    <div v-if="showNoVoucherModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+      <div class="bg-white p-6 rounded-lg shadow-xl">
+        <h2 class="text-lg font-semibold mb-4">Lanjutkan tanpa promo?</h2>
+        <p class="mb-4">Anda tidak memasukkan kode voucher, apakah ingin melanjutkan tanpa promo?</p>
+        <div class="flex justify-end">
+          <button @click="cancelNoVoucher" class="px-4 py-2 bg-gray-400 text-white rounded-lg mr-4">Batal</button>
+          <button @click="confirmNoVoucher" class="px-4 py-2 bg-primary text-white rounded-lg">Ya, Lanjutkan</button>
+        </div>
+      </div>
+    </div>
+
   </MemberLayouts>
 </template>
 
@@ -169,14 +261,15 @@ import api from '@/api/Api.js';
 import qrisLogo from '@/assets/qris.png';
 import { useRoute, useRouter } from 'vue-router';
 import { formatRupiah } from "@/filters";
+import { formatDate } from '@/filters';
 import { useStore } from 'vuex';
 import { useToast } from 'vue-toastification';
-
 
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
 const toast = useToast();
+
 const paymentMethods = ref([]);
 const wallets = ref([]);
 const selectedMethodId = ref(null);
@@ -184,6 +277,19 @@ const selectedTab = ref('bank'); // Default selected tab
 const { transactionId } = route.params;
 const showConfirmationModal = ref(false);
 const isLoading = ref(false);
+const showNoVoucherModal = ref(false);
+const voucherCode = ref('');
+const voucherApplied = ref(false);
+const discountAmount = ref(0);
+const finalAmount = ref(0);
+const totalAmount = ref(0); 
+const isApplyingVoucher = ref(false);
+const showVouchers = ref(false);
+const availableVouchers = ref([]);
+const selectedVoucher = ref(null);
+const showConfirmationVoucherModal = ref(false);
+const transactionData = ref([]);
+const transactionIds = ref(JSON.parse(localStorage.getItem('transactionIds')) || []);
 
 const user = store.getters['auth/user'];
 
@@ -303,7 +409,14 @@ const getSelectedMethod = () => {
   return null;
 };
 
-const proceedToPayment = () => {
+const proceedToPayment = async () => {
+  if (voucherCode.value && !voucherApplied.value) {
+    await applyVoucher();
+    if (!voucherApplied.value) {
+      return;
+    }
+  }
+
   const selectedMethod = getSelectedMethod();
   if (selectedMethod) {
     if (selectedMethod.id.startsWith('bank')) {
@@ -425,10 +538,106 @@ const proceedSaldoPayment = async (method) => {
   }
 };
 
+// VOUCHER SECTION
+
+const fetchVouchers = async () => {
+  try {
+    const response = await api.get('/v1/vouchers');
+    if (response.data.meta.code === 200) {
+      availableVouchers.value = response.data.data;
+    }
+  } catch (error) {
+    toast.error('Failed to fetch vouchers: ' + (error.response?.data?.error || error.message));
+    console.error('Failed to fetch vouchers:', error);
+  }
+};
+
+const applyVoucher = async () => {
+  try {
+    if (!voucherCode.value) {
+      toast.error('Please enter a voucher code.');
+      return;
+    }
+
+    const transactionIds = JSON.parse(localStorage.getItem('transactionIds'));
+
+    const response = await api.post('/v1/apply-voucher', {
+      voucher_code: voucherCode.value,
+      transaction_ids: transactionIds,
+    });
+
+    if (response.data.success) {
+      discountAmount.value = response.data.discount_amount;
+      finalAmount.value = response.data.final_amount;
+      voucherApplied.value = true;
+      toast.success('Voucher berhasil diterapkan!');
+    } else {
+      toast.error('Voucher tidak valid atau sudah kadaluarsa.');
+    }
+  } catch (error) {
+    toast.error('Gagal menerapkan voucher ini: ' + (error.response?.data?.error || error.message));
+    console.error('Gagal menerapkan voucher ini:', error);
+  }
+};
+
+const fetchAppliedVoucher = async () => {
+  try {
+    const response = await api.get('/v1/vouchers/applied', {
+      params: { transaction_ids: transactionIds.value }
+    });
+    if (response.data.success) {
+      const appliedVouchers = response.data.vouchers;
+      if (appliedVouchers.length > 0) {
+        const voucher = appliedVouchers[0]; // Assuming only one voucher can be applied at a time
+        voucherCode.value = voucher.code;
+        discountAmount.value = voucher.discount_amount;
+        voucherApplied.value = true;
+      }
+    }
+  } catch (error) {
+    toast.error('Failed to fetch applied voucher: ' + (error.response?.data?.message || error.message));
+    console.error('Failed to fetch applied voucher:', error);
+  }
+};
+
+
+const openConfirmationVoucherModal = (voucher) => {
+  selectedVoucher.value = voucher;
+  showConfirmationVoucherModal.value = true;
+};
+
+const confirmApplyVoucher = async () => {
+  if (!selectedVoucher.value) return;
+
+  voucherCode.value = selectedVoucher.value.code;
+  await applyVoucher();
+  showConfirmationVoucherModal.value = false;
+  selectedVoucher.value = null;
+};
+
+const cancelApplyVoucher = () => {
+  showConfirmationVoucherModal.value = false;
+  selectedVoucher.value = null;
+};
+
+const toggleVouchers = () => {
+  showVouchers.value = !showVouchers.value;
+  if (showVouchers.value) {
+    fetchVouchers();
+  }
+};
+
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text);
+  toast.success('Kode voucher berhasil disalin!');
+};
+
 
 onMounted(() => {
   fetchBankPaymentMethods();
   fetchWalletPaymentMethods();
+  fetchAppliedVoucher();
+  // fetchVouchers();
 });
 
 </script>
@@ -720,4 +929,60 @@ onMounted(() => {
   }
 }
 
+.coupon-card {
+  position: relative;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.coupon-card::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.coupon-card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.coupon-card::before {
+  left: -10px;
+}
+
+.coupon-card::after {
+  right: -10px;
+}
+
+.coupon-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.coupon-content {
+  flex-grow: 1;
+}
+
+.coupon-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 </style>

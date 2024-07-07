@@ -37,7 +37,7 @@
 
     <!-- Tryout Cards -->
     <div v-else-if="filteredTryouts && filteredTryouts.length && activeTab === 'myTryouts'"
-      class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5 mx-8 mt-8">
+      class="flex gap-5 lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mx-8 mt-8">
         <div v-for="tryout in filteredTryouts" :key="tryout.id"
           class="w-full max-w-[300px] flex flex-col gap-4 bg-white rounded-xl p-3 shadow-lg justify-between"
         >
