@@ -13,7 +13,7 @@
     <p class="text-red-400 line-through mb-2">{{ method.adminFee }}</p>
     <div class="flex items-center gap-2">
       <p class="text-gray-800 mb-2">Rp 0</p>
-      <p class="bg-green-500 text-white text-xs px-2 py-1 rounded-full mb-2">PROMO</p>
+      <span class="bg-green-700 text-white text-xs px-2 py-1 rounded-full mb-2">PROMO</span>
     </div>
     <p v-if="method.note" class="text-xs text-gray-800 mt-2">{{ method.note }}</p>
     <div v-if="isSelected" class="absolute top-2 right-2 text-primary">
