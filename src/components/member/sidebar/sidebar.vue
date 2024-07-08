@@ -47,6 +47,7 @@ const memberLinks = [
     url: "/member/my-tryout",
     // icons learning use outline
     icons: "fluent:brain-circuit-20-regular",
+    // badge: "Promo",
   },
   {
     name: "Ranking",

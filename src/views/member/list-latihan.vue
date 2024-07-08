@@ -407,7 +407,7 @@ const claimPackage = async (packageId) => {
         showSuccessModal.value = true;
     } catch (error) {
         console.error('Error claiming package:', error);
-        alert('Gagal mengklaim paket soal.');
+        toast.error(error.response.data.meta.message + ' 😟');
     }
 };
 
@@ -428,7 +428,7 @@ const startTryout = async (tryoutId) => {
     } catch (error) {
         isLoading.value = false;
         console.error('Error starting tryout:', error);
-        alert('Gagal memulai latihan soal.');
+        toast.error('Gagal memulai tryout. Silahkan coba lagi atau hubungi admin.');
     }
 };
 
