@@ -105,6 +105,11 @@ const resendOtp = async () => {
   }
 };
 
+// call center
+const callCenter = () => {
+  window.open('https://wa.me/6285183002434', '_blank');
+};
+
 // change email
 const changeEmail = () => {
   // remove email from localStorage
@@ -162,7 +167,7 @@ onMounted(() => {
               <p>Verifikasi Akun</p>
             </div>
             <div class="flex flex-row text-sm font-medium text-gray-400">
-              <p>We have sent a code to your email {{ censoredEmail }}</p>
+              <p>Kami sudah mengirim kode OTP ke email {{ censoredEmail }}</p>
             </div>
           </div>
           <div>
@@ -186,7 +191,7 @@ onMounted(() => {
                       type="submit"
                       class="bg-primary text-white w-full rounded-xl py-3"
                     >
-                      Verification Account
+                      Verifikasi Akun
                     </button>
                   </div>
                   <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
@@ -197,6 +202,17 @@ onMounted(() => {
                       class="text-primary font-semibold"
                     >
                       Kirim Ulang Kode
+                    </button>
+                  </div>
+                  <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                    <!-- button pusat bantuan with whatsapp icon -->
+                    <button 
+                      @click="callCenter"
+                      type="button" class="flex items-center justify-center space-x-1 text-primary font-semibold">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 17H9C8.45 17 8 16.55 8 16V14C8 13.45 8.45 13 9 13H11C11.55 13 12 13.45 12 14V16C12 16.55 11.55 17 11 17ZM15.71 14.71C15.53 14.89 15.3 15 15 15H14.5C14.22 15 14 14.78 14 14.5V13.5C14 13.22 14.22 13 14.5 13H15C15.55 13 15.89 13.45 16.09 13.78L17.29 15.29C17.47 15.47 17.5 15.72 17.37 15.91C17.24 16.09 17 16.13 16.82 16L15.71 14.71ZM19 11C19.55 11 20 11.45 20 12V15.5C20 15.78 19.78 16 19.5 16H19V17.5C19 18.05 18.55 18.5 18 18.5H6C5.45 18.5 5 18.05 5 17.5V6.5C5 5.95 5.45 5.5 6 5.5H18C18.55 5.5 19 5.95 19 6.5V10C19 10.55 18.55 11 18 11H19Z" />
+                      </svg>
+                      <span>Hubungi Pusat Bantuan (Whatsapp)</span>
                     </button>
                   </div>
                 </div>

@@ -66,8 +66,11 @@
                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       @change="handleFileChange"
                     />
+                    <!-- ganti foto profile -->
+                    <label for="avatar" class="absolute -bottom-10 left-0 right-0 bg-primary text-white px-2 py-1 rounded-lg 
+                      cursor-pointer text-center">Ganti Foto</label>
                   </div>
-                  <h3 class="text-lg font-semibold text-gray-700 mt-2">{{ user.name }}</h3>
+                  <h3 class="text-lg font-semibold text-gray-700 mt-12">@{{ user.username }}</h3>
                 </div>
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="mb-4">
@@ -224,6 +227,7 @@ const tab = ref('Informasi Akun');
 
 const accountInfo = ref({
   name: user?.name || '',
+  username: user?.username || '',
   email: user?.email || '',
   phone: user?.phone || '',
   birthdate: user?.birthdate || '',
