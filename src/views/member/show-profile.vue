@@ -10,14 +10,16 @@
               {{ user.name }}
               <span class="ml-4 bg-yellow-100 text-yellow-700 p-2 rounded-lg text-sm cursor-pointer flex items-center" @click="copyReferralCode">
                 {{ user.referral_code }}
-                <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-7 8h6a2 2 0 002-2v-6a2 2 0 00-2-2h-6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V6z"></path>
-                </svg>
+                <Icon icon="mdi:clipboard" class="w-4 h-4 inline ml-1" />
               </span>
             </h2>
             <p class="text-gray-600">{{ user.email }}</p>
             <p class="text-gray-600">Usia: {{ user.age }}</p>
+            <!-- Add the button with pencil icon here -->
+            <router-link to="/member/profile" class=" bg-blue-500 rounded-full text-white px-4 py-2 shadow hover:bg-blue-700 mt-2 flex items-center">
+              <Icon icon="mdi:pencil" class="w-4 h-4 mr-2" />
+              Edit Profil
+            </router-link>
           </div>
         </div>
         <div class="bg-blue-50 p-4 rounded-lg mt-6">
@@ -34,7 +36,11 @@
             </button>
           </div>
         </div>
-        <router-link to="/member/topup" class="mt-4 inline-block bg-primary rounded-full text-white px-4 py-2 shadow hover:bg-blue-700">Top-Up Saldo</router-link>
+        <router-link to="/member/topup" class="mt-4 bg-green-700 rounded-full text-white px-4 py-2 shadow hover:bg-green-800 
+          flex items-center justify-center">
+          <Icon icon="mdi:cash" class="w-6 h-6 mr-2" />
+          Top-Up Saldo
+        </router-link>
       </div>
       
       <!-- Riwayat Pengisian Saldo -->
@@ -62,6 +68,8 @@
         </div>
       </div>
     </div>
+    
+    
   </MemberLayouts>
 </template>
 
@@ -72,6 +80,7 @@ import { useRouter } from 'vue-router';
 import MemberLayouts from "@/components/MemberLayouts.vue";
 import api from '@/api/Api.js';
 import { useToast } from 'vue-toastification';
+import { Icon } from "@iconify/vue";
 
 const store = useStore();
 const router = useRouter();
