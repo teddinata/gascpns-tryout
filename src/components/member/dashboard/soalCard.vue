@@ -35,7 +35,7 @@ const router = useRouter();
     class="w-full flex flex-col gap-4 bg-white rounded-xl p-3 shadow-lg justify-between
      hover:bg-gray-100 transition duration-200"
   >
-    <img :src="soal.cover_path" class="w-full h-40" :alt="soal.title" />
+    <img :src="soal.cover_path" class="w-full h-auto" :alt="soal.title" />
     <h1 class="text-xl font-semibold text-text-primary">{{ soal.name }}</h1>
     <div class="flex flex-col space-y-2">
       <div class="flex gap-3 justify-between items-center">
