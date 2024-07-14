@@ -42,7 +42,7 @@
           class="w-full max-w-[300px] flex flex-col gap-4 bg-white rounded-xl p-3 shadow-lg justify-between"
         >
           <!-- Konten tryout -->
-          <img :src="tryout.cover_path" class="w-full h-40" :alt="tryout.name" />
+          <img :src="tryout.cover_path" class="w-full h-auto" :alt="tryout.name" />
           <h1 class="text-xl font-semibold text-text-primary">{{ tryout.name }}</h1>
           <div class="flex flex-col space-y-2">
             <div class="flex gap-3 justify-between items-center">
@@ -210,7 +210,7 @@
       >
         <!-- Konten kartu pembelian tryout -->
          <!-- Konten tryout -->
-         <img :src="tryout.cover_path" class="w-full h-40" :alt="tryout.name" />
+         <img :src="tryout.cover_path" class="w-full h-auto" :alt="tryout.name" />
          <h1 class="text-xl font-semibold text-text-primary">{{ tryout.name }}</h1>
          <div class="flex flex-col space-y-2">
            <div class="flex gap-3 justify-between items-center">
