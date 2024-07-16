@@ -1,11 +1,10 @@
 <template>
   <MemberLayouts>
-    <div class="w-full mx-auto p-6 ">
+    <div class="w-full mx-auto p-6 mt-8">
       <!-- Header -->
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <h1 class="text-3xl font-bold">{{ paket.name }}</h1>
-        <button @click="redirectToPurchaseForm" 
-          class="flex items-center py-2 px-4 bg-primary rounded-full text-white hover:bg-blue-600">
+        <button @click="redirectToPurchaseForm" class="flex items-center py-2 px-4 bg-primary rounded-full text-white hover:bg-blue-600 mt-4 md:mt-0">
           <Icon icon="fa-solid:shopping-cart" class="text-xl"></Icon>
           <p class="ml-2">Beli Sekarang</p>
         </button>
@@ -13,18 +12,15 @@
       <p class="mb-6">{{ paket.description }}</p>
       
       <!-- Features List -->
-      <div class="grid grid-cols-2 gap-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div class="text-white">
           <div class="p-6 bg-gray-800 rounded-xl shadow-lg w-auto">
             <img :src="paket.cover_path" alt="Paket CPNS Premium" class="w-full h-auto rounded mb-4" style="object-fit: cover; object-position: center; size: 20px;">
             <h2 class="text-xl font-semibold mb-2">{{ paket.name }} 
-            <span v-if="paket.is_premium == 0"
-              class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 
-              rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">PREMIUM</span>
-              <span 
-                v-else-if="paket.is_premium == 1"
-                class="bg-yellow-100 text-yellow-800 text-xs font-medium ms-2 px-2.5 py-0.5
-                rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300">FREE</span>
+              <span v-if="paket.is_premium == 0"
+                class="bg-blue-100 text-blue-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">PREMIUM</span>
+              <span v-else-if="paket.is_premium == 1"
+                class="bg-yellow-100 text-yellow-800 text-xs font-medium ms-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300">FREE</span>
             </h2>
             <div class="flex items-center mb-2">
               <span v-if="paket.discount" class="text-red-400 text-2xl font-bold">Rp {{ formatRupiah(paket.discount) }}</span>
@@ -35,15 +31,9 @@
             <button @click="purchaseForSelf" class="w-full py-2 bg-primary text-white rounded-md hover:bg-blue-600 mt-2">Beli Paket Sekarang</button>
             <button @click="toggleFriendPurchase" class="w-full mt-2 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600">Beli Untuk Teman?</button>
           </div>
-          
         </div>
         <div>
           <ul class="list-none space-y-2">
-            <!-- <li v-for="feature in paket.features" :key="feature.id" class="flex items-center">
-              <span v-if="feature.available" class="text-green-500 mr-2">✔</span>
-              <span v-else class="text-red-500 mr-2">✖</span>
-              {{ feature.name }}
-            </li> -->
             <li class="flex items-center">
               <span class="text-green-500 mr-2">✔</span> Try Out Premium SKD Sistem CAT
             </li>
@@ -82,13 +72,7 @@
           <div v-if="showFriendPurchaseForm" class="mt-4 p-4 bg-gray-800 rounded-xl shadow-lg w-auto">
             <form @submit.prevent="purchaseForFriends">
               <div v-for="(email, index) in friendEmails" :key="index" class="mb-2 flex items-center">
-                <input 
-                  v-model="friendEmails[index]" 
-                  type="email" 
-                  placeholder="Masukkan email teman" 
-                  class="w-full py-2 px-4 bg-gray-800 text-white rounded-md 
-                  focus:outline-none focus:ring-2 focus:ring-blue-600 border border-gray-700"
-                />
+                <input v-model="friendEmails[index]" type="email" placeholder="Masukkan email teman" class="w-full py-2 px-4 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 border border-gray-700" />
                 <button type="button" @click="removeEmailField(index)" class="ml-2 p-2 bg-red-500 text-white rounded-md hover:bg-red-600">x</button>
               </div>
               <button type="button" @click="addEmailField" class="w-full mt-2 py-2 bg-green-600 text-white rounded-md hover:bg-green-500">Tambah Email</button>
@@ -97,7 +81,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>    
   </MemberLayouts>
 </template>
 

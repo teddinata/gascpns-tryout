@@ -47,26 +47,31 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <!-- Informasi Paket -->
           <div class="p-4 rounded-lg shadow-2xl bg-white">
-            <div class="flex items-center mb-6 shadow-2xl bg-white p-4">
+            <div class="flex flex-col md:flex-row items-center mb-6 shadow-2xl bg-white p-4">
               <img 
                 v-if="transactionData[0].package.cover_path" 
                 :src="transactionData[0].package.cover_path" 
                 alt="Paket CPNS Premium" 
-                class="w-40 rounded mr-4" 
-                style="object-fit: cover; object-position: center; border-radius: 10px; border: 1px solid #000000;" />
-              <div class="flex flex-col">
+                class="w-full md:w-40 rounded mb-4 md:mb-0 md:mr-4" 
+                style="object-fit: cover; object-position: center; border-radius: 10px; border: 1px solid #000000;" 
+              />
+              <div class="flex flex-col text-center md:text-left">
                 <h4 class="text-lg font-semibold mb-2">{{ transactionData[0].package.name }}</h4>
-                <div class="flex items-center">
-                  <p v-if="transactionData[0].package.discount" class="text-red-400 font-semibold">Rp {{ formatRupiah(transactionData[0].package.discount) }}</p>
-                  <p v-if="transactionData[0].package.discount" class="text-gray-400 line-through ml-2">Rp {{ formatRupiah(transactionData[0].package.price) }}</p>
-                  <span v-else class="text-red-400">Rp {{ formatRupiah(transactionData[0].package.price) }}</span>
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start">
+                  <p v-if="transactionData[0].package.discount" class="text-red-400 font-semibold">
+                    Rp {{ formatRupiah(transactionData[0].package.discount) }}
+                  </p>
+                  <p v-if="transactionData[0].package.discount" class="text-gray-400 line-through md:ml-2 mt-2 md:mt-0">
+                    Rp {{ formatRupiah(transactionData[0].package.price) }}
+                  </p>
+                  <span v-else class="text-red-400 mt-2 md:mt-0">Rp {{ formatRupiah(transactionData[0].package.price) }}</span>
                 </div>
                 <span class="text-black mt-2">Jumlah:
                   <span class="text-black font-semibold">x{{ totalQuantity }}</span>
                 </span>
               </div>
             </div>
-          </div>
+          </div>          
 
          <!-- Rincian Pembayaran -->
         <div class="p-4 rounded-lg shadow-2xl bg-white">

@@ -180,11 +180,22 @@
         </div>
         <div class="mt-4 flex flex-col card p-4 rounded-lg shadow-2xl bg-white">
           <div class="mt-4 flex flex-col md:flex-row gap-4">
-            <input v-model="voucherCode" type="text" class="p-2 border rounded w-full md:w-full" placeholder="Masukkan kode promo" style="text-transform: uppercase;" :disabled="voucherApplied || isApplyingVoucher">
-            <button @click="applyVoucher" class="mt-2 md:mt-0 bg-primary text-white py-2 px-4 rounded-lg w-full md:w-auto" :disabled="voucherApplied || isApplyingVoucher">Gunakan Kode Promo</button>
+            <input v-model="voucherCode" type="text" class="p-2 border rounded w-full md:w-full"
+            @input="isTypingVoucher = true"
+            placeholder="Masukkan kode promo" style="text-transform: uppercase;" 
+            >
+            <button @click="applyVoucher" class="mt-2 md:mt-0 bg-primary text-white py-2 px-4 rounded-lg w-full md:w-auto" 
+            >Gunakan Kode Promo</button>
           </div>
-          <p v-if="voucherApplied" class="text-green-500 mt-2">Kode voucher berhasil digunakan! Diskon: Rp {{ formatRupiah(discountAmount) }}</p>
-          <p v-if="!voucherApplied && voucherCode && !isApplyingVoucher" class="text-red-500 mt-2">Kode voucher tidak valid atau sudah kadaluarsa.</p>
+          <p v-if="voucherApplied" class="text-green-500 mt-2">
+            Kode voucher berhasil digunakan! Diskon: Rp {{ formatRupiah(discountAmount) }}
+          </p>
+          <p v-if="isTypingVoucher" class="text-blue-500 mt-2">
+            Sedang mengetik... klik tombol untuk menerapkan promo.
+          </p>
+          <p v-if="invalidVoucher && !isTypingVoucher" class="text-red-500 mt-2">
+            Kode voucher tidak valid atau sudah pernah digunakan.
+          </p>
         </div>
       </div>
 
@@ -284,7 +295,9 @@ const discountAmount = ref(0);
 const finalAmount = ref(0);
 const totalAmount = ref(0); 
 const isApplyingVoucher = ref(false);
-const showVouchers = ref(false);
+const isTypingVoucher = ref(false);
+const invalidVoucher = ref(false);
+const showVouchers = ref(true);
 const availableVouchers = ref([]);
 const selectedVoucher = ref(null);
 const showConfirmationVoucherModal = ref(false);
@@ -569,14 +582,22 @@ const applyVoucher = async () => {
     if (response.data.success) {
       discountAmount.value = response.data.discount_amount;
       finalAmount.value = response.data.final_amount;
-      voucherApplied.value = true;
       toast.success('Voucher berhasil diterapkan!');
+      voucherApplied.value = true;
+      invalidVoucher.value = false; 
+      isTypingVoucher.value = false;
     } else {
       toast.error('Voucher tidak valid atau sudah kadaluarsa.');
+      voucherApplied.value = false;
+      invalidVoucher.value = true;
+      isTypingVoucher.value = false;
     }
   } catch (error) {
     toast.error('Gagal menerapkan voucher ini: ' + (error.response?.data?.error || error.message));
     console.error('Gagal menerapkan voucher ini:', error);
+    voucherApplied.value = false;
+    invalidVoucher.value = true;
+    isTypingVoucher.value = false;
   }
 };
 
@@ -587,18 +608,25 @@ const fetchAppliedVoucher = async () => {
     });
     if (response.data.success) {
       const appliedVouchers = response.data.vouchers;
-      if (appliedVouchers.length > 0) {
+      if (appliedVouchers.length > 0 && appliedVouchers[0].code !== null) {
         const voucher = appliedVouchers[0]; // Assuming only one voucher can be applied at a time
         voucherCode.value = voucher.code;
         discountAmount.value = voucher.discount_amount;
         voucherApplied.value = true;
+        invalidVoucher.value = false; // Reset invalid voucher status if a voucher is applied
+      } else {
+        voucherApplied.value = false; // Ensure voucherApplied is false if no vouchers are applied
       }
     }
   } catch (error) {
     toast.error('Failed to fetch applied voucher: ' + (error.response?.data?.message || error.message));
     console.error('Failed to fetch applied voucher:', error);
+    voucherApplied.value = false; // Ensure voucherApplied is false in case of error
   }
 };
+
+// Call fetchAppliedVoucher to check if there's already an applied voucher
+fetchAppliedVoucher();
 
 
 const openConfirmationVoucherModal = (voucher) => {
@@ -622,9 +650,9 @@ const cancelApplyVoucher = () => {
 
 const toggleVouchers = () => {
   showVouchers.value = !showVouchers.value;
-  if (showVouchers.value) {
-    fetchVouchers();
-  }
+  // if (showVouchers.value) {
+  //   fetchVouchers();
+  // }
 };
 
 const copyToClipboard = (text) => {
@@ -637,6 +665,7 @@ onMounted(() => {
   fetchBankPaymentMethods();
   fetchWalletPaymentMethods();
   fetchAppliedVoucher();
+  fetchVouchers();
   // fetchVouchers();
 });
 
