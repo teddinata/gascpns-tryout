@@ -96,7 +96,7 @@ const truncatedBlogData = computed(() => {
         <DashboardCard
           title="Total User"
           icon="mage:users-fill"
-          :content="dashboardData.total_user + '7k'"
+          :content="formatRupiah(dashboardData.total_user + 7000)"
           content-color="text-text-primary"
           bg-icon-color="bg-[#E0FEEE]"
           icon-color="text-[#0BE361]"
