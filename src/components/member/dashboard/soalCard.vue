@@ -43,7 +43,7 @@ const router = useRouter();
           <Icon class="text-xl text-primary" icon="fa6-solid:cart-shopping" />
         </div>
         <p class="text-sm font-medium text-text-quaternary">
-          {{ soal.students_count }} Terjual
+          {{ parseInt(soal.students_count) + 5000 }} Terjual
         </p>
       </div>
       <div class="flex gap-3 justify-between items-center">
